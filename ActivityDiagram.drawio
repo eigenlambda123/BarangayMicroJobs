@@ -1,6 +1,6 @@
 <mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36" version="29.5.1">
   <diagram name="Page-1" id="dNgfz3BAdBn4VVBanrbT">
-    <mxGraphModel dx="1732" dy="473" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="2095" dy="667" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -18,15 +18,15 @@
         <mxCell id="TNgTKdZIUwi3PJjqAMHU-8" edge="1" parent="1" source="TNgTKdZIUwi3PJjqAMHU-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;endArrow=open;endFill=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" target="TNgTKdZIUwi3PJjqAMHU-5">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="TNgTKdZIUwi3PJjqAMHU-4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;Fill out Job Details&lt;/font&gt;" vertex="1">
+        <mxCell id="TNgTKdZIUwi3PJjqAMHU-4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;Input Transaction Details&lt;/font&gt;" vertex="1">
           <mxGeometry height="40" width="120" x="220" y="200" as="geometry" />
         </mxCell>
-        <mxCell id="TNgTKdZIUwi3PJjqAMHU-9" edge="1" parent="1" source="TNgTKdZIUwi3PJjqAMHU-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;endArrow=open;endFill=0;" target="TNgTKdZIUwi3PJjqAMHU-29">
+        <mxCell id="TNgTKdZIUwi3PJjqAMHU-9" edge="1" parent="1" source="TNgTKdZIUwi3PJjqAMHU-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;endArrow=open;endFill=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" target="TNgTKdZIUwi3PJjqAMHU-29">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="280" y="400" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="TNgTKdZIUwi3PJjqAMHU-5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;Click Submit&lt;/font&gt;" vertex="1">
+        <mxCell id="TNgTKdZIUwi3PJjqAMHU-5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;Submit Job Application data&lt;/font&gt;" vertex="1">
           <mxGeometry height="40" width="120" x="220" y="280" as="geometry" />
         </mxCell>
         <mxCell id="TNgTKdZIUwi3PJjqAMHU-11" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=open;endFill=0;">
@@ -77,9 +77,9 @@
         <mxCell id="TNgTKdZIUwi3PJjqAMHU-29" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="&lt;span style=&quot;font-size: 10px;&quot;&gt;Save to Local SQLite DB&lt;/span&gt;" vertex="1">
           <mxGeometry height="40" width="120" x="220" y="360" as="geometry" />
         </mxCell>
-        <mxCell id="TNgTKdZIUwi3PJjqAMHU-31" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=open;endFill=0;">
+        <mxCell id="TNgTKdZIUwi3PJjqAMHU-31" edge="1" parent="1" source="TNgTKdZIUwi3PJjqAMHU-29" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=open;endFill=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="279.72" y="400" as="sourcePoint" />
+            <mxPoint x="280" y="400" as="sourcePoint" />
             <mxPoint x="280" y="440" as="targetPoint" />
           </mxGeometry>
         </mxCell>
@@ -89,7 +89,7 @@
         <mxCell id="TNgTKdZIUwi3PJjqAMHU-35" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;Redirect to Dashboard&lt;/font&gt;" vertex="1">
           <mxGeometry height="40" width="120" x="-400" y="595" as="geometry" />
         </mxCell>
-        <mxCell id="TNgTKdZIUwi3PJjqAMHU-39" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;Admin: Moderate Content / Posts&lt;/font&gt;" vertex="1">
+        <mxCell id="TNgTKdZIUwi3PJjqAMHU-39" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;Admin: Moderate Content&lt;/font&gt;" vertex="1">
           <mxGeometry height="40" width="120" x="-20" y="460" as="geometry" />
         </mxCell>
         <mxCell id="TNgTKdZIUwi3PJjqAMHU-40" parent="1" style="html=1;points=[];perimeter=orthogonalPerimeter;fillColor=strokeColor;" value="" vertex="1">
@@ -202,6 +202,12 @@
         </mxCell>
         <mxCell id="TNgTKdZIUwi3PJjqAMHU-82" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;strokeColor=light-dark(#000000,#000000);gradientColor=none;fillStyle=auto;strokeWidth=3;fillColor=light-dark(#FFFFFF,#FDFDFD);" value="" vertex="1">
           <mxGeometry height="20" width="20" x="570" y="452.5" as="geometry" />
+        </mxCell>
+        <mxCell id="TNgTKdZIUwi3PJjqAMHU-83" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Admin Report Flow" vertex="1">
+          <mxGeometry height="30" width="120" x="520" y="110" as="geometry" />
+        </mxCell>
+        <mxCell id="TNgTKdZIUwi3PJjqAMHU-85" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Barangay Resident Flow" vertex="1">
+          <mxGeometry height="30" width="140" x="220" y="110" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
