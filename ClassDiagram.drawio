@@ -1,6 +1,6 @@
-<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36" version="29.5.1">
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36" version="29.5.2">
   <diagram name="Page-1" id="GGgb9iygMNfNr09LgLK7">
-    <mxGraphModel dx="2076" dy="1767" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="1445" dy="1424" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -35,7 +35,7 @@
           <mxGeometry height="26" width="140" y="216" as="geometry" />
         </mxCell>
         <mxCell id="fVLF3IP0_c9RsRDlGiun-6" parent="1" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=none;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;snapToPoint=0;enumerate=0;miterlimit=4;" value="Class: JobPost" vertex="1">
-          <mxGeometry height="294" width="180" x="220" y="-210" as="geometry" />
+          <mxGeometry height="320" width="180" x="220" y="-210" as="geometry" />
         </mxCell>
         <mxCell id="fVLF3IP0_c9RsRDlGiun-7" parent="fVLF3IP0_c9RsRDlGiun-6" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;snapToPoint=0;enumerate=0;miterlimit=4;" value="+ jobId: String {PK}" vertex="1">
           <mxGeometry height="26" width="180" y="26" as="geometry" />
@@ -69,6 +69,9 @@
         </mxCell>
         <mxCell id="fVLF3IP0_c9RsRDlGiun-16" parent="fVLF3IP0_c9RsRDlGiun-6" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;snapToPoint=0;enumerate=0;miterlimit=4;" value="+ syncWithBackend(): Boolean" vertex="1">
           <mxGeometry height="26" width="180" y="268" as="geometry" />
+        </mxCell>
+        <mxCell id="GJkgaUOQMlkPzAsxBFeQ-1" parent="fVLF3IP0_c9RsRDlGiun-6" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;snapToPoint=0;enumerate=0;miterlimit=4;" value="&lt;font&gt;+&amp;nbsp;&lt;span style=&quot;font-family: Verdana; text-align: center; text-wrap-mode: nowrap;&quot;&gt;triggerSync(): void&lt;/span&gt;&lt;/font&gt;" vertex="1">
+          <mxGeometry height="26" width="180" y="294" as="geometry" />
         </mxCell>
         <mxCell id="fVLF3IP0_c9RsRDlGiun-19" parent="1" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=none;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;snapToPoint=0;enumerate=0;miterlimit=4;" value="Class: JobTransaction" vertex="1">
           <mxGeometry height="242" width="300" x="460" y="180" as="geometry" />
