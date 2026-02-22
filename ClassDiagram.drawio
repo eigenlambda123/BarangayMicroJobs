@@ -5,7 +5,7 @@
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
         <mxCell id="7Osbk0KqhFKbRZPnSXQq-1" parent="1" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=none;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;snapToPoint=0;enumerate=0;miterlimit=4;" value="Class: User" vertex="1">
-          <mxGeometry height="216" width="140" x="30" y="-20" as="geometry" />
+          <mxGeometry height="242" width="140" x="30" y="-20" as="geometry" />
         </mxCell>
         <mxCell id="7Osbk0KqhFKbRZPnSXQq-2" parent="7Osbk0KqhFKbRZPnSXQq-1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;snapToPoint=0;enumerate=0;miterlimit=4;" value="+ userID: String {PK}" vertex="1">
           <mxGeometry height="26" width="140" y="26" as="geometry" />
@@ -30,6 +30,9 @@
         </mxCell>
         <mxCell id="fVLF3IP0_c9RsRDlGiun-5" parent="7Osbk0KqhFKbRZPnSXQq-1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;snapToPoint=0;enumerate=0;miterlimit=4;" value="+ updateProfile(): void" vertex="1">
           <mxGeometry height="26" width="140" y="190" as="geometry" />
+        </mxCell>
+        <mxCell id="-sO6b_kFUzGgdNLb8HeN-1" parent="7Osbk0KqhFKbRZPnSXQq-1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;snapToPoint=0;enumerate=0;miterlimit=4;" value="+&amp;nbsp;applyForJob(): void" vertex="1">
+          <mxGeometry height="26" width="140" y="216" as="geometry" />
         </mxCell>
         <mxCell id="fVLF3IP0_c9RsRDlGiun-6" parent="1" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=none;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;snapToPoint=0;enumerate=0;miterlimit=4;" value="Class: JobPost" vertex="1">
           <mxGeometry height="294" width="180" x="220" y="-210" as="geometry" />
