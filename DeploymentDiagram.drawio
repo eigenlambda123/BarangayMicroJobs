@@ -1,32 +1,55 @@
 <mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36" version="29.5.2">
   <diagram name="Page-1" id="4EY_U0CLWdRVv5K3rL0v">
-    <mxGraphModel dx="868" dy="473" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="1303" dy="709" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
         <mxCell id="YFN7SWQStyVWJg71a9ko-4" parent="1" style="html=1;outlineConnect=0;whiteSpace=wrap;fillColor=#AFFFAF;shape=mxgraph.archimate3.node;" value="" vertex="1">
-          <mxGeometry height="289" width="290" x="50" y="470" as="geometry" />
+          <mxGeometry height="290" width="290" x="50" y="470" as="geometry" />
         </mxCell>
         <mxCell id="YFN7SWQStyVWJg71a9ko-8" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&lt;font style=&quot;font-size: 13px;&quot;&gt;Resident Smartphone&lt;/font&gt;" vertex="1">
-          <mxGeometry height="30" width="180" x="75" y="550" as="geometry" />
+          <mxGeometry height="30" width="210" x="50" y="550" as="geometry" />
         </mxCell>
         <mxCell id="YFN7SWQStyVWJg71a9ko-9" parent="1" style="html=1;outlineConnect=0;whiteSpace=wrap;fillColor=#AFFFAF;shape=mxgraph.archimate3.node;" value="" vertex="1">
-          <mxGeometry height="40" width="70" x="840" y="427.5" as="geometry" />
+          <mxGeometry height="200" width="220" x="880" y="515" as="geometry" />
         </mxCell>
-        <mxCell id="YFN7SWQStyVWJg71a9ko-10" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&lt;font style=&quot;font-size: 6px;&quot;&gt;Admin PC&lt;/font&gt;" vertex="1">
-          <mxGeometry height="30" width="50" x="840" y="437.5" as="geometry" />
+        <mxCell id="YFN7SWQStyVWJg71a9ko-10" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&lt;font style=&quot;font-size: 13px;&quot;&gt;Admin PC&lt;/font&gt;" vertex="1">
+          <mxGeometry height="30" width="160" x="880" y="570" as="geometry" />
         </mxCell>
         <mxCell id="YFN7SWQStyVWJg71a9ko-11" parent="1" style="html=1;outlineConnect=0;whiteSpace=wrap;fillColor=#AFFFAF;shape=mxgraph.archimate3.node;" value="" vertex="1">
-          <mxGeometry height="40" width="80" x="780" y="477.5" as="geometry" />
+          <mxGeometry height="290" width="290" x="470" y="470" as="geometry" />
         </mxCell>
-        <mxCell id="YFN7SWQStyVWJg71a9ko-12" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&lt;font style=&quot;font-size: 5px;&quot;&gt;Application Server&lt;/font&gt;" vertex="1">
-          <mxGeometry height="30" width="60" x="780" y="487.5" as="geometry" />
+        <mxCell id="YFN7SWQStyVWJg71a9ko-12" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&lt;font style=&quot;font-size: 13px;&quot;&gt;Application Server&lt;/font&gt;" vertex="1">
+          <mxGeometry height="30" width="210" x="470" y="550" as="geometry" />
         </mxCell>
         <mxCell id="YFN7SWQStyVWJg71a9ko-14" parent="1" style="html=1;outlineConnect=0;whiteSpace=wrap;fillColor=#AFFFAF;shape=mxgraph.archimate3.application;appType=artifact;archiType=square;" value="&lt;font style=&quot;font-size: 8px;&quot;&gt;Flutter App&lt;/font&gt;" vertex="1">
-          <mxGeometry height="55" width="130" x="100" y="600" as="geometry" />
+          <mxGeometry height="55" width="130" x="90" y="600" as="geometry" />
         </mxCell>
         <mxCell id="YFN7SWQStyVWJg71a9ko-15" parent="1" style="html=1;outlineConnect=0;whiteSpace=wrap;fillColor=#AFFFAF;shape=mxgraph.archimate3.application;appType=artifact;archiType=square;" value="&lt;font style=&quot;font-size: 8px;&quot;&gt;SQLite DB&lt;/font&gt;" vertex="1">
-          <mxGeometry height="55" width="130" x="100" y="680" as="geometry" />
+          <mxGeometry height="55" width="130" x="90" y="680" as="geometry" />
+        </mxCell>
+        <mxCell id="m4dxoo2f5NN0uRnh9ko2-1" parent="1" style="html=1;outlineConnect=0;whiteSpace=wrap;fillColor=#AFFFAF;shape=mxgraph.archimate3.application;appType=artifact;archiType=square;" value="&lt;font style=&quot;font-size: 8px;&quot;&gt;FastAPI Backend&lt;/font&gt;" vertex="1">
+          <mxGeometry height="60" width="130" x="510" y="600" as="geometry" />
+        </mxCell>
+        <mxCell id="m4dxoo2f5NN0uRnh9ko2-2" parent="1" style="html=1;outlineConnect=0;whiteSpace=wrap;fillColor=#AFFFAF;shape=mxgraph.archimate3.application;appType=artifact;archiType=square;" value="&lt;font style=&quot;font-size: 8px;&quot;&gt;PostgreSQL&lt;/font&gt;" vertex="1">
+          <mxGeometry height="55" width="130" x="510" y="680" as="geometry" />
+        </mxCell>
+        <mxCell id="m4dxoo2f5NN0uRnh9ko2-3" parent="1" style="html=1;outlineConnect=0;whiteSpace=wrap;fillColor=#AFFFAF;shape=mxgraph.archimate3.application;appType=artifact;archiType=square;" value="&lt;font style=&quot;font-size: 8px;&quot;&gt;Web Browser&lt;/font&gt;" vertex="1">
+          <mxGeometry height="55" width="130" x="900" y="620" as="geometry" />
+        </mxCell>
+        <mxCell id="m4dxoo2f5NN0uRnh9ko2-5" edge="1" parent="1" source="YFN7SWQStyVWJg71a9ko-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;endArrow=none;endFill=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;" target="YFN7SWQStyVWJg71a9ko-11">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="380" y="615.0000000000002" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m4dxoo2f5NN0uRnh9ko2-7" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;HTTPS / REST API&lt;/font&gt;" vertex="1">
+          <mxGeometry height="30" width="110" x="350" y="590" as="geometry" />
+        </mxCell>
+        <mxCell id="m4dxoo2f5NN0uRnh9ko2-8" edge="1" parent="1" source="YFN7SWQStyVWJg71a9ko-11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;endArrow=none;endFill=0;" target="YFN7SWQStyVWJg71a9ko-9">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m4dxoo2f5NN0uRnh9ko2-9" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&lt;span style=&quot;font-size: 10px;&quot;&gt;HTTPS&lt;/span&gt;" vertex="1">
+          <mxGeometry height="30" width="60" x="790" y="590" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
