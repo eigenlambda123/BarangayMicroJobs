@@ -17,7 +17,7 @@ Before you begin, ensure you have the following installed:
 ### 2. Clone the Repository
 Open your terminal and run:
 ```bash
-git clone [https://github.com/eigenlambda123/BarangayMicroJobs.git](https://github.com/eigenlambda123/BarangayMicroJobs.git)
+git clone https://github.com/eigenlambda123/BarangayMicroJobs.git
 
 ```
 
@@ -55,19 +55,3 @@ To keep your local code in sync with the team:
 2. **Stage changes:** `git add .`
 3. **Commit changes:** `git commit -m "Brief description of what you did"`
 4. **Push to GitHub:** `git push origin feature/your-task-name`
-
----
-
-## Project Structure
-
-* `lib/` - Contains the core Flutter code.
-* `assets/` - Images, fonts, and static files.
-* `pubspec.yaml` - Project dependencies and configuration.
-
-## Contributing
-
-1. Fork the Project.
-2. Create your Feature Branch.
-3. Commit your Changes.
-4. Push to the Branch.
-5. Open a Pull Request.
