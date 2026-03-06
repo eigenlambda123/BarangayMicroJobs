@@ -41,11 +41,11 @@ class JobTransaction(SQLModel, table=True):
     id: UUID = Field(default_factory=uuid4, primary_key=True)
     job_id: UUID = Field(foreign_key="jobpost.id")
     provider_id: UUID = Field(foreign_key="user.id")
-    accepted_at = datetime = Field(default_factory=datetime.utcnow)
+    accepted_at: datetime = Field(default_factory=datetime.utcnow)
     completed_at: Optional[datetime]
 
     # Relationship
-    provider = User = Relationship(back_populates="tasks_accepted")
+    provider: User = Relationship(back_populates="tasks_accepted")
 
 class Rating(SQLModel, table=True):
     # Basic Rating Informations
