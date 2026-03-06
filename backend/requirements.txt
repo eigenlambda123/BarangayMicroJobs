@@ -1,2 +1,7 @@
+# Generic dependencies for the FastAPI
 fastapi[standard]
 sqlmodel
+
+# For password hashing and JWT token handling
+passlib[bcrypt]
+python-jose[cryptography]
