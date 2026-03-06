@@ -23,7 +23,7 @@ To keep your local code in sync with the team:
 3. **Activate the virtual environment:**
     - On Windows:
     ```bash
-        venv\Scripts\activate
+    venv\Scripts\activate
     ```
     - On macOS/Linux:
     ```bash
