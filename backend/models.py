@@ -19,7 +19,7 @@ class User(SQLModel, table=True):
     posted_jobs: List["JobPost"] = Relationship(back_populates="poster")
 
     # 2. As a Service Provider
-    task_accepted: List["JobTransaction"] = Relationship(back_populates="provider")
+    tasks_accepted: List["JobTransaction"] = Relationship(back_populates="provider")
 
 class JobPost(SQLModel, table=True):
     # Basic JobPost Informations
