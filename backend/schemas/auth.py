@@ -5,3 +5,7 @@ class RegisterRequest(BaseModel):
     phone_number: str
     role: str = "resident"
     password: str
+
+class LoginRequest(BaseModel):
+    phone_number: str
+    password: str
