@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from sqlmodel import Session
+from uuid import UUID
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
@@ -35,12 +36,16 @@ def get_current_user(token: str = Depends(oauth2_scheme), session: Session = Dep
     try:
         # Decode the JWT token to get the user ID
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        user_id: int = payload.get("sub")
+        user_id: str = payload.get("sub")
         if user_id is None:
-
             raise credentials_exception
+        # Convert string UUID to UUID object
+        user_id = UUID(user_id)
     except JWTError:
         # If token is invalid or expired, raise an exception
+        raise credentials_exception
+    except ValueError:
+        # If UUID conversion fails
         raise credentials_exception
     
     # Fetch the user from the database using the user ID
