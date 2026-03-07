@@ -6,7 +6,7 @@ from database import get_session
 from models import User 
 
 from schemas.auth import RegisterRequest, LoginRequest
-from utils.auth_utils import verify_password, create_access_token
+from utils.auth_utils import verify_password, create_access_token, get_current_user
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -58,3 +58,16 @@ def login_user(login_data: LoginRequest, session: Session = Depends(get_session)
                 "is_verified": user.is_verified,
             }       
         }    
+
+@router.get("/me")
+def get_me(current_user: User = Depends(get_current_user)):
+    """
+    Get current authenticated user profile
+    """
+    return {
+        "id": current_user.id,
+        "full_name": current_user.full_name,
+        "phone_number": current_user.phone_number,
+        "role": current_user.role,
+        "is_verified": current_user.is_verified
+    }
