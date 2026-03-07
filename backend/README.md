@@ -10,6 +10,7 @@ $body = @{
     phone_number = "09876543210"
     role = "resident"
     password = "your_password"
+    is_verified = $true
 } | ConvertTo-Json
 
 Invoke-RestMethod -Uri http://localhost:8000/auth/register -Method POST -Body $body -ContentType "application/json"
@@ -40,7 +41,7 @@ $token  # Display the token
 **Response:**
 ```json
 {
-    "access_token": "eyJhbGc...",
+    "access_token": "put_your_jwt_token_here",
     "token_type": "bearer",
     "user": {
         "id": "uuid-here",
@@ -57,7 +58,7 @@ Once you have the token from login, use it to access protected endpoints:
 
 ```powershell
 # Store the token from login response
-$token = "eyJhbGc..."
+$token = ""
 
 # Access protected endpoint
 $headers = @{
@@ -81,6 +82,43 @@ Invoke-RestMethod -Uri http://localhost:8000/auth/me -Method GET -Headers $heade
 
 ---
 
+## Job Management
+
+### 1. Create a New Job Post
+
+**Prerequisites:** User must be authenticated and verified
+
+```powershell
+$token = "put_your_jwt_token_here"  # Token from login
+
+$body = @{
+    title = "House Cleaning"
+    description = "Need help cleaning house"
+} | ConvertTo-Json
+
+$headers = @{
+    "Authorization" = "Bearer $token"
+    "Content-Type" = "application/json"
+}
+
+Invoke-RestMethod -Uri http://localhost:8000/jobs/ -Method POST -Body $body -Headers $headers -ContentType "application/json"
+```
+
+**Expected Response (201 Created):**
+```json
+{
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "title": "House Cleaning",
+    "description": "Need help cleaning house",
+    "poster_id": "954b092e-3b2a-4e23-9bb7-6af4e600af60",
+    "status": "open",
+    "last_modified": "2026-03-07T10:30:00",
+    "is_synced": true
+}
+```
+
+---
+
 ## Quick Reference
 
 ### Using Curl (Windows PowerShell)
@@ -98,6 +136,10 @@ curl -X POST http://localhost:8000/auth/login -H "Content-Type: application/json
 **Access Protected Endpoint:**
 ```powershell
 curl -X GET http://localhost:8000/auth/me -H "Authorization: Bearer YOUR_TOKEN_HERE"
+```
+
+```powershell
+curl -X POST http://localhost:8000/jobs/ -H "Authorization: Bearer YOUR_TOKEN_HERE" -H "Content-Type: application/json" -d "{\"title\":\"House Cleaning\",\"description\":\"Need help cleaning house\"}"
 ```
 
 ---
