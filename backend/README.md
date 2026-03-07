@@ -23,7 +23,6 @@ Invoke-RestMethod -Uri http://localhost:8000/auth/register -Method POST -Body $b
 }
 ```
 
----
 
 ### 2. Login and Get JWT Token
 
@@ -51,7 +50,6 @@ $token  # Display the token
 }
 ```
 
----
 
 ### 3. Access Protected Endpoints (Using Token)
 
