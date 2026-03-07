@@ -7,7 +7,7 @@
 ```powershell
 $body = @{
     full_name = "John Doe"
-    phone_number = "09123456789"
+    phone_number = "09876543210"
     role = "resident"
     password = "your_password"
 } | ConvertTo-Json
@@ -29,7 +29,7 @@ Invoke-RestMethod -Uri http://localhost:8000/auth/register -Method POST -Body $b
 
 ```powershell
 $body = @{
-    phone_number = "09123456789"
+    phone_number = "09876543210"
     password = "your_password"
 } | ConvertTo-Json
 
@@ -67,7 +67,7 @@ $headers = @{
     "Content-Type" = "application/json"
 }
 
-Invoke-RestMethod -Uri http://localhost:8000/me -Method GET -Headers $headers
+Invoke-RestMethod -Uri http://localhost:8000/auth/me -Method GET -Headers $headers
 ```
 
 **Expected Response:**
@@ -75,7 +75,7 @@ Invoke-RestMethod -Uri http://localhost:8000/me -Method GET -Headers $headers
 {
     "id": "uuid-here",
     "full_name": "John Doe",
-    "phone_number": "09123456789",
+    "phone_number": "09876543210",
     "role": "resident",
     "is_verified": false
 }
@@ -99,53 +99,7 @@ curl -X POST http://localhost:8000/auth/login -H "Content-Type: application/json
 
 **Access Protected Endpoint:**
 ```powershell
-curl -X GET http://localhost:8000/me -H "Authorization: Bearer YOUR_TOKEN_HERE"
-```
-
----
-
-## Example: Register → Login → Create Job Post
-
-### Step 1: Register
-
-```powershell
-$body = @{
-    full_name = "John Doe"
-    phone_number = "09123456789"
-    role = "resident"
-    password = "mypassword123"
-} | ConvertTo-Json
-
-Invoke-RestMethod -Uri http://localhost:8000/auth/register -Method POST -Body $body -ContentType "application/json"
-```
-
-### Step 2: Login
-
-```powershell
-$body = @{
-    phone_number = "09123456789"
-    password = "mypassword123"
-} | ConvertTo-Json
-
-$response = Invoke-RestMethod -Uri http://localhost:8000/auth/login -Method POST -Body $body -ContentType "application/json"
-$token = $response.access_token
-```
-
-### Step 3: Create Job Post (Using Token)
-
-```powershell
-$headers = @{
-    "Authorization" = "Bearer $token"
-    "Content-Type" = "application/json"
-}
-
-$body = @{
-    title = "Fix my fence"
-    description = "Need someone to repair the broken fence in my yard"
-    last_modified = Get-Date -Format "yyyy-MM-ddTHH:mm:ss"
-} | ConvertTo-Json
-
-Invoke-RestMethod -Uri http://localhost:8000/jobs/ -Method POST -Body $body -ContentType "application/json" -Headers $headers
+curl -X GET http://localhost:8000/auth/me -H "Authorization: Bearer YOUR_TOKEN_HERE"
 ```
 
 ---
@@ -156,4 +110,4 @@ Invoke-RestMethod -Uri http://localhost:8000/jobs/ -Method POST -Body $body -Con
 - **Token Expiration:** Tokens expire after 7 days
 - **Invalid Credentials:** Returns 401 Unauthorized
 - **Token Validation:** If token is invalid or expired, you'll receive a 401 error with message "Could not validate credentials"
-- **User Verification:** User must be verified to create job posts
+- **User Verification:** User must be verified to access certain endpoints
