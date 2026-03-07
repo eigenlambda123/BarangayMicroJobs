@@ -10,7 +10,7 @@ class User(SQLModel, table=True):
     phone_number: str = Field(unique=True)
 
     # Security/Indentity
-    is_verified: bool = Field(default=False)
+    is_verified: bool = Field(default=True)
     role: str = Field(default="resident") # "admin" or "resident"
     hashed_password: str
 
