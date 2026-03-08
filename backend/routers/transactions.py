@@ -9,7 +9,7 @@ from utils.auth_utils import get_current_user
 
 router = APIRouter(prefix="/transactions", tags=["Transactions"])
 
-@router.post("apply/{job_id}")
+@router.post("/apply/{job_id}")
 def apply_for_job(
     job_id: UUID,
     session: Session = Depends(get_session),
