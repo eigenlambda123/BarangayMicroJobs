@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlmodel import Session
+from sqlmodel import Session, select
 from datetime import datetime
 from uuid import UUID
+
 
 from database import get_session
 from models import User, JobPost, JobTransaction, TransactionStatus
@@ -59,3 +60,19 @@ def hire_provider(
     session.add(job)
     session.commit()
     return {"message": "Provider hired successfully", "transaction_id": transaction.id}
+
+@router.get("/{job_id}/applicants")
+def get_applicants(
+    job_id: UUID,
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user),
+):
+    # Ensure the current user is the poster of the job
+    job = session.get(JobPost, job_id)
+    if not job or job.poster_id != current_user.id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You are not the owner of this job")
+
+    # Get all applications for the job
+    statement = select(JobTransaction).where(JobTransaction.job_id == job_id)
+    transactions = session.exec(statement).all()
+    return {"applicants": transactions}
