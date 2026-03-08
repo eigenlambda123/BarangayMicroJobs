@@ -109,10 +109,10 @@ Invoke-RestMethod -Uri http://localhost:8000/jobs/ -Method POST -Body $body -Hea
 **Expected Response (201 Created):**
 ```json
 {
-    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "id": "job-uuid-here",
     "title": "House Cleaning",
     "description": "Need help cleaning house",
-    "poster_id": "954b092e-3b2a-4e23-9bb7-6af4e600af60",
+    "poster_id": "job_poster-uuid-here",
     "status": "open",
     "last_modified": "2026-03-07T10:30:00",
     "is_synced": true
@@ -129,10 +129,10 @@ Invoke-RestMethod -Uri http://localhost:8000/jobs/ -Method GET
 ```json
 [
     {
-        "id": "550e8400-e29b-41d4-a716-446655440000",
+        "id": "job-uuid-here",
         "title": "House Cleaning",
         "description": "Need help cleaning house",
-        "poster_id": "954b092e-3b2a-4e23-9bb7-6af4e600af60",
+        "poster_id": "job_poster-uuid-here",
         "status": "open",
         "last_modified": "2026-03-07T10:30:00",
         "is_synced": true
@@ -161,7 +161,7 @@ Invoke-RestMethod -Uri "http://localhost:8000/transactions/accept/$job_id" -Meth
 ```json
 {
     "message": "Job accepted successfully",
-    "transaction_id": "660f9511-f40c-52e5-b827-557766551111"
+    "transaction_id": "transaction-uuid-here"
 }
 ```
 
