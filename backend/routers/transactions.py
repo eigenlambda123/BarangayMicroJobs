@@ -34,3 +34,28 @@ def apply_for_job(
     session.refresh(transaction)
 
     return {"message": "Application Submitted"}
+
+@router.patch("/hire/{transaction_id}")
+def hire_provider(
+    transaction_id: UUID,
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user),
+):
+    # Get the transaction
+    transaction = session.get(JobTransaction, transaction_id)
+
+    # Ensure the transaction exists and belongs to the current user as requester
+    if not transaction or transaction.requester_id != current_user.id:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Transaction not found")
+    
+    # Udpate statuses
+    transaction.status = TransactionStatus.HIRED
+    job = session.get(JobPost, transaction.job_id)
+    job.status = "assigned"
+
+    # TODO: Reject other applications for the same job
+
+    session.add(transaction)
+    session.add(job)
+    session.commit()
+    return {"message": "Provider hired successfully", "transaction_id": transaction.id}
