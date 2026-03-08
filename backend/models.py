@@ -50,6 +50,7 @@ class JobTransaction(SQLModel, table=True):
     id: UUID = Field(default_factory=uuid4, primary_key=True)
     job_id: UUID = Field(foreign_key="jobpost.id")
     provider_id: UUID = Field(foreign_key="user.id")
+    requester_id: UUID = Field(foreign_key="user.id")
     accepted_at: datetime = Field(default_factory=datetime.utcnow)
     completed_at: Optional[datetime]
     status: TransactionStatus = Field(default=TransactionStatus.APPLIED)
