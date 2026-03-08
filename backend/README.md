@@ -86,7 +86,7 @@ Invoke-RestMethod -Uri http://localhost:8000/auth/me -Method GET -Headers $heade
 
 ### 1. Create a New Job Post
 
-**Prerequisites:** User must be authenticated and verified
+**Prerequisites:** User must be authenticated
 
 ```powershell
 $token = "put_your_jwt_token_here"  # Token from login
@@ -103,19 +103,14 @@ $headers = @{
     "Content-Type" = "application/json"
 }
 
-Invoke-RestMethod -Uri http://localhost:8000/jobs/ -Method POST -Body $body -Headers $headers -ContentType "application/json"
+Invoke-RestMethod -Uri http://localhost:8000/jobs/create -Method POST -Body $body -Headers $headers -ContentType "application/json"
 ```
 
 **Expected Response (201 Created):**
 ```json
 {
-    "id": "job-uuid-here",
-    "title": "House Cleaning",
-    "description": "Need help cleaning house",
-    "poster_id": "job_poster-uuid-here",
-    "status": "open",
-    "last_modified": "2026-03-07T10:30:00",
-    "is_synced": true
+    "message": "Job posted successfully",
+    "job_id": "job-uuid-here"
 }
 ```
 
@@ -141,26 +136,75 @@ Invoke-RestMethod -Uri http://localhost:8000/jobs/ -Method GET
 ]
 ```
 
-### 3. Accept a Job Post
+### 3. Get All Job Posts
 
-**Prerequisites:** User must be authenticated and the job must be in "open" status
+```powershell
+Invoke-RestMethod -Uri http://localhost:8000/jobs/ -Method GET
+```
+
+**Expected Response:**
+```json
+[
+    {
+        "id": "job-uuid-here",
+        "title": "House Cleaning",
+        "description": "Need help cleaning house",
+        "poster_id": "job_poster-uuid-here",
+        "status": "open",
+        "last_modified": "2026-03-07T10:30:00",
+        "is_synced": true
+    },
+    ...
+]
+```
+
+---
+
+## Job Applications & Transactions
+
+### 1. Apply for a Job
+
+**Prerequisites:** User must be authenticated
 
 ```powershell
 $token = "put_your_jwt_token_here"  # Token from login
-$job_id = "put_job_id_here"  # Job ID to accept
+$job_id = "job-uuid-here"  # Job ID to apply for
 
 $headers = @{
     "Authorization" = "Bearer $token"
     "Content-Type" = "application/json"
 }
 
-Invoke-RestMethod -Uri "http://localhost:8000/transactions/accept/$job_id" -Method POST -Headers $headers
+Invoke-RestMethod -Uri "http://localhost:8000/transactions/apply/$job_id" -Method POST -Headers $headers
+```
+
+**Expected Response (201 Created):**
+```json
+{
+    "message": "Application Submitted"
+}
+```
+
+### 2. Hire a Provider
+
+**Prerequisites:** User must be the job poster (requester)
+
+```powershell
+$token = "put_your_jwt_token_here"  # Token from login (job poster)
+$transaction_id = "transaction-uuid-here"  # Transaction ID of the application to hire
+
+$headers = @{
+    "Authorization" = "Bearer $token"
+    "Content-Type" = "application/json"
+}
+
+Invoke-RestMethod -Uri "http://localhost:8000/transactions/hire/$transaction_id" -Method PATCH -Headers $headers
 ```
 
 **Expected Response (200 OK):**
 ```json
 {
-    "message": "Job accepted successfully",
+    "message": "Provider hired successfully",
     "transaction_id": "transaction-uuid-here"
 }
 ```
@@ -188,12 +232,22 @@ curl -X GET http://localhost:8000/auth/me -H "Authorization: Bearer YOUR_TOKEN_H
 
 **Create Job Post:**
 ```powershell
-curl -X POST http://localhost:8000/jobs/ -H "Authorization: Bearer YOUR_TOKEN_HERE" -H "Content-Type: application/json" -d "{\"title\":\"House Cleaning\",\"description\":\"Need help cleaning house\"}"
+curl -X POST http://localhost:8000/jobs/create -H "Authorization: Bearer YOUR_TOKEN_HERE" -H "Content-Type: application/json" -d "{\"title\":\"House Cleaning\",\"description\":\"Need help cleaning house\",\"location\":\"123 Main St\",\"salary\":500}"
 ```
 
-**Accept Job Post:**
+**Get Job Posts:**
 ```powershell
-curl -X POST http://localhost:8000/transactions/accept/JOB_ID_HERE -H "Authorization: Bearer YOUR_TOKEN_HERE" -H "Content-Type: application/json"
+curl -X GET http://localhost:8000/jobs/
+```
+
+**Apply for Job:**
+```powershell
+curl -X POST http://localhost:8000/transactions/apply/JOB_ID_HERE -H "Authorization: Bearer YOUR_TOKEN_HERE"
+```
+
+**Hire a Provider:**
+```powershell
+curl -X PATCH http://localhost:8000/transactions/hire/TRANSACTION_ID_HERE -H "Authorization: Bearer YOUR_TOKEN_HERE"
 ```
 
 ---
