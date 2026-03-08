@@ -88,3 +88,5 @@ def get_applicants(
         ))
 
     return {"applicants": applicants}
+
+# TODO: Add endpoints for completing jobs, leaving reviews, handling cancellations, Status of the job the provider applied for, etc.

@@ -9,22 +9,19 @@ test_users = [
         "full_name": "Alice Johnson",
         "phone_number": "09111111111",
         "role": "resident",
-        "password": "password123",
-        "is_verified": True
+        "password": "password123"
     },
     {
         "full_name": "Bob Smith",
         "phone_number": "09222222222",
         "role": "resident",
-        "password": "password123",
-        "is_verified": True
+        "password": "password123"
     },
     {
         "full_name": "Carol Davis",
         "phone_number": "09333333333",
         "role": "resident",
-        "password": "password123",
-        "is_verified": True
+        "password": "password123"
     }
 ]
 
@@ -86,16 +83,16 @@ def create_job_post(token, job_data):
         "Authorization": f"Bearer {token}",
         "Content-Type": "application/json"
     }
-    response = requests.post(f"{BASE_URL}/jobs/", json=job_data, headers=headers)
+    response = requests.post(f"{BASE_URL}/jobs/create", json=job_data, headers=headers)
     return response.json()
 
-def accept_job(token, job_id):
-    """Accept a job post"""
+def apply_for_job(token, job_id):
+    """Apply for a job post"""
     headers = {
         "Authorization": f"Bearer {token}",
         "Content-Type": "application/json"
     }
-    response = requests.post(f"{BASE_URL}/transactions/accept/{job_id}", headers=headers)
+    response = requests.post(f"{BASE_URL}/transactions/apply/{job_id}", headers=headers)
     return response.json()
 
 def main():
@@ -160,14 +157,14 @@ def main():
                 print("✗")
                 print(f"    Error: {result}")
     
-    # Accept some jobs (Carol accepts Bob's first job)
-    print("\n[4] Accepting jobs (testing transactions)...")
+    # Apply for some jobs (Carol applies to Bob's first job)
+    print("\n[4] Applying for jobs (testing transactions)...")
     carol_token = user_tokens.get("09333333333")
     
     if carol_token and len(job_ids) > 2:
-        print(f"  - Carol accepting job {job_ids[2]}...", end=" ")
-        result = accept_job(carol_token, job_ids[2])
-        if "transaction_id" in result:
+        print(f"  - Carol applying to job {job_ids[2]}...", end=" ")
+        result = apply_for_job(carol_token, job_ids[2])
+        if result.get("message") == "Application Submitted":
             print("✓")
         else:
             print("✗")
