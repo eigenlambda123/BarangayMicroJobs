@@ -1,9 +1,8 @@
 # Running Test Data Script
 
-## Quick Start
+## How to run
 
 ```powershell
-cd c:\Users\PC\Desktop\BarangayMicroJobs\backend
 python create_test_data.py
 ```
 
