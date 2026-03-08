@@ -187,6 +187,46 @@ Invoke-RestMethod -Uri "http://localhost:8000/transactions/hire/$transaction_id"
 }
 ```
 
+### 3. Get Applications for a Job
+
+**Prerequisites:** User must be the job poster (requester)
+
+```powershell
+$token = "put_your_jwt_token_here"  # Token from login (job poster)
+$job_id = "job-uuid-here"  # Job ID to get applications for
+
+$headers = @{
+    "Authorization" = "Bearer $token"
+    "Content-Type" = "application/json"
+}
+
+Invoke-RestMethod -Uri "http://localhost:8000/transactions/$job_id/applicants" -Method GET -Headers $headers
+```
+
+**Expected Response (200 OK):**
+```json
+{
+    "applicants": [
+        {
+            "id": "transaction-uuid-1",
+            "job_id": "job-uuid-here",
+            "provider_id": "provider-uuid-1",
+            "requester_id": "job_poster-uuid-here",
+            "status": "applied",
+            "accepted_at": "2026-03-08T10:30:00"
+        },
+        {
+            "id": "transaction-uuid-2",
+            "job_id": "job-uuid-here",
+            "provider_id": "provider-uuid-2",
+            "requester_id": "job_poster-uuid-here",
+            "status": "applied",
+            "accepted_at": "2026-03-08T11:00:00"
+        }
+    ]
+}
+```
+
 ---
 
 ## Quick Reference
@@ -226,6 +266,11 @@ curl -X POST http://localhost:8000/transactions/apply/JOB_ID_HERE -H "Authorizat
 **Hire a Provider:**
 ```powershell
 curl -X PATCH http://localhost:8000/transactions/hire/TRANSACTION_ID_HERE -H "Authorization: Bearer YOUR_TOKEN_HERE"
+```
+
+**Get Job Applicants:**
+```powershell
+curl -X GET http://localhost:8000/transactions/JOB_ID_HERE/applicants -H "Authorization: Bearer YOUR_TOKEN_HERE"
 ```
 
 ---
