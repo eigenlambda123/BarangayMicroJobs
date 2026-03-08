@@ -34,4 +34,10 @@ def create_job_post(
     session.refresh(new_job)
 
     return {"message": "Job posted successfully", "job_id": new_job.id}
+
+@router.get("/", response_model=List[JobPost])
+def get_all_jobs(session: Session = Depends(get_session)):
+    statement = select(JobPost)
+    jobs = session.exec(statement).all()
+    return jobs
     
