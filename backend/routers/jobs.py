@@ -5,35 +5,33 @@ from datetime import datetime
 
 from database import get_session
 from models import JobPost, User
+from schemas.jobs import JobCreateRequest
 from utils.auth_utils import get_current_user
 
 router = APIRouter(prefix="/jobs", tags=["jobs"])
 
-# TODO: Add schema for request and response models for better validation and documentation
 @router.post("/", status_code=status.HTTP_201_CREATED)
 def create_job_post(
-    job: JobPost,
+    job: JobCreateRequest,
     session: Session = Depends(get_session),
     current_user: User = Depends(get_current_user)
 ):
-    # Only allow verified users to create job posts
-    if not current_user.is_verified:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="User is not verified to create job posts."
-        )
-    
-    # Check if a job post with the same ID already exists
-    existing_jobs = session.get(JobPost, job.id)
-    if existing_jobs:
-        return existing_jobs
-    
-    job.poster_id = current_user.id
-    job.last_modified = datetime.now()
-    job.is_synced = True
+    # Only allow residents to post jobs
+    if current_user.role != "resident":
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only residents can post jobs")
 
-    session.add(job)
+    new_job = JobPost(
+        poster_id=current_user.id,
+        title=job.title,
+        description=job.description,
+        location=job.location,
+        salary=job.salary,
+        last_modified=datetime.utcnow()
+    )
+
+    session.add(new_job)
     session.commit()
-    session.refresh(job)
-    return job
+    session.refresh(new_job)
+
+    return {"message": "Job posted successfully", "job_id": new_job.id}
     

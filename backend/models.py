@@ -27,6 +27,8 @@ class JobPost(SQLModel, table=True):
     poster_id: UUID = Field(foreign_key="user.id")
     title: str
     description: str
+    location: str
+    salary: float
     status: str = Field(default="open") # "open", "assigned", "completed"
 
     # Sync and Conflict Resolution fields
