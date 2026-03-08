@@ -136,28 +136,6 @@ Invoke-RestMethod -Uri http://localhost:8000/jobs/ -Method GET
 ]
 ```
 
-### 3. Get All Job Posts
-
-```powershell
-Invoke-RestMethod -Uri http://localhost:8000/jobs/ -Method GET
-```
-
-**Expected Response:**
-```json
-[
-    {
-        "id": "job-uuid-here",
-        "title": "House Cleaning",
-        "description": "Need help cleaning house",
-        "poster_id": "job_poster-uuid-here",
-        "status": "open",
-        "last_modified": "2026-03-07T10:30:00",
-        "is_synced": true
-    },
-    ...
-]
-```
-
 ---
 
 ## Job Applications & Transactions
