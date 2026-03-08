@@ -10,7 +10,7 @@ from utils.auth_utils import get_current_user
 
 router = APIRouter(prefix="/jobs", tags=["jobs"])
 
-@router.post("/", status_code=status.HTTP_201_CREATED)
+@router.post("/create", status_code=status.HTTP_201_CREATED)
 def create_job_post(
     job: JobCreateRequest,
     session: Session = Depends(get_session),
