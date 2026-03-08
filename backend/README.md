@@ -52,13 +52,13 @@ $token  # Display the token
 ```
 
 
-### 3. Access Protected Endpoints (Using Token)
+### 3. Sanity Check with Protected Endpoint
 
 Once you have the token from login, use it to access protected endpoints:
 
 ```powershell
 # Store the token from login response
-$token = ""
+$token = "put_your_jwt_token_here" 
 
 # Access protected endpoint
 $headers = @{
@@ -94,6 +94,8 @@ $token = "put_your_jwt_token_here"  # Token from login
 $body = @{
     title = "House Cleaning"
     description = "Need help cleaning house"
+    location = "123 Main St"
+    salary = 500.00
 } | ConvertTo-Json
 
 $headers = @{
@@ -117,13 +119,35 @@ Invoke-RestMethod -Uri http://localhost:8000/jobs/ -Method POST -Body $body -Hea
 }
 ```
 
-### 2. Accept a Job Post
+### 2. Get All Job Posts
+
+```powershell
+Invoke-RestMethod -Uri http://localhost:8000/jobs/ -Method GET
+```
+
+**Expected Response:**
+```json
+[
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440000",
+        "title": "House Cleaning",
+        "description": "Need help cleaning house",
+        "poster_id": "954b092e-3b2a-4e23-9bb7-6af4e600af60",
+        "status": "open",
+        "last_modified": "2026-03-07T10:30:00",
+        "is_synced": true
+    },
+    ...
+]
+```
+
+### 3. Accept a Job Post
 
 **Prerequisites:** User must be authenticated and the job must be in "open" status
 
 ```powershell
 $token = "put_your_jwt_token_here"  # Token from login
-$job_id = "550e8400-e29b-41d4-a716-446655440000"  # Job ID to accept
+$job_id = "put_job_id_here"  # Job ID to accept
 
 $headers = @{
     "Authorization" = "Bearer $token"
