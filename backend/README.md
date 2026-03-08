@@ -117,6 +117,30 @@ Invoke-RestMethod -Uri http://localhost:8000/jobs/ -Method POST -Body $body -Hea
 }
 ```
 
+### 2. Accept a Job Post
+
+**Prerequisites:** User must be authenticated and the job must be in "open" status
+
+```powershell
+$token = "put_your_jwt_token_here"  # Token from login
+$job_id = "550e8400-e29b-41d4-a716-446655440000"  # Job ID to accept
+
+$headers = @{
+    "Authorization" = "Bearer $token"
+    "Content-Type" = "application/json"
+}
+
+Invoke-RestMethod -Uri "http://localhost:8000/transactions/accept/$job_id" -Method POST -Headers $headers
+```
+
+**Expected Response (200 OK):**
+```json
+{
+    "message": "Job accepted successfully",
+    "transaction_id": "660f9511-f40c-52e5-b827-557766551111"
+}
+```
+
 ---
 
 ## Quick Reference
@@ -138,8 +162,14 @@ curl -X POST http://localhost:8000/auth/login -H "Content-Type: application/json
 curl -X GET http://localhost:8000/auth/me -H "Authorization: Bearer YOUR_TOKEN_HERE"
 ```
 
+**Create Job Post:**
 ```powershell
 curl -X POST http://localhost:8000/jobs/ -H "Authorization: Bearer YOUR_TOKEN_HERE" -H "Content-Type: application/json" -d "{\"title\":\"House Cleaning\",\"description\":\"Need help cleaning house\"}"
+```
+
+**Accept Job Post:**
+```powershell
+curl -X POST http://localhost:8000/transactions/accept/JOB_ID_HERE -H "Authorization: Bearer YOUR_TOKEN_HERE" -H "Content-Type: application/json"
 ```
 
 ---
