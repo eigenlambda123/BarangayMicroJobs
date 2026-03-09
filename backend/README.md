@@ -259,6 +259,65 @@ Invoke-RestMethod -Uri "http://localhost:8000/transactions/complete/$transaction
 }
 ```
 
+### 5. Rate a Service Provider
+
+**Prerequisites:** User must be the job poster (requester) and the job must be completed
+
+```powershell
+$token = "put_your_jwt_token_here"  # Token from login (job poster)
+$transaction_id = "transaction-uuid-here"  # Transaction ID to rate
+
+$body = @{
+    score = 5
+    comment = "Great work! The provider did an excellent job."
+} | ConvertTo-Json
+
+$headers = @{
+    "Authorization" = "Bearer $token"
+    "Content-Type" = "application/json"
+}
+
+Invoke-RestMethod -Uri "http://localhost:8000/transactions/$transaction_id/rate" -Method POST -Body $body -Headers $headers
+```
+
+**Expected Response (201 Created):**
+```json
+{
+    "message": "Rating submitted successfully",
+    "rating_id": "rating-uuid-here",
+    "score": 5
+}
+```
+
+### 6. Get Provider's Rating
+
+```powershell
+$provider_id = "provider-uuid-here"
+
+Invoke-RestMethod -Uri "http://localhost:8000/providers/$provider_id/rating" -Method GET
+```
+
+**Expected Response (200 OK):**
+```json
+{
+    "provider_id": "provider-uuid-here",
+    "average_rating": 4.5,
+    "total_ratings": 10,
+    "ratings": [
+        {
+            "score": 5,
+            "comment": "Excellent work!",
+            "created_at": "2026-03-09T15:30:00"
+        },
+        {
+            "score": 4,
+            "comment": "Good job, very responsive",
+            "created_at": "2026-03-08T10:20:00"
+        }
+    ]
+}
+```
+
 ---
 
 ## Quick Reference
@@ -308,6 +367,16 @@ curl -X GET http://localhost:8000/transactions/JOB_ID_HERE/applicants -H "Author
 **Mark Job as Completed:**
 ```powershell
 curl -X PATCH http://localhost:8000/transactions/complete/TRANSACTION_ID_HERE -H "Authorization: Bearer YOUR_TOKEN_HERE"
+```
+
+**Rate a Provider:**
+```powershell
+curl -X POST http://localhost:8000/transactions/TRANSACTION_ID_HERE/rate -H "Authorization: Bearer YOUR_TOKEN_HERE" -H "Content-Type: application/json" -d "{\"score\":5,\"comment\":\"Great work!\"}"
+```
+
+**Get Provider Rating:**
+```powershell
+curl -X GET http://localhost:8000/providers/PROVIDER_ID_HERE/rating
 ```
 
 ---
