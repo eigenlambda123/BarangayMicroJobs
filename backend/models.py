@@ -19,9 +19,6 @@ class User(SQLModel, table=True):
     # 1. As a Job Poster
     posted_jobs: List["JobPost"] = Relationship(back_populates="poster")
 
-    # 2. As a Service Provider
-    tasks_accepted: List["JobTransaction"] = Relationship(back_populates="provider")
-
 class JobPost(SQLModel, table=True):
     # Basic JobPost Informations
     id: UUID = Field(default_factory=uuid4, primary_key=True)
@@ -54,9 +51,6 @@ class JobTransaction(SQLModel, table=True):
     accepted_at: datetime = Field(default_factory=datetime.utcnow)
     completed_at: Optional[datetime]
     status: TransactionStatus = Field(default=TransactionStatus.APPLIED)
-
-    # Relationship
-    provider: User = Relationship(back_populates="tasks_accepted")
 
 class Rating(SQLModel, table=True):
     # Basic Rating Informations
