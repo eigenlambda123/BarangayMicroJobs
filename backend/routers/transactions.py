@@ -5,8 +5,9 @@ from uuid import UUID
 
 
 from database import get_session
-from models import User, JobPost, JobTransaction, TransactionStatus
+from models import User, JobPost, JobTransaction, TransactionStatus, Rating
 from schemas.transactions import ApplicantsInfo
+from schemas.ratings import RatingRequest
 from utils.auth_utils import get_current_user
 
 router = APIRouter(prefix="/transactions", tags=["Transactions"])
@@ -130,5 +131,4 @@ def mark_job_as_completed(
         session.commit()
         return {"message": "Completion marked by one party. Waiting for the other party to confirm.", "transaction_id": transaction.id}
 
-
-# TODO: Add endpoints for completing jobs, leaving reviews, handling cancellations, Status of the job the provider applied for, etc.
+# TODO: Add endpoints for handling cancellations, Status of the job the provider applied for, etc.

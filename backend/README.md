@@ -145,7 +145,7 @@ Invoke-RestMethod -Uri http://localhost:8000/jobs/ -Method GET
 **Prerequisites:** User must be authenticated
 
 ```powershell
-$token = "put_your_jwt_token_here"  # Token from login
+$token = "put_your_jwt_token_here"  # Token from login 
 $job_id = "job-uuid-here"  # Job ID to apply for
 
 $headers = @{
@@ -193,7 +193,7 @@ Invoke-RestMethod -Uri "http://localhost:8000/transactions/hire/$transaction_id"
 
 ```powershell
 $token = "put_your_jwt_token_here"  # Token from login (job poster)
-$job_id = "job-uuid-here"  # Job ID to get applications for
+$job_id = "job-uuid-here"  # Job ID to get applicants
 
 $headers = @{
     "Authorization" = "Bearer $token"

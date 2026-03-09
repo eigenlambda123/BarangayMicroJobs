@@ -59,12 +59,12 @@ class JobTransaction(SQLModel, table=True):
 class Rating(SQLModel, table=True):
     # Basic Rating Informations
     id: UUID = Field(default_factory=uuid4, primary_key=True)
+    transaction_id: UUID = Field(foreign_key="jobtransaction.id")
     job_id: UUID = Field(foreign_key="jobpost.id")
 
-    # Who is giving the rating?
-    rater_id: UUID = Field(foreign_key="user.id")
-    # Who is receiving the rating?
-    target_id: UUID = Field(foreign_key="user.id")
+    # Job poster rates the service provider
+    rater_id: UUID = Field(foreign_key="user.id")  # Job poster
+    target_id: UUID = Field(foreign_key="user.id")  # Service provider
 
     score: int = Field(ge=1, le=5)
     comment: Optional[str] = None
