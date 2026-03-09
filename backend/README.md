@@ -227,6 +227,38 @@ Invoke-RestMethod -Uri "http://localhost:8000/transactions/$job_id/applicants" -
 }
 ```
 
+### 4. Mark Job as Completed (Dual Confirmation)
+
+**Prerequisites:** User must be authenticated (either requester or provider). Both parties must confirm completion separately.
+
+```powershell
+$token = "put_your_jwt_token_here"  # Token from login
+$transaction_id = "transaction-uuid-here"  # Transaction ID to mark as completed
+
+$headers = @{
+    "Authorization" = "Bearer $token"
+    "Content-Type" = "application/json"
+}
+
+Invoke-RestMethod -Uri "http://localhost:8000/transactions/complete/$transaction_id" -Method PATCH -Headers $headers
+```
+
+**Expected Response (First Party - 200 OK):**
+```json
+{
+    "message": "Completion marked by one party. Waiting for the other party to confirm.",
+    "transaction_id": "transaction-uuid-here"
+}
+```
+
+**Expected Response (Second Party - 200 OK):**
+```json
+{
+    "message": "Job marked as completed by both parties",
+    "transaction_id": "transaction-uuid-here"
+}
+```
+
 ---
 
 ## Quick Reference
@@ -271,6 +303,11 @@ curl -X PATCH http://localhost:8000/transactions/hire/TRANSACTION_ID_HERE -H "Au
 **Get Job Applicants:**
 ```powershell
 curl -X GET http://localhost:8000/transactions/JOB_ID_HERE/applicants -H "Authorization: Bearer YOUR_TOKEN_HERE"
+```
+
+**Mark Job as Completed:**
+```powershell
+curl -X PATCH http://localhost:8000/transactions/complete/TRANSACTION_ID_HERE -H "Authorization: Bearer YOUR_TOKEN_HERE"
 ```
 
 ---
