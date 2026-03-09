@@ -51,6 +51,10 @@ class JobTransaction(SQLModel, table=True):
     accepted_at: datetime = Field(default_factory=datetime.utcnow)
     completed_at: Optional[datetime]
     status: TransactionStatus = Field(default=TransactionStatus.APPLIED)
+    
+    # Dual completion flags
+    requester_completed: bool = Field(default=False)
+    provider_completed: bool = Field(default=False)
 
 class Rating(SQLModel, table=True):
     # Basic Rating Informations

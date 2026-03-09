@@ -89,4 +89,46 @@ def get_applicants(
 
     return {"applicants": applicants}
 
+@router.patch("/complete/{transaction_id}")
+def mark_job_as_completed(
+    transaction_id: UUID,
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user),
+):
+    # Get the transaction
+    transaction = session.get(JobTransaction, transaction_id)
+
+    # Ensure the transaction exists
+    if not transaction:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Transaction not found")
+
+    # Only the requester or provider can mark the job as completed
+    if transaction.requester_id != current_user.id and transaction.provider_id != current_user.id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only the requester or provider can mark the job as completed")
+
+    # Set completion flag based on who's marking it as completed
+    if transaction.requester_id == current_user.id:
+        transaction.requester_completed = True
+    else:
+        transaction.provider_completed = True
+
+    # Only mark as completed if both have confirmed
+    if transaction.requester_completed and transaction.provider_completed:
+        transaction.status = TransactionStatus.COMPLETED
+        transaction.completed_at = datetime.utcnow()
+        
+        job = session.get(JobPost, transaction.job_id)
+        if job:
+            job.status = "completed"
+            session.add(job)
+        
+        session.add(transaction)
+        session.commit()
+        return {"message": "Job marked as completed by both parties", "transaction_id": transaction.id}
+    else:
+        session.add(transaction)
+        session.commit()
+        return {"message": "Completion marked by one party. Waiting for the other party to confirm.", "transaction_id": transaction.id}
+
+
 # TODO: Add endpoints for completing jobs, leaving reviews, handling cancellations, Status of the job the provider applied for, etc.

@@ -8,7 +8,7 @@ from models import JobPost, User
 from schemas.jobs import JobCreateRequest
 from utils.auth_utils import get_current_user
 
-router = APIRouter(prefix="/jobs", tags=["jobs"])
+router = APIRouter(prefix="/jobs", tags=["Jobs"])
 
 @router.post("/create", status_code=status.HTTP_201_CREATED)
 def create_job_post(
