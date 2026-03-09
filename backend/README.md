@@ -106,7 +106,7 @@ $headers = @{
 Invoke-RestMethod -Uri http://localhost:8000/jobs/create -Method POST -Body $body -Headers $headers -ContentType "application/json"
 ```
 
-**Expected Response (201 Created):**
+**Expected Response:**
 ```json
 {
     "message": "Job posted successfully",
@@ -156,7 +156,7 @@ $headers = @{
 Invoke-RestMethod -Uri "http://localhost:8000/transactions/apply/$job_id" -Method POST -Headers $headers
 ```
 
-**Expected Response (201 Created):**
+**Expected Response:**
 ```json
 {
     "message": "Application Submitted"
@@ -179,7 +179,7 @@ $headers = @{
 Invoke-RestMethod -Uri "http://localhost:8000/transactions/hire/$transaction_id" -Method PATCH -Headers $headers
 ```
 
-**Expected Response (200 OK):**
+**Expected Response:**
 ```json
 {
     "message": "Provider hired successfully",
@@ -203,7 +203,7 @@ $headers = @{
 Invoke-RestMethod -Uri "http://localhost:8000/transactions/$job_id/applicants" -Method GET -Headers $headers
 ```
 
-**Expected Response (200 OK):**
+**Expected Response:**
 ```json
 {
     "applicants": [
@@ -243,7 +243,7 @@ $headers = @{
 Invoke-RestMethod -Uri "http://localhost:8000/transactions/complete/$transaction_id" -Method PATCH -Headers $headers
 ```
 
-**Expected Response (First Party - 200 OK):**
+**Expected Response:**
 ```json
 {
     "message": "Completion marked by one party. Waiting for the other party to confirm.",
@@ -251,7 +251,7 @@ Invoke-RestMethod -Uri "http://localhost:8000/transactions/complete/$transaction
 }
 ```
 
-**Expected Response (Second Party - 200 OK):**
+**Expected Response:**
 ```json
 {
     "message": "Job marked as completed by both parties",
@@ -280,7 +280,7 @@ $headers = @{
 Invoke-RestMethod -Uri "http://localhost:8000/ratings/$transaction_id/rate" -Method POST -Body $body -Headers $headers
 ```
 
-**Expected Response (201 Created):**
+**Expected Response:**
 ```json
 {
     "message": "Rating submitted successfully",
