@@ -277,7 +277,7 @@ $headers = @{
     "Content-Type" = "application/json"
 }
 
-Invoke-RestMethod -Uri "http://localhost:8000/transactions/$transaction_id/rate" -Method POST -Body $body -Headers $headers
+Invoke-RestMethod -Uri "http://localhost:8000/ratings/$transaction_id/rate" -Method POST -Body $body -Headers $headers
 ```
 
 **Expected Response (201 Created):**
@@ -294,7 +294,7 @@ Invoke-RestMethod -Uri "http://localhost:8000/transactions/$transaction_id/rate"
 ```powershell
 $provider_id = "provider-uuid-here"
 
-Invoke-RestMethod -Uri "http://localhost:8000/providers/$provider_id/rating" -Method GET
+Invoke-RestMethod -Uri "http://localhost:8000/ratings/providers/$provider_id" -Method GET
 ```
 
 **Expected Response (200 OK):**
