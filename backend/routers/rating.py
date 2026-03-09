@@ -61,8 +61,8 @@ def rate_provider(
         "score": rating.score
     }
 
-
-@router.get("/providers/{provider_id}/rating")
+    
+@router.get("/providers/{provider_id}")
 def get_provider_rating(
     provider_id: UUID,
     session: Session = Depends(get_session),
