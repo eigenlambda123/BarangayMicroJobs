@@ -42,7 +42,7 @@ class PostJobModal extends StatelessWidget {
                   border: OutlineInputBorder(),
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 10),
               Row(
                 children: [
                   Expanded(
@@ -68,7 +68,7 @@ class PostJobModal extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 5),
                   Expanded(
                     child: const TextField(
                       decoration: InputDecoration(

@@ -116,12 +116,6 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
               'My Active Postings',
               style: Theme.of(context).textTheme.titleLarge,
             ),
-            Text(
-              'MANAGE HELP IN ZONE 1',
-              style: Theme.of(
-                context,
-              ).textTheme.labelSmall?.copyWith(color: Colors.grey),
-            ),
           ],
         ),
         const SizedBox(height: 12),
