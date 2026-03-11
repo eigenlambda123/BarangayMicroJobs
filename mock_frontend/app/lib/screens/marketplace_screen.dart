@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../widgets/posting_card.dart';
-import '../widgets/applicant_card.dart';
 import '../widgets/post_job_modal.dart';
+import 'job_details_screen.dart';
 
 class MarketplaceScreen extends StatefulWidget {
   const MarketplaceScreen({super.key});
@@ -28,8 +28,6 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                 _buildActionButtons(),
                 const SizedBox(height: 32),
                 _buildActivePostingsSection(context),
-                const SizedBox(height: 16),
-                _buildReviewApplicantsSection(context),
               ],
             ),
           ),
@@ -123,36 +121,18 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
   }
 
   Widget _buildActionButtons() {
-    return Row(
-      children: [
-        Expanded(
-          child: ElevatedButton.icon(
-            onPressed: () {},
-            icon: const Icon(Icons.help_outline),
-            label: const Text('NEED HELP'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.grey.shade200,
-              foregroundColor: Colors.black,
-              padding: const EdgeInsets.symmetric(vertical: 12),
-            ),
-          ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: ElevatedButton.icon(
-            onPressed: () {
-              setState(() => _showPostJobModal = true);
-            },
-            icon: const Icon(Icons.work_outline),
-            label: const Text('WANT WORK'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blue,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(vertical: 12),
-            ),
-          ),
-        ),
-      ],
+    return ElevatedButton.icon(
+      onPressed: () {
+        setState(() => _showPostJobModal = true);
+      },
+      icon: const Icon(Icons.add_circle_outline),
+      label: const Text('POST JOB'),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.blue,
+        foregroundColor: Colors.white,
+        minimumSize: const Size.fromHeight(48),
+        padding: const EdgeInsets.symmetric(vertical: 12),
+      ),
     );
   }
 
@@ -176,60 +156,23 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
           ],
         ),
         const SizedBox(height: 12),
-        const PostingCard(
+        PostingCard(
           title: 'Laundry Help (Wash & Fold)',
           price: '₱200',
           zone: 'ZONE 1',
           applicants: 2,
           status: 'OPEN',
-        ),
-      ],
-    );
-  }
-
-  Widget _buildReviewApplicantsSection(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Review Applicants',
-          style: Theme.of(context).textTheme.titleMedium,
-        ),
-        const SizedBox(height: 8),
-        Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: Colors.blue.shade50,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Text(
-            'LAUNDRY HELP (WASH & FOLD)',
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              color: Colors.blue.shade700,
-            ),
-          ),
-        ),
-        const SizedBox(height: 12),
-        ApplicantCard(
-          name: 'Ricardo Dalisay',
-          rating: 4.9,
-          reviewCount: 40,
-          timeAvailable: '1Hrs Now',
-          onHirePressed: () {},
-          onMessagePressed: () {},
-          onViewProfilePressed: () {},
-        ),
-        const SizedBox(height: 8),
-        ApplicantCard(
-          name: 'Santi Garcia',
-          rating: 4.7,
-          reviewCount: 12,
-          timeAvailable: '2Hrs Now',
-          onHirePressed: () {},
-          onMessagePressed: () {},
-          onViewProfilePressed: () {},
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const JobDetailsScreen(
+                  jobTitle: 'Laundry Help (Wash & Fold)',
+                  price: '₱200',
+                  zone: 'ZONE 1',
+                ),
+              ),
+            );
+          },
         ),
       ],
     );

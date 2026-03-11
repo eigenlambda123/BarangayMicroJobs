@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  bool isServiceProvider = false;
 
   @override
   Widget build(BuildContext context) {
@@ -19,6 +26,8 @@ class ProfileScreen extends StatelessWidget {
             const SizedBox(height: 24),
             _buildProfileHeader(),
             const SizedBox(height: 32),
+            _buildProviderToggle(),
+            const SizedBox(height: 24),
             _buildStatsCard(),
             const SizedBox(height: 24),
             _buildLogoutButton(),
@@ -52,6 +61,44 @@ class ProfileScreen extends StatelessWidget {
             ],
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildProviderToggle() {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Service Provider',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  isServiceProvider ? 'Enabled' : 'Disabled',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: isServiceProvider ? Colors.green : Colors.grey,
+                  ),
+                ),
+              ],
+            ),
+            Switch(
+              value: isServiceProvider,
+              onChanged: (value) {
+                setState(() {
+                  isServiceProvider = value;
+                });
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
