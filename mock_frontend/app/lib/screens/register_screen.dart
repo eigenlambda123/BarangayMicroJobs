@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'login_screen.dart';
+import '../services/auth_service.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -56,8 +57,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
     setState(() => _isLoading = true);
 
     try {
-      // TODO: Connect to actual API endpoint: POST /auth/register
-      await Future.delayed(const Duration(seconds: 2));
+      final result = await AuthService().register(
+        fullName: _fullNameController.text,
+        phoneNumber: _phoneController.text,
+        password: _passwordController.text,
+        role: _selectedRole,
+      );
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -69,9 +74,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Registration failed: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Registration failed: ${e.toString()}')),
+        );
       }
     } finally {
       if (mounted) {
@@ -95,8 +100,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
               _buildFullNameField(),
               const SizedBox(height: 20),
               _buildPhoneField(),
-              const SizedBox(height: 20),
-              _buildRoleSelection(),
               const SizedBox(height: 20),
               _buildPasswordField(),
               const SizedBox(height: 20),
@@ -181,54 +184,54 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  Widget _buildRoleSelection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Account Type',
-          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
-        ),
-        const SizedBox(height: 12),
-        Row(
-          children: [
-            Expanded(child: _buildRoleOption('customer', 'Customer')),
-            const SizedBox(width: 12),
-            Expanded(child: _buildRoleOption('provider', 'Provider')),
-          ],
-        ),
-      ],
-    );
-  }
+  // Widget _buildRoleSelection() {
+  //   return Column(
+  //     crossAxisAlignment: CrossAxisAlignment.start,
+  //     children: [
+  //       const Text(
+  //         'Account Type',
+  //         style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+  //       ),
+  //       const SizedBox(height: 12),
+  //       Row(
+  //         children: [
+  //           Expanded(child: _buildRoleOption('customer', 'Customer')),
+  //           const SizedBox(width: 12),
+  //           Expanded(child: _buildRoleOption('provider', 'Provider')),
+  //         ],
+  //       ),
+  //     ],
+  //   );
+  // }
 
-  Widget _buildRoleOption(String value, String label) {
-    final isSelected = _selectedRole == value;
-    return GestureDetector(
-      onTap: () {
-        setState(() => _selectedRole = value);
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        decoration: BoxDecoration(
-          color: isSelected ? Colors.blue.shade50 : Colors.grey.shade100,
-          border: Border.all(
-            color: isSelected ? Colors.blue : Colors.grey.shade300,
-            width: 2,
-          ),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Center(
-          child: Text(
-            label,
-            style: TextStyle(
-              fontWeight: FontWeight.w600,
-              color: isSelected ? Colors.blue : Colors.grey.shade600,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+  // Widget _buildRoleOption(String value, String label) {
+  //   final isSelected = _selectedRole == value;
+  //   return GestureDetector(
+  //     onTap: () {
+  //       setState(() => _selectedRole = value);
+  //     },
+  //     child: Container(
+  //       padding: const EdgeInsets.symmetric(vertical: 12),
+  //       decoration: BoxDecoration(
+  //         color: isSelected ? Colors.blue.shade50 : Colors.grey.shade100,
+  //         border: Border.all(
+  //           color: isSelected ? Colors.blue : Colors.grey.shade300,
+  //           width: 2,
+  //         ),
+  //         borderRadius: BorderRadius.circular(8),
+  //       ),
+  //       child: Center(
+  //         child: Text(
+  //           label,
+  //           style: TextStyle(
+  //             fontWeight: FontWeight.w600,
+  //             color: isSelected ? Colors.blue : Colors.grey.shade600,
+  //           ),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget _buildPasswordField() {
     return Column(

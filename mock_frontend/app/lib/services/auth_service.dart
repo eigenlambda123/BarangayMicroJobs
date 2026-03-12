@@ -1,83 +1,122 @@
-// Auth service for handling API calls
-// This is a placeholder for the actual HTTP service
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
-  static const String baseUrl = 'http://localhost:8000'; // Update with your backend URL
+  static const String baseUrl =
+      'http://10.0.2.2:8000'; // Android emulator uses 10.0.2.2 for host localhost
+  static const String _tokenKey = 'auth_token';
+  static const String _userIdKey = 'user_id';
 
-  // Register endpoint
-  // POST /auth/register
+  // Register endpoint: POST /auth/register
   Future<Map<String, dynamic>> register({
     required String fullName,
     required String phoneNumber,
     required String password,
     required String role,
   }) async {
-    // TODO: Implement actual HTTP POST request
-    // Example:
-    // final response = await http.post(
-    //   Uri.parse('$baseUrl/auth/register'),
-    //   headers: {'Content-Type': 'application/json'},
-    //   body: jsonEncode({
-    //     'full_name': fullName,
-    //     'phone_number': phoneNumber,
-    //     'password': password,
-    //     'role': role,
-    //   }),
-    // );
-    
-    return {
-      'message': 'User created successfully',
-      'user_id': 1,
-    };
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/auth/register'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'full_name': fullName,
+          'phone_number': phoneNumber,
+          'password': password,
+          'role': role,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else {
+        final error = jsonDecode(response.body);
+        throw Exception(error['detail'] ?? 'Registration failed');
+      }
+    } catch (e) {
+      throw Exception('Registration error: $e');
+    }
   }
 
-  // Login endpoint
-  // POST /auth/login
+  // Login endpoint: POST /auth/login
   Future<Map<String, dynamic>> login({
     required String phoneNumber,
     required String password,
   }) async {
-    // TODO: Implement actual HTTP POST request
-    // Example:
-    // final response = await http.post(
-    //   Uri.parse('$baseUrl/auth/login'),
-    //   headers: {'Content-Type': 'application/json'},
-    //   body: jsonEncode({
-    //     'phone_number': phoneNumber,
-    //     'password': password,
-    //   }),
-    // );
-    
-    return {
-      'access_token': 'sample_token_12345',
-      'token_type': 'bearer',
-      'user': {
-        'id': 1,
-        'full_name': 'John Doe',
-        'is_verified': true,
-      },
-    };
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/auth/login'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'phone_number': phoneNumber, 'password': password}),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+
+        // Store token and user info
+        await _saveToken(data['access_token']);
+        await _saveUserId(data['user']['id'].toString());
+
+        return data;
+      } else {
+        final error = jsonDecode(response.body);
+        throw Exception(error['detail'] ?? 'Login failed');
+      }
+    } catch (e) {
+      throw Exception('Login error: $e');
+    }
   }
 
-  // Get current user endpoint
-  // GET /auth/me
+  // Get current user endpoint: GET /auth/me
   Future<Map<String, dynamic>> getCurrentUser(String token) async {
-    // TODO: Implement actual HTTP GET request
-    // Example:
-    // final response = await http.get(
-    //   Uri.parse('$baseUrl/auth/me'),
-    //   headers: {
-    //     'Authorization': 'Bearer $token',
-    //     'Content-Type': 'application/json',
-    //   },
-    // );
-    
-    return {
-      'id': 1,
-      'full_name': 'John Doe',
-      'phone_number': '09123456789',
-      'role': 'customer',
-      'is_verified': true,
-    };
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/auth/me'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else {
+        throw Exception('Failed to get user');
+      }
+    } catch (e) {
+      throw Exception('Get user error: $e');
+    }
+  }
+
+  // Token management
+  Future<void> _saveToken(String token) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_tokenKey, token);
+  }
+
+  Future<String?> getToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_tokenKey);
+  }
+
+  Future<void> _saveUserId(String userId) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_userIdKey, userId);
+  }
+
+  Future<String?> getUserId() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_userIdKey);
+  }
+
+  Future<bool> isLoggedIn() async {
+    final token = await getToken();
+    return token != null;
+  }
+
+  Future<void> logout() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_tokenKey);
+    await prefs.remove(_userIdKey);
   }
 }
