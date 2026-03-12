@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../widgets/posting_card.dart';
 import '../widgets/post_job_modal.dart';
+import '../services/job_service.dart';
 import 'job_details_screen.dart';
 
 class MarketplaceScreen extends StatefulWidget {
@@ -12,6 +13,34 @@ class MarketplaceScreen extends StatefulWidget {
 
 class _MarketplaceScreenState extends State<MarketplaceScreen> {
   bool _showPostJobModal = false;
+  List<Map<String, dynamic>> _jobs = [];
+  bool _isLoading = true;
+  String? _errorMessage;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadJobs();
+  }
+
+  Future<void> _loadJobs() async {
+    try {
+      final jobs = await JobService().getAllJobs();
+      if (mounted) {
+        setState(() {
+          _jobs = jobs;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _errorMessage = 'Failed to load jobs: ${e.toString()}';
+          _isLoading = false;
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,6 +79,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('Job posted successfully!')),
                     );
+                    _loadJobs();
                   },
                 ),
               ),
@@ -106,6 +136,69 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
   }
 
   Widget _buildActivePostingsSection(BuildContext context) {
+    if (_isLoading) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(32.0),
+          child: Column(
+            children: [
+              const CircularProgressIndicator(),
+              const SizedBox(height: 16),
+              Text(
+                'Loading jobs...',
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    if (_errorMessage != null) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(32.0),
+          child: Column(
+            children: [
+              const Icon(Icons.error_outline, color: Colors.red, size: 48),
+              const SizedBox(height: 16),
+              Text(
+                _errorMessage!,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(onPressed: _loadJobs, child: const Text('Retry')),
+            ],
+          ),
+        ),
+      );
+    }
+
+    if (_jobs.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(32.0),
+          child: Column(
+            children: [
+              const Icon(Icons.inbox_outlined, color: Colors.grey, size: 48),
+              const SizedBox(height: 16),
+              Text(
+                'No jobs available',
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Check back later for new opportunities',
+                style: Theme.of(context).textTheme.bodySmall,
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -113,30 +206,41 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'My Active Postings',
+              'Available Jobs (${_jobs.length})',
               style: Theme.of(context).textTheme.titleLarge,
+            ),
+            GestureDetector(
+              onTap: _loadJobs,
+              child: Icon(Icons.refresh, color: Colors.blue.shade700),
             ),
           ],
         ),
         const SizedBox(height: 12),
-        PostingCard(
-          title: 'Laundry Help (Wash & Fold)',
-          price: '₱200',
-          zone: 'ZONE 1',
-          applicants: 2,
-          status: 'OPEN',
-          onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => const JobDetailsScreen(
-                  jobTitle: 'Laundry Help (Wash & Fold)',
-                  price: '₱200',
-                  zone: 'ZONE 1',
-                ),
+        ..._jobs.map((job) {
+          return Column(
+            children: [
+              PostingCard(
+                title: job['title'] ?? 'Unknown Job',
+                price: '₱${job['salary'] ?? '0'}',
+                zone: job['location'] ?? 'Unknown Location',
+                applicants: 0,
+                status: 'OPEN',
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => JobDetailsScreen(
+                        jobTitle: job['title'] ?? 'Job',
+                        price: '₱${job['salary'] ?? '0'}',
+                        zone: job['location'] ?? 'Unknown',
+                      ),
+                    ),
+                  );
+                },
               ),
-            );
-          },
-        ),
+              const SizedBox(height: 8),
+            ],
+          );
+        }).toList(),
       ],
     );
   }
