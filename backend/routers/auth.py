@@ -62,12 +62,17 @@ def login_user(login_data: LoginRequest, session: Session = Depends(get_session)
 @router.get("/me")
 def get_me(current_user: User = Depends(get_current_user)):
     """
-    Get current authenticated user profile
+    Get current authenticated user profile with stats
     """
     return {
         "id": current_user.id,
         "full_name": current_user.full_name,
         "phone_number": current_user.phone_number,
         "role": current_user.role,
-        "is_verified": current_user.is_verified
+        "is_verified": current_user.is_verified,
+        "rating": current_user.rating,
+        "review_count": current_user.review_count,
+        "jobs_done": current_user.jobs_done,
+        "jobs_posted": current_user.jobs_posted,
+        "total_earned": current_user.total_earned,
     }

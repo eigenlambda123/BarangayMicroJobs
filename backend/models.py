@@ -15,6 +15,12 @@ class User(SQLModel, table=True):
     role: str = Field(default="resident") # "admin" or "resident"
     hashed_password: str
 
+    # Profile Stats
+    rating: float = Field(default=0.0) 
+    review_count: int = Field(default=0) 
+    jobs_done: int = Field(default=0)  
+    jobs_posted: int = Field(default=0) 
+    total_earned: float = Field(default=0.0) 
     # Relationships
     # 1. As a Job Poster
     posted_jobs: List["JobPost"] = Relationship(back_populates="poster")
