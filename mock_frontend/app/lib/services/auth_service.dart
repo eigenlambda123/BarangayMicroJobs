@@ -68,8 +68,13 @@ class AuthService {
   }
 
   // Get current user endpoint: GET /auth/me
-  Future<Map<String, dynamic>> getCurrentUser(String token) async {
+  Future<Map<String, dynamic>> getCurrentUser() async {
     try {
+      final token = await getToken();
+      if (token == null) {
+        throw Exception('Not authenticated');
+      }
+
       final response = await http.get(
         Uri.parse('$baseUrl/auth/me'),
         headers: {

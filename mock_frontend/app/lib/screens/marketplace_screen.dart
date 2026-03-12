@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import '../widgets/posting_card.dart';
 import '../widgets/post_job_modal.dart';
 import '../services/job_service.dart';
+import '../services/auth_service.dart';
 import 'job_details_screen.dart';
 
 class MarketplaceScreen extends StatefulWidget {
@@ -16,11 +18,28 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
   List<Map<String, dynamic>> _jobs = [];
   bool _isLoading = true;
   String? _errorMessage;
+  String? _currentUserId;
 
   @override
   void initState() {
     super.initState();
+    _loadCurrentUser();
     _loadJobs();
+  }
+
+  Future<void> _loadCurrentUser() async {
+    try {
+      final userId = await AuthService().getUserId();
+      if (mounted) {
+        setState(() {
+          _currentUserId = userId;
+        });
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('DEBUG: Failed to load current user: $e');
+      }
+    }
   }
 
   Future<void> _loadJobs() async {
@@ -41,6 +60,12 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
       }
     }
   }
+
+  List<Map<String, dynamic>> get _myJobs =>
+      _jobs.where((job) => job['poster_id'] == _currentUserId).toList();
+
+  List<Map<String, dynamic>> get _availableJobs =>
+      _jobs.where((job) => job['poster_id'] != _currentUserId).toList();
 
   @override
   Widget build(BuildContext context) {
@@ -202,45 +227,120 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Available Jobs (${_jobs.length})',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            GestureDetector(
-              onTap: _loadJobs,
-              child: Icon(Icons.refresh, color: Colors.blue.shade700),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        ..._jobs.map((job) {
-          return Column(
-            children: [
-              PostingCard(
-                title: job['title'] ?? 'Unknown Job',
-                price: '₱${job['salary'] ?? '0'}',
-                zone: job['location'] ?? 'Unknown Location',
-                applicants: 0,
-                status: 'OPEN',
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => JobDetailsScreen(
-                        jobTitle: job['title'] ?? 'Job',
-                        price: '₱${job['salary'] ?? '0'}',
-                        zone: job['location'] ?? 'Unknown',
+        // My Posted Jobs Section
+        if (_myJobs.isNotEmpty) ...[
+          Text(
+            'My Posted Jobs (${_myJobs.length})',
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+          const SizedBox(height: 12),
+          ..._myJobs.map((job) {
+            return Column(
+              children: [
+                PostingCard(
+                  title: job['title'] ?? 'Unknown Job',
+                  price: '₱${job['salary'] ?? '0'}',
+                  zone: job['location'] ?? 'Unknown Location',
+                  applicants: 0,
+                  status: 'OPEN',
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) {
+                          final posterName = job['poster'] != null
+                              ? job['poster']['full_name']
+                              : 'Unknown User';
+                          return JobDetailsScreen(
+                            jobTitle: job['title'] ?? 'Job',
+                            price: '₱${job['salary'] ?? '0'}',
+                            zone: job['location'] ?? 'Unknown',
+                            jobId: job['id'] ?? '',
+                            posterId: job['poster_id'] ?? '',
+                            posterName: posterName,
+                          );
+                        },
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
+                const SizedBox(height: 8),
+              ],
+            );
+          }).toList(),
+          const SizedBox(height: 24),
+        ],
+
+        // Available Jobs Section (All other jobs)
+        if (_availableJobs.isNotEmpty) ...[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Available Jobs (${_availableJobs.length})',
+                style: Theme.of(context).textTheme.titleLarge,
               ),
-              const SizedBox(height: 8),
+              GestureDetector(
+                onTap: _loadJobs,
+                child: Icon(Icons.refresh, color: Colors.blue.shade700),
+              ),
             ],
-          );
-        }).toList(),
+          ),
+          const SizedBox(height: 12),
+          ..._availableJobs.map((job) {
+            final posterName = job['poster'] != null
+                ? job['poster']['full_name']
+                : 'Unknown User';
+            return Column(
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    PostingCard(
+                      title: job['title'] ?? 'Unknown Job',
+                      price: '₱${job['salary'] ?? '0'}',
+                      zone: job['location'] ?? 'Unknown Location',
+                      applicants: 0,
+                      status: 'OPEN',
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) {
+                              final posterName = job['poster'] != null
+                                  ? job['poster']['full_name']
+                                  : 'Unknown User';
+                              return JobDetailsScreen(
+                                jobTitle: job['title'] ?? 'Job',
+                                price: '₱${job['salary'] ?? '0'}',
+                                zone: job['location'] ?? 'Unknown',
+                                jobId: job['id'] ?? '',
+                                posterId: job['poster_id'] ?? '',
+                                posterName: posterName,
+                              );
+                            },
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+              ],
+            );
+          }).toList(),
+        ] else if (_myJobs.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.all(32.0),
+            child: Column(
+              children: [
+                const Icon(Icons.inbox_outlined, color: Colors.grey, size: 48),
+                const SizedBox(height: 16),
+                Text(
+                  'No other jobs available to apply for',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+              ],
+            ),
+          ),
       ],
     );
   }

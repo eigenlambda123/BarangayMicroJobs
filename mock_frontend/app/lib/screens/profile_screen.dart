@@ -24,7 +24,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     try {
       final token = await AuthService().getToken();
       if (token != null) {
-        final userData = await AuthService().getCurrentUser(token);
+        final userData = await AuthService().getCurrentUser();
         if (mounted) {
           setState(() {
             _userData = userData;

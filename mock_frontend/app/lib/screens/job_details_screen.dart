@@ -1,20 +1,78 @@
 import 'package:flutter/material.dart';
-import '../widgets/applicant_card.dart';
+import 'package:flutter/foundation.dart';
+import '../services/auth_service.dart';
+import '../services/transaction_service.dart';
 
-class JobDetailsScreen extends StatelessWidget {
+class JobDetailsScreen extends StatefulWidget {
   final String jobTitle;
   final String price;
   final String zone;
+  final String jobId;
+  final String posterId;
+  final String posterName;
 
   const JobDetailsScreen({
     required this.jobTitle,
     required this.price,
     required this.zone,
+    required this.jobId,
+    required this.posterId,
+    required this.posterName,
     super.key,
   });
 
   @override
+  State<JobDetailsScreen> createState() => _JobDetailsScreenState();
+}
+
+class _JobDetailsScreenState extends State<JobDetailsScreen> {
+  String? _currentUserId;
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCurrentUser();
+  }
+
+  Future<void> _loadCurrentUser() async {
+    try {
+      final user = await AuthService().getCurrentUser();
+      setState(() {
+        _currentUserId = user['id'];
+      });
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error loading current user: $e');
+      }
+    }
+  }
+
+  Future<void> _applyForJob() async {
+    setState(() => _isLoading = true);
+    try {
+      await TransactionService().applyForJob(widget.jobId);
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Applied successfully!')));
+        Navigator.of(context).pop();
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error applying: ${e.toString()}')),
+        );
+      }
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final isJobPoster = _currentUserId == widget.posterId;
+
     return Scaffold(
       appBar: AppBar(title: const Text('Job Details')),
       body: SingleChildScrollView(
@@ -25,54 +83,21 @@ class JobDetailsScreen extends StatelessWidget {
             children: [
               _buildJobHeader(),
               const SizedBox(height: 32),
-              Text(
-                'Applicants (2)',
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-              const SizedBox(height: 16),
-              ApplicantCard(
-                name: 'Ricardo Dalisay',
-                rating: 4.9,
-                reviewCount: 40,
-                timeAvailable: '1Hrs Now',
-                onHirePressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Ricardo hired!')),
-                  );
-                },
-                onMessagePressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Message sent to Ricardo')),
-                  );
-                },
-                onViewProfilePressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Viewing Ricardo\'s profile')),
-                  );
-                },
-              ),
-              const SizedBox(height: 12),
-              ApplicantCard(
-                name: 'Santi Garcia',
-                rating: 4.7,
-                reviewCount: 12,
-                timeAvailable: '2Hrs Now',
-                onHirePressed: () {
-                  ScaffoldMessenger.of(
-                    context,
-                  ).showSnackBar(const SnackBar(content: Text('Santi hired!')));
-                },
-                onMessagePressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Message sent to Santi')),
-                  );
-                },
-                onViewProfilePressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Viewing Santi\'s profile')),
-                  );
-                },
-              ),
+              if (!isJobPoster)
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: _isLoading ? null : _applyForJob,
+                    icon: _isLoading
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Icon(Icons.check_circle),
+                    label: Text(_isLoading ? 'Applying...' : 'Apply for Job'),
+                  ),
+                ),
             ],
           ),
         ),
@@ -88,10 +113,15 @@ class JobDetailsScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              jobTitle,
+              widget.jobTitle,
               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 8),
+            Text(
+              'Posted by: ${widget.posterName}',
+              style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+            ),
+            const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -107,7 +137,7 @@ class JobDetailsScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      price,
+                      widget.price,
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
@@ -128,7 +158,7 @@ class JobDetailsScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      zone,
+                      widget.zone,
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
