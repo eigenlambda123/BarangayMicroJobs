@@ -1,0 +1,12 @@
+Backend
+- Job Post should have image attribute
+- Applicants count should increment after a user apply for the job
+- Make an endpoint for deleting the post
+
+Frontend
+- Jobpost should show the date
+- Fix the postedby in job details screen
+- Use the transaction endpoints for the History screen
+- Use the rate endpoint to rate service providers
+- Use the review endpoint to get the average star for the user profile
+- Change the location of post job button
