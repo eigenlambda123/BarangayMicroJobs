@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import '../services/job_service.dart';
 
-class PostJobModal extends StatelessWidget {
+class PostJobModal extends StatefulWidget {
   final VoidCallback onClose;
   final VoidCallback onSubmit;
 
@@ -9,6 +10,65 @@ class PostJobModal extends StatelessWidget {
     required this.onSubmit,
     super.key,
   });
+
+  @override
+  State<PostJobModal> createState() => _PostJobModalState();
+}
+
+class _PostJobModalState extends State<PostJobModal> {
+  final _titleController = TextEditingController();
+  final _descriptionController = TextEditingController();
+  final _salaryController = TextEditingController();
+  String _location = 'Zone 1';
+  bool _isLoading = false;
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _descriptionController.dispose();
+    _salaryController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _handlePostJob() async {
+    if (_titleController.text.isEmpty ||
+        _descriptionController.text.isEmpty ||
+        _salaryController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please fill in all fields')),
+      );
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    try {
+      final result = await JobService().createJob(
+        title: _titleController.text,
+        description: _descriptionController.text,
+        location: _location,
+        salary: _salaryController.text,
+      );
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Job posted successfully! ID: ${result['job_id']}')),
+        );
+        widget.onSubmit();
+        widget.onClose();
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: ${e.toString()}')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,14 +89,15 @@ class PostJobModal extends StatelessWidget {
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
                   GestureDetector(
-                    onTap: onClose,
+                    onTap: widget.onClose,
                     child: const Icon(Icons.close),
                   ),
                 ],
               ),
               const SizedBox(height: 20),
-              const TextField(
-                decoration: InputDecoration(
+              TextField(
+                controller: _titleController,
+                decoration: const InputDecoration(
                   labelText: 'JOB TITLE',
                   hintText: 'e.g. Help carrying groceries',
                   border: OutlineInputBorder(),
@@ -47,31 +108,28 @@ class PostJobModal extends StatelessWidget {
                 children: [
                   Expanded(
                     child: DropdownButtonFormField<String>(
+                      value: _location,
                       items: const [
-                        DropdownMenuItem(
-                          value: 'manual',
-                          child: Text('Manual Labor'),
-                        ),
-                        DropdownMenuItem(
-                          value: 'domestic',
-                          child: Text('Domestic Help'),
-                        ),
-                        DropdownMenuItem(
-                          value: 'tutoring',
-                          child: Text('Tutoring'),
-                        ),
+                        DropdownMenuItem(value: 'Zone 1', child: Text('Zone 1')),
+                        DropdownMenuItem(value: 'Zone 2', child: Text('Zone 2')),
+                        DropdownMenuItem(value: 'Zone 3', child: Text('Zone 3')),
+                        DropdownMenuItem(value: 'Zone 4', child: Text('Zone 4')),
                       ],
-                      onChanged: (value) {},
+                      onChanged: (value) {
+                        setState(() => _location = value ?? 'Zone 1');
+                      },
                       decoration: const InputDecoration(
-                        labelText: 'CATEGORY',
+                        labelText: 'LOCATION',
                         border: OutlineInputBorder(),
                       ),
                     ),
                   ),
                   const SizedBox(width: 5),
                   Expanded(
-                    child: const TextField(
-                      decoration: InputDecoration(
+                    child: TextField(
+                      controller: _salaryController,
+                      keyboardType: TextInputType.number,
+                      decoration: const InputDecoration(
                         labelText: 'BUDGET (₱)',
                         hintText: '200',
                         border: OutlineInputBorder(),
@@ -81,8 +139,9 @@ class PostJobModal extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 16),
-              const TextField(
-                decoration: InputDecoration(
+              TextField(
+                controller: _descriptionController,
+                decoration: const InputDecoration(
                   labelText: 'DESCRIPTION',
                   hintText: 'What do you need help with?',
                   border: OutlineInputBorder(),
@@ -93,11 +152,19 @@ class PostJobModal extends StatelessWidget {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: onSubmit,
+                  onPressed: _isLoading ? null : _handlePostJob,
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 12),
                   ),
-                  child: const Text('Post Job Now'),
+                  child: _isLoading
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : const Text('Post Job Now'),
                 ),
               ),
             ],
