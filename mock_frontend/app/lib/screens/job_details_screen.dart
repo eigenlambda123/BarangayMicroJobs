@@ -98,6 +98,45 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
     }
   }
 
+  Future<void> _deleteJob() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Job'),
+        content: const Text('Are you sure you want to delete this job post?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      try {
+        // Assuming we add a deleteJob method to JobService
+        await JobService().deleteJob(widget.jobId);
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Job deleted successfully!')),
+          );
+          Navigator.of(context).pop();
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error deleting job: ${e.toString()}')),
+          );
+        }
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final isJobPoster = _currentUserId == widget.posterId;
@@ -127,6 +166,19 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                     label: Text(_isLoading ? 'Applying...' : 'Apply for Job'),
                   ),
                 ),
+              if (isJobPoster)
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: _deleteJob,
+                    icon: const Icon(Icons.delete),
+                    label: const Text('Delete Job'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      foregroundColor: Colors.white,
+                    ),
+                  ),
+                ),
             ],
           ),
         ),
@@ -145,6 +197,19 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
               widget.jobTitle,
               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
             ),
+            const SizedBox(height: 8),
+            if (_jobData?['image'] != null && _jobData!['image'].isNotEmpty)
+              Container(
+                height: 200,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  image: DecorationImage(
+                    image: NetworkImage(_jobData!['image']),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
             const SizedBox(height: 8),
             Text(
               'Posted by: ${_posterData?['full_name'] ?? 'Unknown'}',

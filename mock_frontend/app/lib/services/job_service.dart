@@ -12,6 +12,7 @@ class JobService {
     required String description,
     required String location,
     required String salary,
+    String? image,
   }) async {
     try {
       final token = await AuthService().getToken();
@@ -41,6 +42,7 @@ class JobService {
           'description': description,
           'location': location,
           'salary': salary,
+          if (image != null && image.isNotEmpty) 'image': image,
         }),
       );
 
@@ -96,6 +98,29 @@ class JobService {
       }
     } catch (e) {
       throw Exception('Get job error: $e');
+    }
+  }
+
+  Future<void> deleteJob(String jobId) async {
+    try {
+      final token = await AuthService().getToken();
+      if (token == null) {
+        throw Exception('Not authenticated');
+      }
+
+      final response = await http.delete(
+        Uri.parse('$baseUrl/jobs/$jobId'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to delete job');
+      }
+    } catch (e) {
+      throw Exception('Delete job error: $e');
     }
   }
 }

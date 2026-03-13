@@ -19,6 +19,7 @@ class _PostJobModalState extends State<PostJobModal> {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _salaryController = TextEditingController();
+  final _imageController = TextEditingController();
   String _location = 'Zone 1';
   bool _isLoading = false;
 
@@ -27,6 +28,7 @@ class _PostJobModalState extends State<PostJobModal> {
     _titleController.dispose();
     _descriptionController.dispose();
     _salaryController.dispose();
+    _imageController.dispose();
     super.dispose();
   }
 
@@ -48,6 +50,7 @@ class _PostJobModalState extends State<PostJobModal> {
         description: _descriptionController.text,
         location: _location,
         salary: _salaryController.text,
+        image: _imageController.text.isNotEmpty ? _imageController.text : null,
       );
 
       if (mounted) {
@@ -147,6 +150,15 @@ class _PostJobModalState extends State<PostJobModal> {
                   border: OutlineInputBorder(),
                 ),
                 maxLines: 4,
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                controller: _imageController,
+                decoration: const InputDecoration(
+                  labelText: 'IMAGE URL (Optional)',
+                  hintText: 'https://example.com/image.jpg',
+                  border: OutlineInputBorder(),
+                ),
               ),
               const SizedBox(height: 20),
               SizedBox(
