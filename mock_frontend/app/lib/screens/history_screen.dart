@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import '../widgets/activity_card.dart';
+import '../widgets/rating_dialog.dart';
 import '../services/transaction_service.dart';
 
 class HistoryScreen extends StatefulWidget {
@@ -144,7 +145,14 @@ class _HistoryScreenState extends State<HistoryScreen> {
                         statusColor: statusColor,
                         worker: workerName,
                         onRatePressed: status == 'completed' ? () {
-                          // TODO: Implement rating
+                          showDialog(
+                            context: context,
+                            builder: (context) => RatingDialog(
+                              transactionId: transaction['id'],
+                              providerName: isRequester ? provider['name'] : requester['name'],
+                              jobTitle: job['title'],
+                            ),
+                          );
                         } : null,
                       ),
                       const SizedBox(height: 12),
