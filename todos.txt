@@ -9,7 +9,7 @@ Frontend
 - Fix the postedby in job details screen cause its currently saying unknown ✓
 - We should be able to put image in the Jobpost and Display that image in job details screen ✓
 - Jobpost should have a delete feature ✓
-- Use the transaction endpoints for the history screen to track job history and current jobs status
+- Use the transaction endpoints for the history screen to track job history and current jobs status ✓
 - Use the rate endpoint to rate service providers
 - Use the review endpoint to get the average star for the user profile
 - Change the location of post job button

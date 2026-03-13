@@ -29,6 +29,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
   bool _isLoading = false;
   Map<String, dynamic>? _jobData;
   Map<String, dynamic>? _posterData;
+  bool _hasApplied = false;
 
   @override
   void initState() {
@@ -36,6 +37,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
     _loadCurrentUser();
     _loadJobDetails();
     _loadPoster();
+    _checkApplicationStatus();
   }
 
   Future<void> _loadCurrentUser() async {
@@ -73,6 +75,22 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
     } catch (e) {
       if (kDebugMode) {
         print('Error loading poster: $e');
+      }
+    }
+  }
+
+  Future<void> _checkApplicationStatus() async {
+    try {
+      final transactions = await TransactionService().getMyTransactions();
+      final hasApplied = transactions.any((transaction) =>
+          transaction['job']['id'] == widget.jobId &&
+          !transaction['is_requester']); // If not requester, then provider (applied)
+      setState(() {
+        _hasApplied = hasApplied;
+      });
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error checking application status: $e');
       }
     }
   }
@@ -155,7 +173,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton.icon(
-                    onPressed: _isLoading ? null : _applyForJob,
+                    onPressed: _hasApplied ? null : (_isLoading ? null : _applyForJob),
                     icon: _isLoading
                         ? const SizedBox(
                             width: 20,
@@ -163,7 +181,13 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
                         : const Icon(Icons.check_circle),
-                    label: Text(_isLoading ? 'Applying...' : 'Apply for Job'),
+                    label: Text(_hasApplied ? 'Applied' : (_isLoading ? 'Applying...' : 'Apply for Job')),
+                    style: _hasApplied
+                        ? ElevatedButton.styleFrom(
+                            backgroundColor: Colors.grey,
+                            foregroundColor: Colors.white,
+                          )
+                        : null,
                   ),
                 ),
               if (isJobPoster)

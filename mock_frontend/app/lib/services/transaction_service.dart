@@ -73,4 +73,33 @@ class TransactionService {
       throw Exception('Get applicants error: $e');
     }
   }
+
+  // Get my transactions: GET /transactions/me
+  Future<List<Map<String, dynamic>>> getMyTransactions() async {
+    try {
+      final token = await AuthService().getToken();
+
+      if (token == null) {
+        throw Exception('Not authenticated. Please log in.');
+      }
+
+      final response = await http.get(
+        Uri.parse('$baseUrl/transactions/me'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final List<dynamic> transactionsList = data['transactions'] ?? [];
+        return transactionsList.cast<Map<String, dynamic>>();
+      } else {
+        throw Exception('Failed to fetch transactions');
+      }
+    } catch (e) {
+      throw Exception('Get transactions error: $e');
+    }
+  }
 }

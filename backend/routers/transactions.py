@@ -12,6 +12,48 @@ from utils.auth_utils import get_current_user
 
 router = APIRouter(prefix="/transactions", tags=["Transactions"])
 
+@router.get("/me")
+def get_my_transactions(
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user),
+):
+    # Get transactions where user is requester or provider
+    statement = select(JobTransaction).where(
+        (JobTransaction.requester_id == current_user.id) | (JobTransaction.provider_id == current_user.id)
+    )
+    transactions = session.exec(statement).all()
+
+    result = []
+    for transaction in transactions:
+        job = session.get(JobPost, transaction.job_id)
+        provider = session.get(User, transaction.provider_id)
+        requester = session.get(User, transaction.requester_id)
+        
+        result.append({
+            "id": transaction.id,
+            "job": {
+                "id": job.id,
+                "title": job.title,
+                "salary": job.salary,
+                "location": job.location,
+                "status": job.status,
+            },
+            "provider": {
+                "id": provider.id,
+                "name": provider.full_name,
+            },
+            "requester": {
+                "id": requester.id,
+                "name": requester.full_name,
+            },
+            "status": transaction.status.value,
+            "accepted_at": transaction.accepted_at,
+            "completed_at": transaction.completed_at,
+            "is_requester": transaction.requester_id == current_user.id,
+        })
+
+    return {"transactions": result}
+
 @router.post("/apply/{job_id}")
 def apply_for_job(
     job_id: UUID,
@@ -22,6 +64,27 @@ def apply_for_job(
     job = session.get(JobPost, job_id)
     if not job:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Job not available")
+
+    # Check if user is trying to apply to their own job
+    if job.poster_id == current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, 
+            detail="You cannot apply to your own job"
+        )
+
+    # Check if user has already applied to this job
+    existing_application = session.exec(
+        select(JobTransaction).where(
+            JobTransaction.job_id == job_id,
+            JobTransaction.provider_id == current_user.id
+        )
+    ).first()
+    
+    if existing_application:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, 
+            detail="You have already applied to this job"
+        )
 
     # Create the transaction
     transaction = JobTransaction(
