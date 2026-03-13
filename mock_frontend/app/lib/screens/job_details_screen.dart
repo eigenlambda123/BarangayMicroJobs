@@ -7,14 +7,14 @@ import '../services/job_service.dart';
 class JobDetailsScreen extends StatefulWidget {
   final String jobTitle;
   final String price;
-  final String zone;
+  final String location;
   final String jobId;
   final String posterId;
 
   const JobDetailsScreen({
     required this.jobTitle,
     required this.price,
-    required this.zone,
+    required this.location,
     required this.jobId,
     required this.posterId,
     super.key,
@@ -82,9 +82,11 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
   Future<void> _checkApplicationStatus() async {
     try {
       final transactions = await TransactionService().getMyTransactions();
-      final hasApplied = transactions.any((transaction) =>
-          transaction['job']['id'] == widget.jobId &&
-          !transaction['is_requester']); // If not requester, then provider (applied)
+      final hasApplied = transactions.any(
+        (transaction) =>
+            transaction['job']['id'] == widget.jobId &&
+            !transaction['is_requester'],
+      ); // If not requester, then provider (applied)
       setState(() {
         _hasApplied = hasApplied;
       });
@@ -173,7 +175,9 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton.icon(
-                    onPressed: _hasApplied ? null : (_isLoading ? null : _applyForJob),
+                    onPressed: _hasApplied
+                        ? null
+                        : (_isLoading ? null : _applyForJob),
                     icon: _isLoading
                         ? const SizedBox(
                             width: 20,
@@ -181,7 +185,11 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
                         : const Icon(Icons.check_circle),
-                    label: Text(_hasApplied ? 'Applied' : (_isLoading ? 'Applying...' : 'Apply for Job')),
+                    label: Text(
+                      _hasApplied
+                          ? 'Applied'
+                          : (_isLoading ? 'Applying...' : 'Apply for Job'),
+                    ),
                     style: _hasApplied
                         ? ElevatedButton.styleFrom(
                             backgroundColor: Colors.grey,
@@ -273,7 +281,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Zone',
+                      'Location',
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.grey.shade600,
@@ -281,7 +289,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      widget.zone,
+                      widget.location,
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,

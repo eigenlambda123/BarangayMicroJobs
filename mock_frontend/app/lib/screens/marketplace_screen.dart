@@ -78,8 +78,6 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildHeaderSection(),
-                const SizedBox(height: 24),
-                _buildActionButtons(),
                 const SizedBox(height: 32),
                 _buildActivePostingsSection(context),
               ],
@@ -139,23 +137,20 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
               ),
             ),
           ),
+          ElevatedButton.icon(
+            onPressed: () {
+              setState(() => _showPostJobModal = true);
+            },
+            icon: const Icon(Icons.add_circle_outline, size: 16),
+            label: const Text('POST JOB'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.blue,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              textStyle: const TextStyle(fontSize: 12),
+            ),
+          ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildActionButtons() {
-    return ElevatedButton.icon(
-      onPressed: () {
-        setState(() => _showPostJobModal = true);
-      },
-      icon: const Icon(Icons.add_circle_outline),
-      label: const Text('POST JOB'),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.blue,
-        foregroundColor: Colors.white,
-        minimumSize: const Size.fromHeight(48),
-        padding: const EdgeInsets.symmetric(vertical: 12),
       ),
     );
   }
@@ -240,7 +235,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                 PostingCard(
                   title: job['title'] ?? 'Unknown Job',
                   price: '₱${job['salary'] ?? '0'}',
-                  zone: job['location'] ?? 'Unknown Location',
+                  location: job['location'] ?? 'Unknown Location',
                   applicants: job['applicants_count'] ?? 0,
                   status: 'OPEN',
                   date: job['last_modified'] != null
@@ -253,7 +248,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                           return JobDetailsScreen(
                             jobTitle: job['title'] ?? 'Job',
                             price: '₱${job['salary'] ?? '0'}',
-                            zone: job['location'] ?? 'Unknown',
+                            location: job['location'] ?? 'Unknown',
                             jobId: job['id'] ?? '',
                             posterId: job['poster_id'] ?? '',
                           );
@@ -297,7 +292,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                     PostingCard(
                       title: job['title'] ?? 'Unknown Job',
                       price: '₱${job['salary'] ?? '0'}',
-                      zone: job['location'] ?? 'Unknown Location',
+                      location: job['location'] ?? 'Unknown Location',
                       applicants: job['applicants_count'] ?? 0,
                       status: 'OPEN',
                       date: job['last_modified'] != null
@@ -310,7 +305,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                               return JobDetailsScreen(
                                 jobTitle: job['title'] ?? 'Job',
                                 price: '₱${job['salary'] ?? '0'}',
-                                zone: job['location'] ?? 'Unknown',
+                                location: job['location'] ?? 'Unknown',
                                 jobId: job['id'] ?? '',
                                 posterId: job['poster_id'] ?? '',
                               );

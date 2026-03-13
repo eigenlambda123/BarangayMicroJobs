@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class PostingCard extends StatelessWidget {
   final String title;
   final String price;
-  final String zone;
+  final String location;
   final int applicants;
   final String status;
   final String? date;
@@ -12,7 +12,7 @@ class PostingCard extends StatelessWidget {
   const PostingCard({
     required this.title,
     required this.price,
-    required this.zone,
+    required this.location,
     required this.applicants,
     required this.status,
     this.date,
@@ -66,7 +66,7 @@ class PostingCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    zone,
+                    location,
                     style: const TextStyle(fontSize: 11, color: Colors.grey),
                   ),
                   Container(

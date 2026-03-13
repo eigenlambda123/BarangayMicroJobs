@@ -55,16 +55,18 @@ class _PostJobModalState extends State<PostJobModal> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Job posted successfully! ID: ${result['job_id']}')),
+          SnackBar(
+            content: Text('Job posted successfully! ID: ${result['job_id']}'),
+          ),
         );
         widget.onSubmit();
         widget.onClose();
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: ${e.toString()}')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
       }
     } finally {
       if (mounted) {
@@ -113,10 +115,22 @@ class _PostJobModalState extends State<PostJobModal> {
                     child: DropdownButtonFormField<String>(
                       value: _location,
                       items: const [
-                        DropdownMenuItem(value: 'Zone 1', child: Text('Zone 1')),
-                        DropdownMenuItem(value: 'Zone 2', child: Text('Zone 2')),
-                        DropdownMenuItem(value: 'Zone 3', child: Text('Zone 3')),
-                        DropdownMenuItem(value: 'Zone 4', child: Text('Zone 4')),
+                        DropdownMenuItem(
+                          value: 'Zone 1',
+                          child: Text('Location 1'),
+                        ),
+                        DropdownMenuItem(
+                          value: 'Zone 2',
+                          child: Text('Location 2'),
+                        ),
+                        DropdownMenuItem(
+                          value: 'Zone 3',
+                          child: Text('Location 3'),
+                        ),
+                        DropdownMenuItem(
+                          value: 'Zone 4',
+                          child: Text('Location 4'),
+                        ),
                       ],
                       onChanged: (value) {
                         setState(() => _location = value ?? 'Zone 1');
@@ -172,9 +186,7 @@ class _PostJobModalState extends State<PostJobModal> {
                       ? const SizedBox(
                           height: 20,
                           width: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                          ),
+                          child: CircularProgressIndicator(strokeWidth: 2),
                         )
                       : const Text('Post Job Now'),
                 ),

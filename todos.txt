@@ -12,4 +12,4 @@ Frontend
 - Use the transaction endpoints for the history screen to track job history and current jobs status ✓
 - Use the rate endpoint to rate service providers ✓
 - Use the review endpoint to get the average star for the user profile ✓
-- Change the location of post job button
+- Change the location of post job button ✓
