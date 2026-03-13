@@ -1,15 +1,9 @@
 Backend
-- Job Post should have image attribute ✓
-- Applicants count should increment after a user apply for the job ✓
-- Make an endpoint for deleting the post ✓
+- There should be an endpoint to get the jobs posted by a user and the jobs they have done. This will be used in the profile screen to show the number of jobs posted and done, and in the job activity/history screen to show the details of each job.
+- There should be an endpoint that handle canceling a job. This will be used in the job activity/history screen to allow users to cancel a job that is still pending or in progress.
 
 Frontend
-- Jobpost should show the date ✓
-- the applicants count and job posted should show in the frontend ✓
-- Fix the postedby in job details screen cause its currently saying unknown ✓
-- We should be able to put image in the Jobpost and Display that image in job details screen ✓
-- Jobpost should have a delete feature ✓
-- Use the transaction endpoints for the history screen to track job history and current jobs status ✓
-- Use the rate endpoint to rate service providers ✓
-- Use the review endpoint to get the average star for the user profile ✓
-- Change the location of post job button ✓
+
+- Change the JobPost button 
+- In Profile Screen Jobs Done and Jobs Posted Should display
+- In Job Activity/History, the user should be able to view the job details and see whats its status, who is working on it, etc.
