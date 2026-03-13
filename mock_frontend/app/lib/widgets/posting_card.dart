@@ -6,6 +6,7 @@ class PostingCard extends StatelessWidget {
   final String zone;
   final int applicants;
   final String status;
+  final String? date;
   final VoidCallback? onTap;
 
   const PostingCard({
@@ -14,6 +15,7 @@ class PostingCard extends StatelessWidget {
     required this.zone,
     required this.applicants,
     required this.status,
+    this.date,
     this.onTap,
     super.key,
   });
@@ -89,6 +91,12 @@ class PostingCard extends StatelessWidget {
                   ),
                 ],
               ),
+              const SizedBox(height: 8),
+              if (date != null)
+                Text(
+                  date!,
+                  style: const TextStyle(fontSize: 10, color: Colors.grey),
+                ),
               const SizedBox(height: 8),
               Align(
                 alignment: Alignment.centerRight,

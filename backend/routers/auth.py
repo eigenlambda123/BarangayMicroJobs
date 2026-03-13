@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlmodel import Session, select
 from passlib.context import CryptContext
+from uuid import UUID
 
 from database import get_session
 from models import User 
@@ -75,4 +76,26 @@ def get_me(current_user: User = Depends(get_current_user)):
         "jobs_done": current_user.jobs_done,
         "jobs_posted": current_user.jobs_posted,
         "total_earned": current_user.total_earned,
+    }
+
+@router.get("/users/{user_id}")
+def get_user(user_id: UUID, session: Session = Depends(get_session)):
+    """
+    Get user profile by ID
+    """
+    user = session.get(User, user_id)
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+    
+    return {
+        "id": user.id,
+        "full_name": user.full_name,
+        "phone_number": user.phone_number,
+        "role": user.role,
+        "is_verified": user.is_verified,
+        "rating": user.rating,
+        "review_count": user.review_count,
+        "jobs_done": user.jobs_done,
+        "jobs_posted": user.jobs_posted,
+        "total_earned": user.total_earned,
     }

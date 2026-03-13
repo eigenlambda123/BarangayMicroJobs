@@ -241,22 +241,21 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                   title: job['title'] ?? 'Unknown Job',
                   price: '₱${job['salary'] ?? '0'}',
                   zone: job['location'] ?? 'Unknown Location',
-                  applicants: 0,
+                  applicants: job['applicants_count'] ?? 0,
                   status: 'OPEN',
+                  date: job['last_modified'] != null
+                      ? _formatDate(job['last_modified'])
+                      : null,
                   onTap: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) {
-                          final posterName = job['poster'] != null
-                              ? job['poster']['full_name']
-                              : 'Unknown User';
                           return JobDetailsScreen(
                             jobTitle: job['title'] ?? 'Job',
                             price: '₱${job['salary'] ?? '0'}',
                             zone: job['location'] ?? 'Unknown',
                             jobId: job['id'] ?? '',
                             posterId: job['poster_id'] ?? '',
-                            posterName: posterName,
                           );
                         },
                       ),
@@ -299,22 +298,21 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                       title: job['title'] ?? 'Unknown Job',
                       price: '₱${job['salary'] ?? '0'}',
                       zone: job['location'] ?? 'Unknown Location',
-                      applicants: 0,
+                      applicants: job['applicants_count'] ?? 0,
                       status: 'OPEN',
+                      date: job['last_modified'] != null
+                          ? _formatDate(job['last_modified'])
+                          : null,
                       onTap: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (context) {
-                              final posterName = job['poster'] != null
-                                  ? job['poster']['full_name']
-                                  : 'Unknown User';
                               return JobDetailsScreen(
                                 jobTitle: job['title'] ?? 'Job',
                                 price: '₱${job['salary'] ?? '0'}',
                                 zone: job['location'] ?? 'Unknown',
                                 jobId: job['id'] ?? '',
                                 posterId: job['poster_id'] ?? '',
-                                posterName: posterName,
                               );
                             },
                           ),
@@ -343,5 +341,25 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
           ),
       ],
     );
+  }
+
+  String _formatDate(String dateString) {
+    try {
+      final dateTime = DateTime.parse(dateString);
+      final now = DateTime.now();
+      final difference = now.difference(dateTime);
+
+      if (difference.inDays == 0) {
+        return 'Today';
+      } else if (difference.inDays == 1) {
+        return 'Yesterday';
+      } else if (difference.inDays < 7) {
+        return '${difference.inDays} days ago';
+      } else {
+        return '${dateTime.month}/${dateTime.day}/${dateTime.year}';
+      }
+    } catch (e) {
+      return 'Unknown date';
+    }
   }
 }

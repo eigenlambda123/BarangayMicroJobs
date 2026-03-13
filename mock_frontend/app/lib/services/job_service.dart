@@ -53,7 +53,9 @@ class JobService {
         return jsonDecode(response.body);
       } else {
         final error = jsonDecode(response.body);
-        throw Exception(error['detail'] ?? 'Failed to create job: ${response.statusCode}');
+        throw Exception(
+          error['detail'] ?? 'Failed to create job: ${response.statusCode}',
+        );
       }
     } catch (e) {
       throw Exception('Job creation error: $e');
@@ -76,6 +78,24 @@ class JobService {
       }
     } catch (e) {
       throw Exception('Get jobs error: $e');
+    }
+  }
+
+  Future<Map<String, dynamic>> getJobById(String jobId) async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/jobs/$jobId'),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> job = jsonDecode(response.body);
+        return job;
+      } else {
+        throw Exception('Failed to fetch job');
+      }
+    } catch (e) {
+      throw Exception('Get job error: $e');
     }
   }
 }

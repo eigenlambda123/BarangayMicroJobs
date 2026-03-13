@@ -93,6 +93,31 @@ class AuthService {
     }
   }
 
+  Future<Map<String, dynamic>> getUserById(String userId) async {
+    try {
+      final token = await getToken();
+      if (token == null) {
+        throw Exception('Not authenticated');
+      }
+
+      final response = await http.get(
+        Uri.parse('$baseUrl/auth/users/$userId'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else {
+        throw Exception('Failed to get user');
+      }
+    } catch (e) {
+      throw Exception('Get user error: $e');
+    }
+  }
+
   // Token management
   Future<void> _saveToken(String token) async {
     final prefs = await SharedPreferences.getInstance();

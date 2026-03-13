@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import '../services/auth_service.dart';
 import '../services/transaction_service.dart';
+import '../services/job_service.dart';
 
 class JobDetailsScreen extends StatefulWidget {
   final String jobTitle;
@@ -9,7 +10,6 @@ class JobDetailsScreen extends StatefulWidget {
   final String zone;
   final String jobId;
   final String posterId;
-  final String posterName;
 
   const JobDetailsScreen({
     required this.jobTitle,
@@ -17,7 +17,6 @@ class JobDetailsScreen extends StatefulWidget {
     required this.zone,
     required this.jobId,
     required this.posterId,
-    required this.posterName,
     super.key,
   });
 
@@ -28,11 +27,15 @@ class JobDetailsScreen extends StatefulWidget {
 class _JobDetailsScreenState extends State<JobDetailsScreen> {
   String? _currentUserId;
   bool _isLoading = false;
+  Map<String, dynamic>? _jobData;
+  Map<String, dynamic>? _posterData;
 
   @override
   void initState() {
     super.initState();
     _loadCurrentUser();
+    _loadJobDetails();
+    _loadPoster();
   }
 
   Future<void> _loadCurrentUser() async {
@@ -44,6 +47,32 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
     } catch (e) {
       if (kDebugMode) {
         print('Error loading current user: $e');
+      }
+    }
+  }
+
+  Future<void> _loadJobDetails() async {
+    try {
+      final job = await JobService().getJobById(widget.jobId);
+      setState(() {
+        _jobData = job;
+      });
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error loading job details: $e');
+      }
+    }
+  }
+
+  Future<void> _loadPoster() async {
+    try {
+      final poster = await AuthService().getUserById(widget.posterId);
+      setState(() {
+        _posterData = poster;
+      });
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error loading poster: $e');
       }
     }
   }
@@ -118,9 +147,14 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              'Posted by: ${widget.posterName}',
+              'Posted by: ${_posterData?['full_name'] ?? 'Unknown'}',
               style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
             ),
+            if (_jobData?['last_modified'] != null)
+              Text(
+                'Posted on: ${_formatDate(_jobData!['last_modified'])}',
+                style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+              ),
             const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -203,5 +237,25 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
         ),
       ),
     );
+  }
+
+  String _formatDate(String dateString) {
+    try {
+      final dateTime = DateTime.parse(dateString);
+      final now = DateTime.now();
+      final difference = now.difference(dateTime);
+
+      if (difference.inDays == 0) {
+        return 'Today';
+      } else if (difference.inDays == 1) {
+        return 'Yesterday';
+      } else if (difference.inDays < 7) {
+        return '${difference.inDays} days ago';
+      } else {
+        return '${dateTime.month}/${dateTime.day}/${dateTime.year}';
+      }
+    } catch (e) {
+      return 'Unknown date';
+    }
   }
 }

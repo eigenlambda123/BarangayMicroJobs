@@ -43,6 +43,16 @@ def get_all_jobs(session: Session = Depends(get_session)):
     jobs = session.exec(statement).all()
     return jobs
 
+@router.get("/{job_id}", response_model=JobPost)
+def get_job_post(
+    job_id: UUID,
+    session: Session = Depends(get_session)
+):
+    job = session.get(JobPost, job_id)
+    if not job:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Job not found")
+    return job
+
 @router.delete("/{job_id}")
 def delete_job_post(
     job_id: UUID,
