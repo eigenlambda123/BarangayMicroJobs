@@ -32,6 +32,9 @@ def apply_for_job(
         accepted_at=datetime.utcnow()
     )
 
+    # Increment applicants count
+    job.applicants_count += 1
+
     session.add(transaction)
     session.commit()
     session.refresh(transaction)

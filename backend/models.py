@@ -33,6 +33,8 @@ class JobPost(SQLModel, table=True):
     description: str
     location: str
     salary: float
+    image: Optional[str] = None
+    applicants_count: int = Field(default=0)
     status: str = Field(default="open") # "open", "assigned", "completed"
 
     # Sync and Conflict Resolution fields
