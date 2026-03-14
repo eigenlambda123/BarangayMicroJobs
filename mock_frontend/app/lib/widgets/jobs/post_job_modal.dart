@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../services/job_service.dart';
+import '../../services/job_service.dart';
 
 class PostJobModal extends StatefulWidget {
   final VoidCallback onClose;

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'transaction_history_card.dart';
+import '../../widgets/transactions/transaction_history_card.dart';
 
-class AcceptedJobsSection extends StatelessWidget {
+class PostedJobsSection extends StatelessWidget {
   final List<Map<String, dynamic>> transactions;
   final Function(String) onCancelPressed;
   final Function(String) onCompletePressed;
 
-  const AcceptedJobsSection({
+  const PostedJobsSection({
     super.key,
     required this.transactions,
     required this.onCancelPressed,
@@ -15,27 +15,27 @@ class AcceptedJobsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final acceptedJobs = transactions
-        .where((t) => !(t['is_requester'] as bool))
+    final postedJobs = transactions
+        .where((t) => t['is_requester'] as bool)
         .toList();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Jobs I\'m Working On (${acceptedJobs.length})',
+          'My Posted Jobs (${postedJobs.length})',
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 12),
-        if (acceptedJobs.isEmpty)
+        if (postedJobs.isEmpty)
           const Card(
             child: Padding(
               padding: EdgeInsets.all(16),
-              child: Text('No jobs accepted yet'),
+              child: Text('No jobs posted yet'),
             ),
           )
         else
-          ...acceptedJobs.map((transaction) {
+          ...postedJobs.map((transaction) {
             final status = transaction['status'];
             final canCancel = status == 'applied' || status == 'hired';
             final canComplete = status == 'hired';

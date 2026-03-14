@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../utils/transaction_helpers.dart';
+import '../../utils/transaction_helpers.dart';
 
 /// Card widget for displaying transaction status and timeline
 class TransactionStatusCard extends StatelessWidget {

@@ -1,21 +1,35 @@
 import 'package:flutter/material.dart';
-import '../widgets/posting_card.dart';
-import '../screens/job_details_screen.dart';
-import '../utils/history_helpers.dart';
+import 'posting_card.dart';
+import '../../screens/job_details_screen.dart';
+import '../../utils/history_helpers.dart';
 
-class MyJobsSection extends StatelessWidget {
+class AvailableJobsSection extends StatelessWidget {
   final List<Map<String, dynamic>> jobs;
+  final VoidCallback onRefresh;
 
-  const MyJobsSection({super.key, required this.jobs});
+  const AvailableJobsSection({
+    super.key,
+    required this.jobs,
+    required this.onRefresh,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'My Posted Jobs (${jobs.length})',
-          style: Theme.of(context).textTheme.titleLarge,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Available Jobs (${jobs.length})',
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            GestureDetector(
+              onTap: onRefresh,
+              child: Icon(Icons.refresh, color: Colors.blue.shade700),
+            ),
+          ],
         ),
         const SizedBox(height: 12),
         ...jobs.map((job) {
@@ -46,11 +60,10 @@ class MyJobsSection extends StatelessWidget {
                   );
                 },
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 12),
             ],
           );
         }).toList(),
-        const SizedBox(height: 24),
       ],
     );
   }

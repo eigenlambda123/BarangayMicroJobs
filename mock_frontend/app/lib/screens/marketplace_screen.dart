@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
-import '../widgets/marketplace_header.dart';
-import '../widgets/loading_state.dart';
-import '../widgets/error_state.dart';
-import '../widgets/empty_state.dart';
-import '../widgets/my_jobs_section.dart';
-import '../widgets/available_jobs_section.dart';
-import '../widgets/post_job_overlay.dart';
+import '../widgets/jobs/marketplace_header.dart';
+import '../widgets/common/loading_state.dart';
+import '../widgets/common/error_state.dart';
+import '../widgets/common/empty_state.dart';
+import '../widgets/jobs/my_jobs_section.dart';
+import '../widgets/jobs/available_jobs_section.dart';
+import '../widgets/jobs/post_job_overlay.dart';
 import '../services/job_service.dart';
 import '../services/auth_service.dart';
 

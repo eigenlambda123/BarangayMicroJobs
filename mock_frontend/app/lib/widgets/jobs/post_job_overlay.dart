@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../widgets/post_job_modal.dart';
+import 'post_job_modal.dart';
 
 class PostJobOverlay extends StatelessWidget {
   final VoidCallback onClose;

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../utils/transaction_helpers.dart';
+import '../../utils/transaction_helpers.dart';
 
 class TransactionCompletionFab extends StatelessWidget {
   final Map<String, dynamic> transaction;

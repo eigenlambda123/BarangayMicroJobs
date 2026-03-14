@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
-import '../widgets/posted_jobs_section.dart';
-import '../widgets/accepted_jobs_section.dart';
+import '../widgets/jobs/posted_jobs_section.dart';
+import '../widgets/jobs/accepted_jobs_section.dart';
 import '../services/transaction_service.dart';
 
 class HistoryScreen extends StatefulWidget {

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../screens/register_screen.dart';
+import '../../screens/login_screen.dart';
 
-class RegisterLink extends StatelessWidget {
-  const RegisterLink({super.key});
+class LoginLink extends StatelessWidget {
+  const LoginLink({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -11,17 +11,17 @@ class RegisterLink extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            "Don't have an account? ",
+            'Already have an account? ',
             style: TextStyle(color: Colors.grey.shade600),
           ),
           GestureDetector(
             onTap: () {
               Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => const RegisterScreen()),
+                MaterialPageRoute(builder: (context) => const LoginScreen()),
               );
             },
             child: const Text(
-              'Sign Up',
+              'Log In',
               style: TextStyle(color: Colors.blue, fontWeight: FontWeight.w600),
             ),
           ),

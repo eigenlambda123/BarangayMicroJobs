@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
-import '../widgets/register_header.dart';
-import '../widgets/full_name_field.dart';
-import '../widgets/phone_field.dart';
-import '../widgets/password_field.dart';
-import '../widgets/confirm_password_field.dart';
-import '../widgets/register_button.dart';
-import '../widgets/login_link.dart';
+import '../widgets/auth/register_header.dart';
+import '../widgets/auth/full_name_field.dart';
+import '../widgets/auth/phone_field.dart';
+import '../widgets/auth/password_field.dart';
+import '../widgets/auth/confirm_password_field.dart';
+import '../widgets/auth/register_button.dart';
+import '../widgets/auth/login_link.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});

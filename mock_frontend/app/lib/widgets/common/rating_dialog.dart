@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
-import '../services/rating_service.dart';
+import '../../services/rating_service.dart';
 
 class RatingDialog extends StatefulWidget {
   final String transactionId;

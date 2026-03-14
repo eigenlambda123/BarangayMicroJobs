@@ -3,8 +3,8 @@ import 'package:flutter/foundation.dart';
 import '../services/auth_service.dart';
 import '../services/transaction_service.dart';
 import '../services/job_service.dart';
-import '../widgets/job_header_card.dart';
-import '../widgets/job_action_buttons.dart';
+import '../widgets/jobs/job_header_card.dart';
+import '../widgets/jobs/job_action_buttons.dart';
 
 class JobDetailsScreen extends StatefulWidget {
   final String jobTitle;

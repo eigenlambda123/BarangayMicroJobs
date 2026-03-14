@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import '../services/transaction_service.dart';
-import '../widgets/transaction_details_content.dart';
-import '../widgets/transaction_completion_fab.dart';
-import '../widgets/loading_state.dart';
-import '../widgets/error_state.dart';
+import '../widgets/transactions/transaction_details_content.dart';
+import '../widgets/transactions/transaction_completion_fab.dart';
+import '../widgets/common/loading_state.dart';
+import '../widgets/common/error_state.dart';
 
 class TransactionDetailsScreen extends StatefulWidget {
   final String transactionId;
@@ -178,10 +178,6 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
         transaction: transaction,
         onCompletePressed: _showCompleteConfirmation,
         onCancelPressed: _showCancelConfirmation,
-      ),
-      floatingActionButton: TransactionCompletionFab(
-        transaction: transaction,
-        onPressed: _showCompleteConfirmation,
       ),
     );
   }

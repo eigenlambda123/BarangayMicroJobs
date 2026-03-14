@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
-import '../widgets/loading_state.dart';
-import '../widgets/error_state.dart';
-import '../widgets/profile_header.dart';
-import '../widgets/stats_card.dart';
-import '../widgets/logout_button.dart';
+import '../widgets/common/loading_state.dart';
+import '../widgets/common/error_state.dart';
+import '../widgets/profile/profile_header.dart';
+import '../widgets/profile/stats_card.dart';
+import '../widgets/profile/logout_button.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});

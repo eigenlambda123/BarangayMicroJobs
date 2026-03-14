@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../utils/history_helpers.dart';
+import '../../utils/history_helpers.dart';
 
 class JobHeaderCard extends StatelessWidget {
   final String jobTitle;
