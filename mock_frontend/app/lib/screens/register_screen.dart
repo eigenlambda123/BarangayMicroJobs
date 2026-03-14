@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
-import 'login_screen.dart';
 import '../services/auth_service.dart';
+import '../widgets/register_header.dart';
+import '../widgets/full_name_field.dart';
+import '../widgets/phone_field.dart';
+import '../widgets/password_field.dart';
+import '../widgets/confirm_password_field.dart';
+import '../widgets/register_button.dart';
+import '../widgets/login_link.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -15,9 +21,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
 
-  String _selectedRole = 'resident';
-  bool _obscurePassword = true;
-  bool _obscureConfirmPassword = true;
+  final String _selectedRole = 'resident';
   bool _isLoading = false;
 
   @override
@@ -57,7 +61,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     setState(() => _isLoading = true);
 
     try {
-      final result = await AuthService().register(
+      await AuthService().register(
         fullName: _fullNameController.text,
         phoneNumber: _phoneController.text,
         password: _passwordController.text,
@@ -95,265 +99,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildHeader(),
+              RegisterHeader(),
               const SizedBox(height: 32),
-              _buildFullNameField(),
+              FullNameField(controller: _fullNameController),
               const SizedBox(height: 20),
-              _buildPhoneField(),
+              PhoneField(controller: _phoneController),
               const SizedBox(height: 20),
-              _buildPasswordField(),
+              PasswordField(controller: _passwordController),
               const SizedBox(height: 20),
-              _buildConfirmPasswordField(),
+              ConfirmPasswordField(controller: _confirmPasswordController),
               const SizedBox(height: 32),
-              _buildRegisterButton(),
+              RegisterButton(isLoading: _isLoading, onPressed: _handleRegister),
               const SizedBox(height: 16),
-              _buildLoginLink(),
+              LoginLink(),
               const SizedBox(height: 24),
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Sign Up',
-          style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          'Create your account to get started',
-          style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildFullNameField() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Full Name',
-          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
-        ),
-        const SizedBox(height: 8),
-        TextField(
-          controller: _fullNameController,
-          decoration: InputDecoration(
-            hintText: 'Enter your full name',
-            prefixIcon: const Icon(Icons.person),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 14,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildPhoneField() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Phone Number',
-          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
-        ),
-        const SizedBox(height: 8),
-        TextField(
-          controller: _phoneController,
-          keyboardType: TextInputType.phone,
-          decoration: InputDecoration(
-            hintText: 'Enter your phone number',
-            prefixIcon: const Icon(Icons.phone),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 14,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  // Widget _buildRoleSelection() {
-  //   return Column(
-  //     crossAxisAlignment: CrossAxisAlignment.start,
-  //     children: [
-  //       const Text(
-  //         'Account Type',
-  //         style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
-  //       ),
-  //       const SizedBox(height: 12),
-  //       Row(
-  //         children: [
-  //           Expanded(child: _buildRoleOption('customer', 'Customer')),
-  //           const SizedBox(width: 12),
-  //           Expanded(child: _buildRoleOption('provider', 'Provider')),
-  //         ],
-  //       ),
-  //     ],
-  //   );
-  // }
-
-  // Widget _buildRoleOption(String value, String label) {
-  //   final isSelected = _selectedRole == value;
-  //   return GestureDetector(
-  //     onTap: () {
-  //       setState(() => _selectedRole = value);
-  //     },
-  //     child: Container(
-  //       padding: const EdgeInsets.symmetric(vertical: 12),
-  //       decoration: BoxDecoration(
-  //         color: isSelected ? Colors.blue.shade50 : Colors.grey.shade100,
-  //         border: Border.all(
-  //           color: isSelected ? Colors.blue : Colors.grey.shade300,
-  //           width: 2,
-  //         ),
-  //         borderRadius: BorderRadius.circular(8),
-  //       ),
-  //       child: Center(
-  //         child: Text(
-  //           label,
-  //           style: TextStyle(
-  //             fontWeight: FontWeight.w600,
-  //             color: isSelected ? Colors.blue : Colors.grey.shade600,
-  //           ),
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
-
-  Widget _buildPasswordField() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Password',
-          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
-        ),
-        const SizedBox(height: 8),
-        TextField(
-          controller: _passwordController,
-          obscureText: _obscurePassword,
-          decoration: InputDecoration(
-            hintText: 'Enter your password',
-            prefixIcon: const Icon(Icons.lock),
-            suffixIcon: IconButton(
-              icon: Icon(
-                _obscurePassword ? Icons.visibility_off : Icons.visibility,
-              ),
-              onPressed: () {
-                setState(() => _obscurePassword = !_obscurePassword);
-              },
-            ),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 14,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildConfirmPasswordField() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Confirm Password',
-          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
-        ),
-        const SizedBox(height: 8),
-        TextField(
-          controller: _confirmPasswordController,
-          obscureText: _obscureConfirmPassword,
-          decoration: InputDecoration(
-            hintText: 'Confirm your password',
-            prefixIcon: const Icon(Icons.lock),
-            suffixIcon: IconButton(
-              icon: Icon(
-                _obscureConfirmPassword
-                    ? Icons.visibility_off
-                    : Icons.visibility,
-              ),
-              onPressed: () {
-                setState(
-                  () => _obscureConfirmPassword = !_obscureConfirmPassword,
-                );
-              },
-            ),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 14,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildRegisterButton() {
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton(
-        onPressed: _isLoading ? null : _handleRegister,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.blue,
-          foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        ),
-        child: _isLoading
-            ? const SizedBox(
-                height: 20,
-                width: 20,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                ),
-              )
-            : const Text(
-                'Create Account',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-              ),
-      ),
-    );
-  }
-
-  Widget _buildLoginLink() {
-    return Center(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            'Already have an account? ',
-            style: TextStyle(color: Colors.grey.shade600),
-          ),
-          GestureDetector(
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => const LoginScreen()),
-              );
-            },
-            child: const Text(
-              'Log In',
-              style: TextStyle(color: Colors.blue, fontWeight: FontWeight.w600),
-            ),
-          ),
-        ],
       ),
     );
   }
