@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/transaction_service.dart';
 import '../widgets/transactions/transaction_details_content.dart';
-import '../widgets/transactions/transaction_completion_fab.dart';
 import '../widgets/common/loading_state.dart';
 import '../widgets/common/error_state.dart';
 

@@ -1,10 +1,7 @@
 Backend
-- the PATCH/transactions/complete/{transaction_id} endpoint should be implemented to allow both the poster and provider to confirm the completion of a job. ✓
-- the PATCH/transactions/complete/{transaction_id} should update the status of the transaction to "completed" and record the completion time in the database. ✓
+
 
 Frontend
-- the current user should be able to click the job in the activity/history tab to see the details of the job, including the status, start time, end time, and any relevant logs or output. ✓
-- the current user should also be able to click wether the job is completed or not, the poster and provider should both confirm completion, use the PATCH/transactions/complete/{transaction_id} endpoint to do this. ✓
-- Use the PATCH/transactions/complete/{transaction_id} endpoint to update the UI when a job is completed. ✓
+
 
 
