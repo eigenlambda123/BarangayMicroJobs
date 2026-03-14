@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import '../services/transaction_service.dart';
-import '../widgets/job_details_card.dart';
-import '../widgets/transaction_status_card.dart';
-import '../widgets/transaction_parties_card.dart';
-import '../widgets/transaction_action_buttons.dart';
-import '../utils/transaction_helpers.dart';
+import '../widgets/transaction_details_content.dart';
+import '../widgets/transaction_completion_fab.dart';
+import '../widgets/loading_state.dart';
+import '../widgets/error_state.dart';
 
 class TransactionDetailsScreen extends StatefulWidget {
   final String transactionId;
@@ -157,84 +156,33 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
     if (_isLoading) {
       return Scaffold(
         appBar: AppBar(title: const Text('Transaction Details')),
-        body: const Center(child: CircularProgressIndicator()),
+        body: const LoadingState(),
       );
     }
 
     if (_errorMessage != null) {
       return Scaffold(
         appBar: AppBar(title: const Text('Transaction Details')),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.error_outline, color: Colors.red, size: 48),
-              const SizedBox(height: 16),
-              Text(_errorMessage!, textAlign: TextAlign.center),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: _loadTransactionDetails,
-                child: const Text('Retry'),
-              ),
-            ],
-          ),
+        body: ErrorState(
+          errorMessage: _errorMessage!,
+          onRetry: _loadTransactionDetails,
         ),
       );
     }
 
     final transaction = _transactionData!;
-    final job = transaction['job'];
-    final provider = transaction['provider'];
-    final requester = transaction['requester'];
 
     return Scaffold(
       appBar: AppBar(title: const Text('Transaction Details')),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Job Details Card
-            JobDetailsCard(job: job),
-
-            const SizedBox(height: 16),
-
-            // Status and Timeline Card
-            TransactionStatusCard(transaction: transaction),
-
-            const SizedBox(height: 16),
-
-            // Parties Involved Card
-            TransactionPartiesCard(requester: requester, provider: provider),
-
-            const SizedBox(height: 24),
-
-            // Action Buttons - Only show if not completed
-            if (transaction['status'] != 'completed') ...[
-              TransactionActionButtons(
-                transaction: transaction,
-                onCompletePressed: _showCompleteConfirmation,
-                onCancelPressed: _showCancelConfirmation,
-              ),
-            ],
-          ],
-        ),
+      body: TransactionDetailsContent(
+        transaction: transaction,
+        onCompletePressed: _showCompleteConfirmation,
+        onCancelPressed: _showCancelConfirmation,
       ),
-      // Floating Action Button for completion
-      floatingActionButton:
-          TransactionHelpers.canShowCompletionActions(transaction)
-          ? FloatingActionButton.extended(
-              onPressed: _showCompleteConfirmation,
-              backgroundColor: Colors.green,
-              foregroundColor: Colors.white,
-              icon: const Icon(Icons.check_circle),
-              label: Text(
-                TransactionHelpers.getCompletionButtonText(transaction)
-                    .replaceAll('Mark Job as ', '')
-                    .replaceAll('Waiting for Other Party', 'Waiting...'),
-              ),
-            )
-          : null,
+      floatingActionButton: TransactionCompletionFab(
+        transaction: transaction,
+        onPressed: _showCompleteConfirmation,
+      ),
     );
   }
 }
