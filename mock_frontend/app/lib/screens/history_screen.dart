@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
-import '../widgets/activity_card.dart';
-import '../widgets/rating_dialog.dart';
+import '../widgets/posted_jobs_section.dart';
+import '../widgets/accepted_jobs_section.dart';
 import '../services/transaction_service.dart';
-import 'transaction_details_screen.dart';
 
 class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});
@@ -134,148 +133,11 @@ class _HistoryScreenState extends State<HistoryScreen> {
     );
   }
 
-  Widget _buildPostedJobsSection() {
-    final postedJobs = _transactions
-        .where((t) => t['is_requester'] as bool)
-        .toList();
+  void _handleCancel(String transactionId) =>
+      _showCancelConfirmation(transactionId);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'My Posted Jobs (${postedJobs.length})',
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 12),
-        if (postedJobs.isEmpty)
-          const Card(
-            child: Padding(
-              padding: EdgeInsets.all(16),
-              child: Text('No jobs posted yet'),
-            ),
-          )
-        else
-          ...postedJobs.map(
-            (transaction) => _buildTransactionCard(transaction),
-          ),
-      ],
-    );
-  }
-
-  Widget _buildAcceptedJobsSection() {
-    final acceptedJobs = _transactions
-        .where((t) => !(t['is_requester'] as bool))
-        .toList();
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Jobs I\'m Working On (${acceptedJobs.length})',
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 12),
-        if (acceptedJobs.isEmpty)
-          const Card(
-            child: Padding(
-              padding: EdgeInsets.all(16),
-              child: Text('No jobs accepted yet'),
-            ),
-          )
-        else
-          ...acceptedJobs.map(
-            (transaction) => _buildTransactionCard(transaction),
-          ),
-      ],
-    );
-  }
-
-  Widget _buildTransactionCard(Map<String, dynamic> transaction) {
-    final job = transaction['job'];
-    final provider = transaction['provider'];
-    final requester = transaction['requester'];
-    final isRequester = transaction['is_requester'] as bool;
-
-    // Determine worker name based on role
-    final workerName = isRequester ? provider['name'] : requester['name'];
-
-    // Format date
-    final acceptedAt = DateTime.parse(transaction['accepted_at']);
-    final dateString = _formatDate(acceptedAt);
-
-    // Determine status and color
-    final status = transaction['status'];
-    Color statusColor;
-    String statusText;
-    switch (status) {
-      case 'completed':
-        statusColor = Colors.green;
-        statusText = 'COMPLETED';
-        break;
-      case 'hired':
-        statusColor = Colors.blue;
-        statusText = 'IN PROGRESS';
-        break;
-      case 'applied':
-        statusColor = Colors.orange;
-        statusText = 'APPLIED';
-        break;
-      case 'canceled':
-        statusColor = Colors.red;
-        statusText = 'CANCELED';
-        break;
-      default:
-        statusColor = Colors.grey;
-        statusText = status.toUpperCase();
-    }
-
-    // Determine if cancel button should be shown
-    final canCancel = status == 'applied' || status == 'hired';
-    // Determine if complete button should be shown
-    final canComplete = status == 'hired';
-
-    return Column(
-      children: [
-        ActivityCard(
-          title: job['title'],
-          price: '₱${job['salary']}',
-          date: dateString,
-          status: statusText,
-          statusColor: statusColor,
-          worker: workerName,
-          onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) =>
-                    TransactionDetailsScreen(transactionId: transaction['id']),
-              ),
-            );
-          },
-          onCompletePressed: canComplete
-              ? () => _showCompleteConfirmation(transaction['id'])
-              : null,
-          onRatePressed: status == 'completed'
-              ? () {
-                  showDialog(
-                    context: context,
-                    builder: (context) => RatingDialog(
-                      transactionId: transaction['id'],
-                      providerName: isRequester
-                          ? provider['name']
-                          : requester['name'],
-                      jobTitle: job['title'],
-                    ),
-                  );
-                }
-              : null,
-          onCancelPressed: canCancel
-              ? () => _showCancelConfirmation(transaction['id'])
-              : null,
-        ),
-        const SizedBox(height: 12),
-      ],
-    );
-  }
+  void _handleComplete(String transactionId) =>
+      _showCompleteConfirmation(transactionId);
 
   @override
   Widget build(BuildContext context) {
@@ -324,29 +186,22 @@ class _HistoryScreenState extends State<HistoryScreen> {
             Expanded(
               child: ListView(
                 children: [
-                  _buildPostedJobsSection(),
+                  PostedJobsSection(
+                    transactions: _transactions,
+                    onCancelPressed: _handleCancel,
+                    onCompletePressed: _handleComplete,
+                  ),
                   const SizedBox(height: 24),
-                  _buildAcceptedJobsSection(),
+                  AcceptedJobsSection(
+                    transactions: _transactions,
+                    onCancelPressed: _handleCancel,
+                    onCompletePressed: _handleComplete,
+                  ),
                 ],
               ),
             ),
         ],
       ),
     );
-  }
-
-  String _formatDate(DateTime dateTime) {
-    final now = DateTime.now();
-    final difference = now.difference(dateTime);
-
-    if (difference.inDays == 0) {
-      return 'Today';
-    } else if (difference.inDays == 1) {
-      return 'Yesterday';
-    } else if (difference.inDays < 7) {
-      return '${difference.inDays} days ago';
-    } else {
-      return '${dateTime.month}/${dateTime.day}/${dateTime.year}';
-    }
   }
 }
