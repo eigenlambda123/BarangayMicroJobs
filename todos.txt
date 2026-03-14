@@ -1,9 +1,10 @@
 Backend
-- There should be an endpoint to get the jobs posted by a user and the jobs they have done. This will be used in the profile screen to show the number of jobs posted and done, and in the job activity/history screen to show the details of each job. ✓
-- There should be an endpoint that handle canceling a job. This will be used in the job activity/history screen to allow users to cancel a job that is still pending or in progress. ✓
+- the PATCH/transactions/complete/{transaction_id} endpoint should be implemented to allow both the poster and provider to confirm the completion of a job. ✓
+- the PATCH/transactions/complete/{transaction_id} should update the status of the transaction to "completed" and record the completion time in the database. ✓
 
 Frontend
+- the current user should be able to click the job in the activity/history tab to see the details of the job, including the status, start time, end time, and any relevant logs or output. ✓
+- the current user should also be able to click wether the job is completed or not, the poster and provider should both confirm completion, use the PATCH/transactions/complete/{transaction_id} endpoint to do this. ✓
+- Use the PATCH/transactions/complete/{transaction_id} endpoint to update the UI when a job is completed. ✓
 
-- Change the JobPost button ✓
-- In Profile Screen Jobs Done and Jobs Posted Should display ✓
-- In Job Activity/History, the user should be able to view the job details and see whats its status, who is working on it, etc. ✓
+

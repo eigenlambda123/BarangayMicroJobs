@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import '../widgets/activity_card.dart';
 import '../widgets/rating_dialog.dart';
 import '../services/transaction_service.dart';
+import 'transaction_details_screen.dart';
 
 class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});
@@ -63,6 +64,25 @@ class _HistoryScreenState extends State<HistoryScreen> {
     }
   }
 
+  Future<void> _completeTransaction(String transactionId) async {
+    try {
+      await TransactionService().completeTransaction(transactionId);
+      // Reload transactions to reflect the change
+      await _loadTransactions();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Completion marked successfully')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to mark as completed: $e')),
+        );
+      }
+    }
+  }
+
   void _showCancelConfirmation(String transactionId) {
     showDialog(
       context: context,
@@ -86,6 +106,174 @@ class _HistoryScreenState extends State<HistoryScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  void _showCompleteConfirmation(String transactionId) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Mark Job as Completed'),
+        content: const Text(
+          'Are you sure you want to mark this job as completed? Both parties need to confirm completion.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              _completeTransaction(transactionId);
+            },
+            child: const Text('Mark Complete'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPostedJobsSection() {
+    final postedJobs = _transactions
+        .where((t) => t['is_requester'] as bool)
+        .toList();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'My Posted Jobs (${postedJobs.length})',
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 12),
+        if (postedJobs.isEmpty)
+          const Card(
+            child: Padding(
+              padding: EdgeInsets.all(16),
+              child: Text('No jobs posted yet'),
+            ),
+          )
+        else
+          ...postedJobs.map(
+            (transaction) => _buildTransactionCard(transaction),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildAcceptedJobsSection() {
+    final acceptedJobs = _transactions
+        .where((t) => !(t['is_requester'] as bool))
+        .toList();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Jobs I\'m Working On (${acceptedJobs.length})',
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 12),
+        if (acceptedJobs.isEmpty)
+          const Card(
+            child: Padding(
+              padding: EdgeInsets.all(16),
+              child: Text('No jobs accepted yet'),
+            ),
+          )
+        else
+          ...acceptedJobs.map(
+            (transaction) => _buildTransactionCard(transaction),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildTransactionCard(Map<String, dynamic> transaction) {
+    final job = transaction['job'];
+    final provider = transaction['provider'];
+    final requester = transaction['requester'];
+    final isRequester = transaction['is_requester'] as bool;
+
+    // Determine worker name based on role
+    final workerName = isRequester ? provider['name'] : requester['name'];
+
+    // Format date
+    final acceptedAt = DateTime.parse(transaction['accepted_at']);
+    final dateString = _formatDate(acceptedAt);
+
+    // Determine status and color
+    final status = transaction['status'];
+    Color statusColor;
+    String statusText;
+    switch (status) {
+      case 'completed':
+        statusColor = Colors.green;
+        statusText = 'COMPLETED';
+        break;
+      case 'hired':
+        statusColor = Colors.blue;
+        statusText = 'IN PROGRESS';
+        break;
+      case 'applied':
+        statusColor = Colors.orange;
+        statusText = 'APPLIED';
+        break;
+      case 'canceled':
+        statusColor = Colors.red;
+        statusText = 'CANCELED';
+        break;
+      default:
+        statusColor = Colors.grey;
+        statusText = status.toUpperCase();
+    }
+
+    // Determine if cancel button should be shown
+    final canCancel = status == 'applied' || status == 'hired';
+    // Determine if complete button should be shown
+    final canComplete = status == 'hired';
+
+    return Column(
+      children: [
+        ActivityCard(
+          title: job['title'],
+          price: '₱${job['salary']}',
+          date: dateString,
+          status: statusText,
+          statusColor: statusColor,
+          worker: workerName,
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) =>
+                    TransactionDetailsScreen(transactionId: transaction['id']),
+              ),
+            );
+          },
+          onCompletePressed: canComplete
+              ? () => _showCompleteConfirmation(transaction['id'])
+              : null,
+          onRatePressed: status == 'completed'
+              ? () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => RatingDialog(
+                      transactionId: transaction['id'],
+                      providerName: isRequester
+                          ? provider['name']
+                          : requester['name'],
+                      jobTitle: job['title'],
+                    ),
+                  );
+                }
+              : null,
+          onCancelPressed: canCancel
+              ? () => _showCancelConfirmation(transaction['id'])
+              : null,
+        ),
+        const SizedBox(height: 12),
+      ],
     );
   }
 
@@ -134,84 +322,12 @@ class _HistoryScreenState extends State<HistoryScreen> {
             const Expanded(child: Center(child: Text('No transactions found')))
           else
             Expanded(
-              child: ListView.builder(
-                itemCount: _transactions.length,
-                itemBuilder: (context, index) {
-                  final transaction = _transactions[index];
-                  final job = transaction['job'];
-                  final provider = transaction['provider'];
-                  final requester = transaction['requester'];
-                  final isRequester = transaction['is_requester'] as bool;
-
-                  // Determine worker name based on role
-                  final workerName = isRequester
-                      ? provider['name']
-                      : requester['name'];
-
-                  // Format date
-                  final acceptedAt = DateTime.parse(transaction['accepted_at']);
-                  final dateString = _formatDate(acceptedAt);
-
-                  // Determine status and color
-                  final status = transaction['status'];
-                  Color statusColor;
-                  String statusText;
-                  switch (status) {
-                    case 'completed':
-                      statusColor = Colors.green;
-                      statusText = 'COMPLETED';
-                      break;
-                    case 'hired':
-                      statusColor = Colors.blue;
-                      statusText = 'IN PROGRESS';
-                      break;
-                    case 'applied':
-                      statusColor = Colors.orange;
-                      statusText = 'APPLIED';
-                      break;
-                    case 'canceled':
-                      statusColor = Colors.red;
-                      statusText = 'CANCELED';
-                      break;
-                    default:
-                      statusColor = Colors.grey;
-                      statusText = status.toUpperCase();
-                  }
-
-                  // Determine if cancel button should be shown
-                  final canCancel = status == 'applied' || status == 'hired';
-
-                  return Column(
-                    children: [
-                      ActivityCard(
-                        title: job['title'],
-                        price: '₱${job['salary']}',
-                        date: dateString,
-                        status: statusText,
-                        statusColor: statusColor,
-                        worker: workerName,
-                        onRatePressed: status == 'completed'
-                            ? () {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => RatingDialog(
-                                    transactionId: transaction['id'],
-                                    providerName: isRequester
-                                        ? provider['name']
-                                        : requester['name'],
-                                    jobTitle: job['title'],
-                                  ),
-                                );
-                              }
-                            : null,
-                        onCancelPressed: canCancel
-                            ? () => _showCancelConfirmation(transaction['id'])
-                            : null,
-                      ),
-                      const SizedBox(height: 12),
-                    ],
-                  );
-                },
+              child: ListView(
+                children: [
+                  _buildPostedJobsSection(),
+                  const SizedBox(height: 24),
+                  _buildAcceptedJobsSection(),
+                ],
               ),
             ),
         ],

@@ -125,11 +125,43 @@ class TransactionService {
       } else {
         final error = jsonDecode(response.body);
         throw Exception(
-          error['detail'] ?? 'Failed to cancel transaction: ${response.statusCode}',
+          error['detail'] ??
+              'Failed to cancel transaction: ${response.statusCode}',
         );
       }
     } catch (e) {
       throw Exception('Cancel transaction error: $e');
+    }
+  }
+
+  // Complete transaction: PATCH /transactions/complete/{transaction_id}
+  Future<Map<String, dynamic>> completeTransaction(String transactionId) async {
+    try {
+      final token = await AuthService().getToken();
+
+      if (token == null) {
+        throw Exception('Not authenticated. Please log in.');
+      }
+
+      final response = await http.patch(
+        Uri.parse('$baseUrl/transactions/complete/$transactionId'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else {
+        final error = jsonDecode(response.body);
+        throw Exception(
+          error['detail'] ??
+              'Failed to complete transaction: ${response.statusCode}',
+        );
+      }
+    } catch (e) {
+      throw Exception('Complete transaction error: $e');
     }
   }
 }

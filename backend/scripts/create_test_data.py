@@ -95,6 +95,24 @@ def apply_for_job(token, job_id):
     response = requests.post(f"{BASE_URL}/transactions/apply/{job_id}", headers=headers)
     return response.json()
 
+def hire_applicant(token, transaction_id):
+    """Hire an applicant for a job"""
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Content-Type": "application/json"
+    }
+    response = requests.patch(f"{BASE_URL}/transactions/hire/{transaction_id}", headers=headers)
+    return response.json()
+
+def get_user_transactions(token):
+    """Get user's transactions"""
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Content-Type": "application/json"
+    }
+    response = requests.get(f"{BASE_URL}/transactions/me", headers=headers)
+    return response.json()
+
 def main():
     print("=" * 60)
     print("Creating Test Data for BarangayMicroJobs")
@@ -169,6 +187,24 @@ def main():
         else:
             print("✗")
             print(f"    Error: {result}")
+    
+    # Hire applicants
+    print("\n[5] Hiring applicants...")
+    alice_token = user_tokens.get("09111111111")
+    if alice_token:
+        # Get Alice's transactions to find the one from Carol's application
+        transactions_result = get_user_transactions(alice_token)
+        if "transactions" in transactions_result:
+            for transaction in transactions_result["transactions"]:
+                if transaction["status"] == "applied":
+                    print(f"  - Hiring applicant for transaction {transaction['id']}...", end=" ")
+                    result = hire_applicant(alice_token, transaction['id'])
+                    if result.get("message") == "Provider hired successfully":
+                        print("✓")
+                        break
+                    else:
+                        print("✗")
+                        print(f"    Error: {result}")
     
     # Print summary
     print("\n" + "=" * 60)

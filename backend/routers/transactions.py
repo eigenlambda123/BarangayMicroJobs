@@ -50,6 +50,8 @@ def get_my_transactions(
             "accepted_at": transaction.accepted_at,
             "completed_at": transaction.completed_at,
             "is_requester": transaction.requester_id == current_user.id,
+            "requester_completed": transaction.requester_completed,
+            "provider_completed": transaction.provider_completed,
         })
 
     return {"transactions": result}
