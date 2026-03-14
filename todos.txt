@@ -1,9 +1,9 @@
 Backend
-- There should be an endpoint to get the jobs posted by a user and the jobs they have done. This will be used in the profile screen to show the number of jobs posted and done, and in the job activity/history screen to show the details of each job.
-- There should be an endpoint that handle canceling a job. This will be used in the job activity/history screen to allow users to cancel a job that is still pending or in progress.
+- There should be an endpoint to get the jobs posted by a user and the jobs they have done. This will be used in the profile screen to show the number of jobs posted and done, and in the job activity/history screen to show the details of each job. ✓
+- There should be an endpoint that handle canceling a job. This will be used in the job activity/history screen to allow users to cancel a job that is still pending or in progress. ✓
 
 Frontend
 
-- Change the JobPost button 
-- In Profile Screen Jobs Done and Jobs Posted Should display
-- In Job Activity/History, the user should be able to view the job details and see whats its status, who is working on it, etc.
+- Change the JobPost button ✓
+- In Profile Screen Jobs Done and Jobs Posted Should display ✓
+- In Job Activity/History, the user should be able to view the job details and see whats its status, who is working on it, etc. ✓

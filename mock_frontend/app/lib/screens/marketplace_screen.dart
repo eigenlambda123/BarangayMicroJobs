@@ -71,16 +71,25 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildHeaderSection(),
-                const SizedBox(height: 32),
-                _buildActivePostingsSection(context),
-              ],
+        Scaffold(
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              setState(() => _showPostJobModal = true);
+            },
+            child: const Icon(Icons.add),
+            tooltip: 'Post a Job',
+          ),
+          body: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildHeaderSection(),
+                  const SizedBox(height: 32),
+                  _buildActivePostingsSection(context),
+                ],
+              ),
             ),
           ),
         ),
@@ -135,19 +144,6 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                 fontSize: 10,
                 fontWeight: FontWeight.bold,
               ),
-            ),
-          ),
-          ElevatedButton.icon(
-            onPressed: () {
-              setState(() => _showPostJobModal = true);
-            },
-            icon: const Icon(Icons.add_circle_outline, size: 16),
-            label: const Text('POST JOB'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blue,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              textStyle: const TextStyle(fontSize: 12),
             ),
           ),
         ],

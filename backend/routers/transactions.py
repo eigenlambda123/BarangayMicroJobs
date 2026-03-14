@@ -188,6 +188,13 @@ def mark_job_as_completed(
         if job:
             job.status = "completed"
             session.add(job)
+            
+            # Update user stats
+            provider = session.get(User, transaction.provider_id)
+            if provider:
+                provider.jobs_done += 1
+                provider.total_earned += job.salary
+                session.add(provider)
         
         session.add(transaction)
         session.commit()
@@ -196,5 +203,43 @@ def mark_job_as_completed(
         session.add(transaction)
         session.commit()
         return {"message": "Completion marked by one party. Waiting for the other party to confirm.", "transaction_id": transaction.id}
+
+@router.patch("/cancel/{transaction_id}")
+def cancel_transaction(
+    transaction_id: UUID,
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user),
+):
+    # Get the transaction
+    transaction = session.get(JobTransaction, transaction_id)
+
+    # Ensure the transaction exists
+    if not transaction:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Transaction not found")
+
+    # Only the requester or provider can cancel the transaction
+    if transaction.requester_id != current_user.id and transaction.provider_id != current_user.id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only the requester or provider can cancel the transaction")
+
+    # Check if transaction is in a cancellable state (not completed)
+    if transaction.status == TransactionStatus.COMPLETED:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Cannot cancel a completed transaction")
+
+    # Update transaction status
+    transaction.status = TransactionStatus.CANCELED
+    
+    # Update job status back to open if it was assigned
+    job = session.get(JobPost, transaction.job_id)
+    if job and job.status == "assigned":
+        job.status = "open"
+        # Decrement applicants count since this application is being canceled
+        if job.applicants_count > 0:
+            job.applicants_count -= 1
+        session.add(job)
+
+    session.add(transaction)
+    session.commit()
+    
+    return {"message": "Transaction canceled successfully", "transaction_id": transaction.id}
 
 # TODO: Add endpoints for handling cancellations, Status of the job the provider applied for, etc.

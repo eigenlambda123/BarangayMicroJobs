@@ -44,6 +44,51 @@ class _HistoryScreenState extends State<HistoryScreen> {
     }
   }
 
+  Future<void> _cancelTransaction(String transactionId) async {
+    try {
+      await TransactionService().cancelTransaction(transactionId);
+      // Reload transactions to reflect the change
+      await _loadTransactions();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Transaction canceled successfully')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to cancel transaction: $e')),
+        );
+      }
+    }
+  }
+
+  void _showCancelConfirmation(String transactionId) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Cancel Transaction'),
+        content: const Text(
+          'Are you sure you want to cancel this transaction? This action cannot be undone.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('No'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              _cancelTransaction(transactionId);
+            },
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: const Text('Yes, Cancel'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -58,18 +103,18 @@ class _HistoryScreenState extends State<HistoryScreen> {
           ),
           const SizedBox(height: 16),
           if (_isLoading)
-            const Expanded(
-              child: Center(
-                child: CircularProgressIndicator(),
-              ),
-            )
+            const Expanded(child: Center(child: CircularProgressIndicator()))
           else if (_errorMessage != null)
             Expanded(
               child: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.error_outline, color: Colors.red, size: 48),
+                    const Icon(
+                      Icons.error_outline,
+                      color: Colors.red,
+                      size: 48,
+                    ),
                     const SizedBox(height: 16),
                     Text(
                       _errorMessage!,
@@ -86,11 +131,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
               ),
             )
           else if (_transactions.isEmpty)
-            const Expanded(
-              child: Center(
-                child: Text('No transactions found'),
-              ),
-            )
+            const Expanded(child: Center(child: Text('No transactions found')))
           else
             Expanded(
               child: ListView.builder(
@@ -103,7 +144,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   final isRequester = transaction['is_requester'] as bool;
 
                   // Determine worker name based on role
-                  final workerName = isRequester ? provider['name'] : requester['name'];
+                  final workerName = isRequester
+                      ? provider['name']
+                      : requester['name'];
 
                   // Format date
                   final acceptedAt = DateTime.parse(transaction['accepted_at']);
@@ -135,6 +178,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
                       statusText = status.toUpperCase();
                   }
 
+                  // Determine if cancel button should be shown
+                  final canCancel = status == 'applied' || status == 'hired';
+
                   return Column(
                     children: [
                       ActivityCard(
@@ -144,16 +190,23 @@ class _HistoryScreenState extends State<HistoryScreen> {
                         status: statusText,
                         statusColor: statusColor,
                         worker: workerName,
-                        onRatePressed: status == 'completed' ? () {
-                          showDialog(
-                            context: context,
-                            builder: (context) => RatingDialog(
-                              transactionId: transaction['id'],
-                              providerName: isRequester ? provider['name'] : requester['name'],
-                              jobTitle: job['title'],
-                            ),
-                          );
-                        } : null,
+                        onRatePressed: status == 'completed'
+                            ? () {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => RatingDialog(
+                                    transactionId: transaction['id'],
+                                    providerName: isRequester
+                                        ? provider['name']
+                                        : requester['name'],
+                                    jobTitle: job['title'],
+                                  ),
+                                );
+                              }
+                            : null,
+                        onCancelPressed: canCancel
+                            ? () => _showCancelConfirmation(transaction['id'])
+                            : null,
                       ),
                       const SizedBox(height: 12),
                     ],

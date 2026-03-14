@@ -102,4 +102,34 @@ class TransactionService {
       throw Exception('Get transactions error: $e');
     }
   }
+
+  // Cancel transaction: PATCH /transactions/cancel/{transaction_id}
+  Future<Map<String, dynamic>> cancelTransaction(String transactionId) async {
+    try {
+      final token = await AuthService().getToken();
+
+      if (token == null) {
+        throw Exception('Not authenticated. Please log in.');
+      }
+
+      final response = await http.patch(
+        Uri.parse('$baseUrl/transactions/cancel/$transactionId'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else {
+        final error = jsonDecode(response.body);
+        throw Exception(
+          error['detail'] ?? 'Failed to cancel transaction: ${response.statusCode}',
+        );
+      }
+    } catch (e) {
+      throw Exception('Cancel transaction error: $e');
+    }
+  }
 }

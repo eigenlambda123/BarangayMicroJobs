@@ -8,6 +8,7 @@ class ActivityCard extends StatelessWidget {
   final Color statusColor;
   final String worker;
   final VoidCallback? onRatePressed;
+  final VoidCallback? onCancelPressed;
 
   const ActivityCard({
     required this.title,
@@ -17,6 +18,7 @@ class ActivityCard extends StatelessWidget {
     required this.statusColor,
     required this.worker,
     this.onRatePressed,
+    this.onCancelPressed,
     super.key,
   });
 
@@ -102,10 +104,17 @@ class ActivityCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                TextButton(
-                  onPressed: onRatePressed,
-                  child: const Text('Rate Service'),
-                ),
+                if (onCancelPressed != null)
+                  TextButton(
+                    onPressed: onCancelPressed,
+                    style: TextButton.styleFrom(foregroundColor: Colors.red),
+                    child: const Text('Cancel'),
+                  ),
+                if (onRatePressed != null)
+                  TextButton(
+                    onPressed: onRatePressed,
+                    child: const Text('Rate Service'),
+                  ),
               ],
             ),
           ],
