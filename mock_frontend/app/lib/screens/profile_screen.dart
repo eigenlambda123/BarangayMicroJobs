@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
+import '../widgets/loading_state.dart';
+import '../widgets/error_state.dart';
+import '../widgets/profile_header.dart';
+import '../widgets/stats_card.dart';
+import '../widgets/logout_button.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -52,41 +57,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const CircularProgressIndicator(),
-            const SizedBox(height: 16),
-            Text(
-              'Loading profile...',
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-          ],
-        ),
-      );
+      return const LoadingState();
     }
 
     if (_errorMessage != null) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.error_outline, color: Colors.red, size: 48),
-            const SizedBox(height: 16),
-            Text(
-              _errorMessage!,
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _loadUserData,
-              child: const Text('Retry'),
-            ),
-          ],
-        ),
-      );
+      return ErrorState(errorMessage: _errorMessage!, onRetry: _loadUserData);
     }
 
     return Padding(
@@ -101,127 +76,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
               style: Theme.of(context).textTheme.headlineSmall,
             ),
             const SizedBox(height: 24),
-            _buildProfileHeader(),
+            ProfileHeader(userData: _userData),
             const SizedBox(height: 32),
             // _buildProviderToggle(),
             const SizedBox(height: 24),
-            _buildStatsCard(),
+            StatsCard(userData: _userData),
             const SizedBox(height: 24),
-            _buildLogoutButton(),
+            LogoutButton(onPressed: _handleLogout),
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildProfileHeader() {
-    final fullName = _userData?['full_name'] ?? 'User';
-    final rating = (_userData?['rating'] ?? 0.0).toStringAsFixed(1);
-    final reviewCount = _userData?['review_count'] ?? 0;
-
-    return Center(
-      child: Column(
-        children: [
-          const CircleAvatar(
-            radius: 50,
-            backgroundColor: Colors.blue,
-            child: Icon(Icons.person, size: 50, color: Colors.white),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            fullName,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-          ),
-          const SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.star, color: Colors.amber, size: 20),
-              const SizedBox(width: 4),
-              Text('$rating ($reviewCount reviews)'),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  // Widget _buildProviderToggle() {
-  //   return Card(
-  //     child: Padding(
-  //       padding: const EdgeInsets.all(16.0),
-  //       child: Row(
-  //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //         children: [
-  //           Column(
-  //             crossAxisAlignment: CrossAxisAlignment.start,
-  //             children: [
-  //               const Text(
-  //                 'Service Provider',
-  //                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-  //               ),
-  //               const SizedBox(height: 4),
-  //               Text(
-  //                 isServiceProvider ? 'Enabled' : 'Disabled',
-  //                 style: TextStyle(
-  //                   fontSize: 14,
-  //                   color: isServiceProvider ? Colors.green : Colors.grey,
-  //                 ),
-  //               ),
-  //             ],
-  //           ),
-  //           Switch(
-  //             value: isServiceProvider,
-  //             onChanged: (value) {
-  //               setState(() {
-  //                 isServiceProvider = value;
-  //               });
-  //             },
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
-
-  Widget _buildStatsCard() {
-    final jobsDone = _userData?['jobs_done'] ?? 0;
-    final jobsPosted = _userData?['jobs_posted'] ?? 0;
-    final totalEarned = (_userData?['total_earned'] ?? 0.0).toStringAsFixed(2);
-
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            _buildStatItem(jobsDone.toString(), 'Jobs Done'),
-            _buildStatItem(jobsPosted.toString(), 'Posted'),
-            _buildStatItem('₱$totalEarned', 'Earned'),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildStatItem(String value, String label) {
-    return Column(
-      children: [
-        Text(value, style: const TextStyle(fontWeight: FontWeight.bold)),
-        const SizedBox(height: 4),
-        Text(label),
-      ],
-    );
-  }
-
-  Widget _buildLogoutButton() {
-    return ElevatedButton(
-      onPressed: _handleLogout,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.red,
-        minimumSize: const Size.fromHeight(48),
-      ),
-      child: const Text('Logout'),
     );
   }
 }
