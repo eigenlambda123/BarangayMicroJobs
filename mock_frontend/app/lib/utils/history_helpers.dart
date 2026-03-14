@@ -1,4 +1,17 @@
-String formatDate(DateTime dateTime) {
+String formatDate(dynamic dateInput) {
+  DateTime dateTime;
+  if (dateInput is String) {
+    try {
+      dateTime = DateTime.parse(dateInput);
+    } catch (e) {
+      return 'Unknown date';
+    }
+  } else if (dateInput is DateTime) {
+    dateTime = dateInput;
+  } else {
+    return 'Unknown date';
+  }
+
   final now = DateTime.now();
   final difference = now.difference(dateTime);
 
