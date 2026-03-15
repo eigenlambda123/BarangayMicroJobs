@@ -3,7 +3,4 @@ Backend
 - The Location choices should be updated to reflect the actual locations in the barangay in Lucena City.
 
 Frontend
-- When current user already applied for the job, the job posted should not be shown in the list of available jobs. (This is already implemented in the backend, but we need to make sure the frontend reflects this correctly.)
-- We should remove the cancel button on the history screen because thats already handled in the transaction details screen. (This is already implemented in the frontend, but we need to make sure the cancel button is removed from the history screen.)
-- The No posted job and No accepted job UI sucks and should be improved. 
-- The rate service provider should be fixed cause its not properly implemented i think the api is not correct.
+- The No posted job and No accepted job UI sucks and should be improved.

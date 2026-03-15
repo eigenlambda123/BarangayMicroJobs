@@ -12,6 +12,21 @@ from utils.auth_utils import verify_password, create_access_token, get_current_u
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
+def build_user_profile(user: User) -> dict:
+    """Build user profile dictionary with stats"""
+    return {
+        "id": user.id,
+        "full_name": user.full_name,
+        "phone_number": user.phone_number,
+        "role": user.role,
+        "is_verified": user.is_verified,
+        "rating": user.rating,
+        "review_count": user.review_count,
+        "jobs_done": user.jobs_done,
+        "jobs_posted": user.jobs_posted,
+        "total_earned": user.total_earned,
+    }
+
 @router.post("/register")
 def register_user(user_data: RegisterRequest, session: Session = Depends(get_session)):
     # Check if the user already exist
@@ -65,18 +80,7 @@ def get_me(current_user: User = Depends(get_current_user)):
     """
     Get current authenticated user profile with stats
     """
-    return {
-        "id": current_user.id,
-        "full_name": current_user.full_name,
-        "phone_number": current_user.phone_number,
-        "role": current_user.role,
-        "is_verified": current_user.is_verified,
-        "rating": current_user.rating,
-        "review_count": current_user.review_count,
-        "jobs_done": current_user.jobs_done,
-        "jobs_posted": current_user.jobs_posted,
-        "total_earned": current_user.total_earned,
-    }
+    return build_user_profile(current_user)
 
 @router.get("/users/{user_id}")
 def get_user(user_id: UUID, session: Session = Depends(get_session)):
@@ -87,15 +91,4 @@ def get_user(user_id: UUID, session: Session = Depends(get_session)):
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
     
-    return {
-        "id": user.id,
-        "full_name": user.full_name,
-        "phone_number": user.phone_number,
-        "role": user.role,
-        "is_verified": user.is_verified,
-        "rating": user.rating,
-        "review_count": user.review_count,
-        "jobs_done": user.jobs_done,
-        "jobs_posted": user.jobs_posted,
-        "total_earned": user.total_earned,
-    }
+    return build_user_profile(user)

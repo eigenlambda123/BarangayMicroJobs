@@ -55,6 +55,21 @@ def rate_provider(
     session.commit()
     session.refresh(rating)
     
+    # Update provider's rating and review count
+    provider = session.get(User, transaction.provider_id)
+    if provider:
+        # Get all ratings for this provider
+        all_ratings = session.exec(
+            select(Rating).where(Rating.target_id == transaction.provider_id)
+        ).all()
+        
+        if all_ratings:
+            avg_score = sum(r.score for r in all_ratings) / len(all_ratings)
+            provider.rating = round(avg_score, 2)
+            provider.review_count = len(all_ratings)
+            session.add(provider)
+            session.commit()
+    
     return {
         "message": "Rating submitted successfully",
         "rating_id": rating.id,
