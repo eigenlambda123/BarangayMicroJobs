@@ -10,6 +10,18 @@ from utils.auth_utils import get_current_user
 
 router = APIRouter(prefix="/ratings", tags=["Ratings"])
 
+def calculate_provider_stats(session: Session, provider_id: UUID) -> tuple[float, int]:
+    """Calculate average rating and total ratings for a provider"""
+    ratings = session.exec(
+        select(Rating).where(Rating.target_id == provider_id)
+    ).all()
+    
+    if not ratings:
+        return 0.0, 0
+    
+    avg_score = sum(r.score for r in ratings) / len(ratings)
+    return round(avg_score, 2), len(ratings)
+
 
 @router.post("/{transaction_id}/rate")
 def rate_provider(
@@ -58,17 +70,11 @@ def rate_provider(
     # Update provider's rating and review count
     provider = session.get(User, transaction.provider_id)
     if provider:
-        # Get all ratings for this provider
-        all_ratings = session.exec(
-            select(Rating).where(Rating.target_id == transaction.provider_id)
-        ).all()
-        
-        if all_ratings:
-            avg_score = sum(r.score for r in all_ratings) / len(all_ratings)
-            provider.rating = round(avg_score, 2)
-            provider.review_count = len(all_ratings)
-            session.add(provider)
-            session.commit()
+        avg_rating, review_count = calculate_provider_stats(session, transaction.provider_id)
+        provider.rating = avg_rating
+        provider.review_count = review_count
+        session.add(provider)
+        session.commit()
     
     return {
         "message": "Rating submitted successfully",
@@ -87,20 +93,12 @@ def get_provider_rating(
         select(Rating).where(Rating.target_id == provider_id)
     ).all()
     
-    if not ratings:
-        return {
-            "provider_id": provider_id,
-            "average_rating": 0.0,
-            "total_ratings": 0,
-            "ratings": []
-        }
-    
-    avg_score = sum(r.score for r in ratings) / len(ratings)
+    avg_rating, total_ratings = calculate_provider_stats(session, provider_id)
     
     return {
         "provider_id": provider_id,
-        "average_rating": round(avg_score, 2),
-        "total_ratings": len(ratings),
+        "average_rating": avg_rating,
+        "total_ratings": total_ratings,
         "ratings": [
             {
                 "score": r.score,
