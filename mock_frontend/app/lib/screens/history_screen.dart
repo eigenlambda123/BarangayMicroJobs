@@ -44,25 +44,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
     }
   }
 
-  Future<void> _cancelTransaction(String transactionId) async {
-    try {
-      await TransactionService().cancelTransaction(transactionId);
-      // Reload transactions to reflect the change
-      await _loadTransactions();
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Transaction canceled successfully')),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to cancel transaction: $e')),
-        );
-      }
-    }
-  }
-
   Future<void> _completeTransaction(String transactionId) async {
     try {
       await TransactionService().completeTransaction(transactionId);
@@ -80,32 +61,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
         );
       }
     }
-  }
-
-  void _showCancelConfirmation(String transactionId) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Cancel Transaction'),
-        content: const Text(
-          'Are you sure you want to cancel this transaction? This action cannot be undone.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('No'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              _cancelTransaction(transactionId);
-            },
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('Yes, Cancel'),
-          ),
-        ],
-      ),
-    );
   }
 
   void _showCompleteConfirmation(String transactionId) {
@@ -132,9 +87,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
       ),
     );
   }
-
-  void _handleCancel(String transactionId) =>
-      _showCancelConfirmation(transactionId);
 
   void _handleComplete(String transactionId) =>
       _showCompleteConfirmation(transactionId);
@@ -188,13 +140,11 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 children: [
                   PostedJobsSection(
                     transactions: _transactions,
-                    onCancelPressed: _handleCancel,
                     onCompletePressed: _handleComplete,
                   ),
                   const SizedBox(height: 24),
                   AcceptedJobsSection(
                     transactions: _transactions,
-                    onCancelPressed: _handleCancel,
                     onCompletePressed: _handleComplete,
                   ),
                 ],

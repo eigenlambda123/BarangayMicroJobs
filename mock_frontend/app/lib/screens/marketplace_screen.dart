@@ -9,6 +9,7 @@ import '../widgets/jobs/available_jobs_section.dart';
 import '../widgets/jobs/post_job_overlay.dart';
 import '../services/job_service.dart';
 import '../services/auth_service.dart';
+import '../services/transaction_service.dart';
 
 class MarketplaceScreen extends StatefulWidget {
   const MarketplaceScreen({super.key});
@@ -20,6 +21,7 @@ class MarketplaceScreen extends StatefulWidget {
 class _MarketplaceScreenState extends State<MarketplaceScreen> {
   bool _showPostJobModal = false;
   List<Map<String, dynamic>> _jobs = [];
+  List<Map<String, dynamic>> _userTransactions = [];
   bool _isLoading = true;
   String? _errorMessage;
   String? _currentUserId;
@@ -29,6 +31,14 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
     super.initState();
     _loadCurrentUser();
     _loadJobs();
+    _loadUserTransactions();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Refresh transactions when returning to this screen
+    _loadUserTransactions();
   }
 
   Future<void> _loadCurrentUser() async {
@@ -65,11 +75,38 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
     }
   }
 
+  Future<void> _loadUserTransactions() async {
+    try {
+      final transactions = await TransactionService().getMyTransactions();
+      if (mounted) {
+        setState(() {
+          _userTransactions = transactions;
+        });
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('DEBUG: Failed to load user transactions: $e');
+      }
+      // Don't set error state for transactions, as it's not critical for the main functionality
+    }
+  }
+
   List<Map<String, dynamic>> get _myJobs =>
       _jobs.where((job) => job['poster_id'] == _currentUserId).toList();
 
-  List<Map<String, dynamic>> get _availableJobs =>
-      _jobs.where((job) => job['poster_id'] != _currentUserId).toList();
+  List<Map<String, dynamic>> get _availableJobs {
+    // Get job IDs that the user has already applied for
+    final appliedJobIds = _userTransactions
+        .where((transaction) => !(transaction['is_requester'] as bool))
+        .map((transaction) => transaction['job']['id'])
+        .toSet();
+
+    return _jobs
+        .where((job) =>
+            job['poster_id'] != _currentUserId && // Not posted by current user
+            !appliedJobIds.contains(job['id'])) // Not already applied for
+        .toList();
+  }
 
   @override
   Widget build(BuildContext context) {

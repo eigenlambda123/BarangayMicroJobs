@@ -29,6 +29,9 @@ def get_my_transactions(
         provider = session.get(User, transaction.provider_id)
         requester = session.get(User, transaction.requester_id)
         
+        if job is None or provider is None or requester is None:
+            continue
+        
         result.append({
             "id": transaction.id,
             "job": {

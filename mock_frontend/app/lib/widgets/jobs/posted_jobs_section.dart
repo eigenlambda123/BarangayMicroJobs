@@ -3,13 +3,11 @@ import '../../widgets/transactions/transaction_history_card.dart';
 
 class PostedJobsSection extends StatelessWidget {
   final List<Map<String, dynamic>> transactions;
-  final Function(String) onCancelPressed;
   final Function(String) onCompletePressed;
 
   const PostedJobsSection({
     super.key,
     required this.transactions,
-    required this.onCancelPressed,
     required this.onCompletePressed,
   });
 
@@ -37,7 +35,6 @@ class PostedJobsSection extends StatelessWidget {
         else
           ...postedJobs.map((transaction) {
             final status = transaction['status'];
-            final canCancel = status == 'applied' || status == 'hired';
             final canComplete = status == 'hired';
 
             return TransactionHistoryCard(
@@ -45,9 +42,7 @@ class PostedJobsSection extends StatelessWidget {
               onCompletePressed: canComplete
                   ? () => onCompletePressed(transaction['id'])
                   : null,
-              onCancelPressed: canCancel
-                  ? () => onCancelPressed(transaction['id'])
-                  : null,
+              onCancelPressed: null, // Cancel handled in transaction details screen
             );
           }),
       ],

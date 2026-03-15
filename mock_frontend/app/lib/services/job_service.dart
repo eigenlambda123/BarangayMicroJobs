@@ -67,9 +67,15 @@ class JobService {
   // Get all jobs: GET /jobs/
   Future<List<Map<String, dynamic>>> getAllJobs() async {
     try {
+      final token = await AuthService().getToken();
+      final headers = {
+        'Content-Type': 'application/json',
+        if (token != null) 'Authorization': 'Bearer $token',
+      };
+
       final response = await http.get(
         Uri.parse('$baseUrl/jobs/'),
-        headers: {'Content-Type': 'application/json'},
+        headers: headers,
       );
 
       if (response.statusCode == 200) {
