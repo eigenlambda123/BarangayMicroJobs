@@ -5,3 +5,12 @@ Backend
 Frontend
 - The rate service should not be shown to the uder if they are the provider, the job poster are the one who should be able to rate only (done)
 - After the job poster rate the provider, the job posted should be removed from the job posted and history screen (done)
+
+Problems:
+- Customer support of requesting past transaction history
+- After the job is done it will go to the history of both poster and worker
+- Have a Star rating when confirming the job is done
+- When choosing a worker what is shown is their name and they're rating
+- Add a way to have a profile picture in the profile
+- Instead of url only add the option of using the camera or photo gallery
+- Pagination should be considered for both market and history screen

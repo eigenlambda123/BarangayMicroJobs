@@ -35,6 +35,6 @@ To keep your local code in sync with the team:
    ```
 5. **Run the FastAPI server:**
    ```bash
-    uvicorn main:app --reload
+    uvicorn app.main:app --reload
     ```
 
