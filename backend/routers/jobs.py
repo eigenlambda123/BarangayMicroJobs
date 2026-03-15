@@ -11,6 +11,27 @@ from utils.auth_utils import get_current_user
 
 router = APIRouter(prefix="/jobs", tags=["Jobs"])
 
+def get_jobs_by_poster(session: Session, poster_id: UUID) -> List[JobPost]:
+    """Get all jobs posted by a specific user"""
+    statement = select(JobPost).where(JobPost.poster_id == poster_id)
+    return session.exec(statement).all()
+
+def get_completed_jobs_by_provider(session: Session, provider_id: UUID) -> List[JobPost]:
+    """Get all completed jobs where user was the provider"""
+    completed_transactions = session.exec(
+        select(JobTransaction).where(
+            JobTransaction.provider_id == provider_id,
+            JobTransaction.status == TransactionStatus.COMPLETED
+        )
+    ).all()
+    
+    jobs = []
+    for transaction in completed_transactions:
+        job = session.get(JobPost, transaction.job_id)
+        if job:
+            jobs.append(job)
+    return jobs
+
 @router.post("/create", status_code=status.HTTP_201_CREATED)
 def create_job_post(
     job: JobCreateRequest,
@@ -83,22 +104,10 @@ def get_user_jobs(
     current_user: User = Depends(get_current_user)
 ):
     # Get jobs posted by the user
-    posted_jobs_statement = select(JobPost).where(JobPost.poster_id == user_id)
-    posted_jobs = session.exec(posted_jobs_statement).all()
+    posted_jobs = get_jobs_by_poster(session, user_id)
     
     # Get jobs done by the user (completed transactions where user is provider)
-    completed_transactions_statement = select(JobTransaction).where(
-        JobTransaction.provider_id == user_id,
-        JobTransaction.status == TransactionStatus.COMPLETED
-    )
-    completed_transactions = session.exec(completed_transactions_statement).all()
-    
-    # Get the job details for completed transactions
-    jobs_done = []
-    for transaction in completed_transactions:
-        job = session.get(JobPost, transaction.job_id)
-        if job:
-            jobs_done.append(job)
+    jobs_done = get_completed_jobs_by_provider(session, user_id)
     
     return {
         "posted_jobs": posted_jobs,
