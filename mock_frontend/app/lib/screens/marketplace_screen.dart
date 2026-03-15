@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
-import '../widgets/jobs/marketplace_header.dart';
+import '../widgets/jobs/headers/marketplace_header.dart';
 import '../widgets/common/loading_state.dart';
 import '../widgets/common/error_state.dart';
 import '../widgets/common/empty_state.dart';
-import '../widgets/jobs/my_jobs_section.dart';
-import '../widgets/jobs/available_jobs_section.dart';
-import '../widgets/jobs/post_job_overlay.dart';
+import '../widgets/jobs/sections/my_jobs_section.dart';
+import '../widgets/jobs/sections/available_jobs_section.dart';
+import '../widgets/jobs/actions/post_job_overlay.dart';
 import '../services/job_service.dart';
 import '../services/auth_service.dart';
 import '../services/transaction_service.dart';
@@ -102,9 +102,12 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
         .toSet();
 
     return _jobs
-        .where((job) =>
-            job['poster_id'] != _currentUserId && // Not posted by current user
-            !appliedJobIds.contains(job['id'])) // Not already applied for
+        .where(
+          (job) =>
+              job['poster_id'] !=
+                  _currentUserId && // Not posted by current user
+              !appliedJobIds.contains(job['id']),
+        ) // Not already applied for
         .toList();
   }
 

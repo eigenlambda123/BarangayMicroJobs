@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../jobs/activity_card.dart';
+import '../jobs/cards/activity_card.dart';
 import '../common/rating_dialog.dart';
 import '../../screens/transaction_details_screen.dart';
 import '../../utils/history_helpers.dart';

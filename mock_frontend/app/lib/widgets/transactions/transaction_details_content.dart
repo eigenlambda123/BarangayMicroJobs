@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../jobs/job_details_card.dart';
+import '../jobs/cards/job_details_card.dart';
 import 'transaction_status_card.dart';
 import 'transaction_parties_card.dart';
 import 'transaction_action_buttons.dart';

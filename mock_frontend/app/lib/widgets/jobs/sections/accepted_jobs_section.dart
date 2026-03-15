@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import '../../widgets/transactions/transaction_history_card.dart';
+import '../../transactions/transaction_history_card.dart';
 
-class PostedJobsSection extends StatelessWidget {
+class AcceptedJobsSection extends StatelessWidget {
   final List<Map<String, dynamic>> transactions;
   final Function(String) onCompletePressed;
 
-  const PostedJobsSection({
+  const AcceptedJobsSection({
     super.key,
     required this.transactions,
     required this.onCompletePressed,
@@ -13,32 +13,32 @@ class PostedJobsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final postedJobs = transactions
-        .where((t) => t['is_requester'] as bool)
+    final acceptedJobs = transactions
+        .where((t) => !(t['is_requester'] as bool))
         .toList();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'My Posted Jobs (${postedJobs.length})',
+          'Jobs I\'m Working On (${acceptedJobs.length})',
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 12),
-        if (postedJobs.isEmpty)
+        if (acceptedJobs.isEmpty)
           Card(
             child: Padding(
               padding: const EdgeInsets.all(24),
               child: Column(
                 children: [
                   Icon(
-                    Icons.work_outline,
+                    Icons.assignment_turned_in_outlined,
                     size: 48,
                     color: Colors.grey[400],
                   ),
                   const SizedBox(height: 16),
                   const Text(
-                    'No jobs posted yet',
+                    'No jobs accepted yet',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w500,
@@ -47,11 +47,8 @@ class PostedJobsSection extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Share your skills and post a job to get started',
-                    style: TextStyle(
-                      color: Colors.grey[600],
-                      fontSize: 14,
-                    ),
+                    'Browse available jobs and apply to start working',
+                    style: TextStyle(color: Colors.grey[600], fontSize: 14),
                     textAlign: TextAlign.center,
                   ),
                 ],
@@ -59,7 +56,7 @@ class PostedJobsSection extends StatelessWidget {
             ),
           )
         else
-          ...postedJobs.map((transaction) {
+          ...acceptedJobs.map((transaction) {
             final status = transaction['status'];
             final canComplete = status == 'hired';
 
@@ -68,7 +65,8 @@ class PostedJobsSection extends StatelessWidget {
               onCompletePressed: canComplete
                   ? () => onCompletePressed(transaction['id'])
                   : null,
-              onCancelPressed: null, // Cancel handled in transaction details screen
+              onCancelPressed:
+                  null, // Cancel handled in transaction details screen
             );
           }),
       ],

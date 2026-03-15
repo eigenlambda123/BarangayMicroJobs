@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'posting_card.dart';
-import '../../screens/job_details_screen.dart';
-import '../../utils/history_helpers.dart';
+import '../cards/posting_card.dart';
+import '../../../screens/job_details_screen.dart';
+import '../../../utils/history_helpers.dart';
 
 class AvailableJobsSection extends StatelessWidget {
   final List<Map<String, dynamic>> jobs;
