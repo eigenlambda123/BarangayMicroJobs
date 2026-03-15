@@ -3,4 +3,5 @@ Backend
 - The Location choices should be updated to reflect the actual locations in the barangay in Lucena City.
 
 Frontend
-- The No posted job and No accepted job UI sucks and should be improved.
+- The rate service should not be shown to the uder if they are the provider, the job poster are the one who should be able to rate only
+- After the job poster rate the provider, the job posted should be removed from the job posted and history screen

@@ -259,5 +259,3 @@ def cancel_transaction(
     session.commit()
     
     return {"message": "Transaction canceled successfully", "transaction_id": transaction.id}
-
-# TODO: Add endpoints for handling cancellations, Status of the job the provider applied for, etc.
