@@ -12,6 +12,54 @@ from utils.auth_utils import get_current_user
 
 router = APIRouter(prefix="/transactions", tags=["Transactions"])
 
+def get_job_safe(session: Session, job_id: UUID) -> JobPost:
+    """Safely get job by ID, raises 404 if not found"""
+    job = session.get(JobPost, job_id)
+    if not job:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Job not found")
+    return job
+
+def get_user_safe(session: Session, user_id: UUID) -> User:
+    """Safely get user by ID, raises 404 if not found"""
+    user = session.get(User, user_id)
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+    return user
+
+def get_transaction_safe(session: Session, transaction_id: UUID) -> JobTransaction:
+    """Safely get transaction by ID, raises 404 if not found"""
+    transaction = session.get(JobTransaction, transaction_id)
+    if not transaction:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Transaction not found")
+    return transaction
+
+def build_transaction_data(transaction: JobTransaction, job: JobPost, provider: User, requester: User, current_user_id: UUID) -> dict:
+    """Build transaction data dictionary"""
+    return {
+        "id": transaction.id,
+        "job": {
+            "id": job.id,
+            "title": job.title,
+            "salary": job.salary,
+            "location": job.location,
+            "status": job.status,
+        },
+        "provider": {
+            "id": provider.id,
+            "name": provider.full_name,
+        },
+        "requester": {
+            "id": requester.id,
+            "name": requester.full_name,
+        },
+        "status": transaction.status.value,
+        "accepted_at": transaction.accepted_at,
+        "completed_at": transaction.completed_at,
+        "is_requester": transaction.requester_id == current_user_id,
+        "requester_completed": transaction.requester_completed,
+        "provider_completed": transaction.provider_completed,
+    }
+
 @router.get("/me")
 def get_my_transactions(
     session: Session = Depends(get_session),
@@ -32,30 +80,7 @@ def get_my_transactions(
         if job is None or provider is None or requester is None:
             continue
         
-        result.append({
-            "id": transaction.id,
-            "job": {
-                "id": job.id,
-                "title": job.title,
-                "salary": job.salary,
-                "location": job.location,
-                "status": job.status,
-            },
-            "provider": {
-                "id": provider.id,
-                "name": provider.full_name,
-            },
-            "requester": {
-                "id": requester.id,
-                "name": requester.full_name,
-            },
-            "status": transaction.status.value,
-            "accepted_at": transaction.accepted_at,
-            "completed_at": transaction.completed_at,
-            "is_requester": transaction.requester_id == current_user.id,
-            "requester_completed": transaction.requester_completed,
-            "provider_completed": transaction.provider_completed,
-        })
+        result.append(build_transaction_data(transaction, job, provider, requester, current_user.id))
 
     return {"transactions": result}
 
@@ -66,9 +91,7 @@ def apply_for_job(
     current_user: User = Depends(get_current_user),
 ):
     # Get the job post
-    job = session.get(JobPost, job_id)
-    if not job:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Job not available")
+    job = get_job_safe(session, job_id)
 
     # Check if user is trying to apply to their own job
     if job.poster_id == current_user.id:
@@ -116,15 +139,15 @@ def hire_provider(
     current_user: User = Depends(get_current_user),
 ):
     # Get the transaction
-    transaction = session.get(JobTransaction, transaction_id)
+    transaction = get_transaction_safe(session, transaction_id)
 
     # Ensure the transaction exists and belongs to the current user as requester
-    if not transaction or transaction.requester_id != current_user.id:
+    if transaction.requester_id != current_user.id:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Transaction not found")
     
     # Udpate statuses
     transaction.status = TransactionStatus.HIRED
-    job = session.get(JobPost, transaction.job_id)
+    job = get_job_safe(session, transaction.job_id)
     job.status = "assigned"
 
     # TODO: Reject other applications for the same job
@@ -141,8 +164,8 @@ def get_applicants(
     current_user: User = Depends(get_current_user),
 ):
     # Get the job post
-    job = session.get(JobPost, job_id)
-    if not job or job.poster_id != current_user.id:
+    job = get_job_safe(session, job_id)
+    if job.poster_id != current_user.id:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Job not found")
 
     # Get all transactions for the job
@@ -151,7 +174,7 @@ def get_applicants(
 
     applicants = []
     for transaction in transactions:
-        provider = session.get(User, transaction.provider_id)
+        provider = get_user_safe(session, transaction.provider_id)
         applicants.append(ApplicantsInfo(
             id=provider.id,
             name=provider.full_name,
@@ -168,11 +191,7 @@ def mark_job_as_completed(
     current_user: User = Depends(get_current_user),
 ):
     # Get the transaction
-    transaction = session.get(JobTransaction, transaction_id)
-
-    # Ensure the transaction exists
-    if not transaction:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Transaction not found")
+    transaction = get_transaction_safe(session, transaction_id)
 
     # Only the requester or provider can mark the job as completed
     if transaction.requester_id != current_user.id and transaction.provider_id != current_user.id:
@@ -189,17 +208,15 @@ def mark_job_as_completed(
         transaction.status = TransactionStatus.COMPLETED
         transaction.completed_at = datetime.utcnow()
         
-        job = session.get(JobPost, transaction.job_id)
-        if job:
-            job.status = "completed"
-            session.add(job)
-            
-            # Update user stats
-            provider = session.get(User, transaction.provider_id)
-            if provider:
-                provider.jobs_done += 1
-                provider.total_earned += job.salary
-                session.add(provider)
+        job = get_job_safe(session, transaction.job_id)
+        job.status = "completed"
+        session.add(job)
+        
+        # Update user stats
+        provider = get_user_safe(session, transaction.provider_id)
+        provider.jobs_done += 1
+        provider.total_earned += job.salary
+        session.add(provider)
         
         session.add(transaction)
         session.commit()
@@ -216,11 +233,7 @@ def cancel_transaction(
     current_user: User = Depends(get_current_user),
 ):
     # Get the transaction
-    transaction = session.get(JobTransaction, transaction_id)
-
-    # Ensure the transaction exists
-    if not transaction:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Transaction not found")
+    transaction = get_transaction_safe(session, transaction_id)
 
     # Only the requester or provider can cancel the transaction
     if transaction.requester_id != current_user.id and transaction.provider_id != current_user.id:
@@ -234,8 +247,8 @@ def cancel_transaction(
     transaction.status = TransactionStatus.CANCELED
     
     # Update job status back to open if it was assigned
-    job = session.get(JobPost, transaction.job_id)
-    if job and job.status == "assigned":
+    job = get_job_safe(session, transaction.job_id)
+    if job.status == "assigned":
         job.status = "open"
         # Decrement applicants count since this application is being canceled
         if job.applicants_count > 0:
