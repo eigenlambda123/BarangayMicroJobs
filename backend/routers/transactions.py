@@ -33,6 +33,16 @@ def get_transaction_safe(session: Session, transaction_id: UUID) -> JobTransacti
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Transaction not found")
     return transaction
 
+def has_requester_rated(session: Session, transaction_id: UUID, requester_id: UUID) -> bool:
+    """Check if the requester has already rated this transaction"""
+    rating = session.exec(
+        select(Rating).where(
+            Rating.transaction_id == transaction_id,
+            Rating.rater_id == requester_id
+        )
+    ).first()
+    return rating is not None
+
 def build_transaction_data(transaction: JobTransaction, job: JobPost, provider: User, requester: User, current_user_id: UUID) -> dict:
     """Build transaction data dictionary"""
     return {
@@ -78,6 +88,10 @@ def get_my_transactions(
         requester = session.get(User, transaction.requester_id)
         
         if job is None or provider is None or requester is None:
+            continue
+        
+        # Skip transactions where the requester has already rated (completed jobs that are rated)
+        if transaction.requester_id == current_user.id and has_requester_rated(session, transaction.id, current_user.id):
             continue
         
         result.append(build_transaction_data(transaction, job, provider, requester, current_user.id))

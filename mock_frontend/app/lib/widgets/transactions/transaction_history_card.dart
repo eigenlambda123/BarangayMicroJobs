@@ -74,7 +74,7 @@ class TransactionHistoryCard extends StatelessWidget {
             );
           },
           onCompletePressed: onCompletePressed,
-          onRatePressed: status == 'completed'
+          onRatePressed: (status == 'completed' && isRequester)
               ? () {
                   showDialog(
                     context: context,
