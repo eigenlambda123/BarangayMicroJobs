@@ -79,25 +79,49 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 40),
-                const LoginHeader(),
-                const SizedBox(height: 48),
-                PhoneField(controller: _phoneController),
-                const SizedBox(height: 20),
-                PasswordField(controller: _passwordController),
-                const SizedBox(height: 32),
-                LoginButton(isLoading: _isLoading, onPressed: _handleLogin),
-                const SizedBox(height: 16),
-                const RegisterLink(),
-              ],
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              colorScheme.secondary.withValues(alpha: 0.12),
+              colorScheme.surface,
+              const Color(0xFFF8F2E9),
+            ],
+          ),
+        ),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.78),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: colorScheme.primary.withValues(alpha: 0.16),
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 8),
+                    const LoginHeader(),
+                    const SizedBox(height: 36),
+                    PhoneField(controller: _phoneController),
+                    const SizedBox(height: 16),
+                    PasswordField(controller: _passwordController),
+                    const SizedBox(height: 28),
+                    LoginButton(isLoading: _isLoading, onPressed: _handleLogin),
+                    const SizedBox(height: 12),
+                    const RegisterLink(),
+                  ],
+                ),
+              ),
             ),
           ),
         ),

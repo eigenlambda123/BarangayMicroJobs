@@ -28,11 +28,14 @@ class ActivityCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Card(
+      margin: const EdgeInsets.symmetric(vertical: 4),
       child: InkWell(
         onTap: onTap,
+        borderRadius: BorderRadius.circular(18),
         child: Padding(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(14),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -44,17 +47,19 @@ class ActivityCard extends StatelessWidget {
                     children: [
                       Text(
                         title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
+                          fontWeight: FontWeight.w800,
+                          fontSize: 15,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         date,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 11,
-                          color: Colors.grey,
+                          color: colorScheme.onSurface.withValues(alpha: 0.56),
                         ),
                       ),
                     ],
@@ -65,14 +70,15 @@ class ActivityCard extends StatelessWidget {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: statusColor.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(4),
+                      color: statusColor.withValues(alpha: 0.14),
+                      borderRadius: BorderRadius.circular(999),
                     ),
                     child: Text(
                       price,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w800,
                         fontSize: 12,
+                        color: colorScheme.onSurface,
                       ),
                     ),
                   ),
@@ -84,9 +90,10 @@ class ActivityCard extends StatelessWidget {
                 children: [
                   Text(
                     worker,
-                    style: const TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      color: colorScheme.onSurface.withValues(alpha: 0.74),
                     ),
                   ),
                   Container(
@@ -96,7 +103,7 @@ class ActivityCard extends StatelessWidget {
                     ),
                     decoration: BoxDecoration(
                       color: statusColor,
-                      borderRadius: BorderRadius.circular(4),
+                      borderRadius: BorderRadius.circular(999),
                     ),
                     child: Text(
                       status,
@@ -116,7 +123,7 @@ class ActivityCard extends StatelessWidget {
                   if (onCompletePressed != null)
                     TextButton(
                       onPressed: onCompletePressed,
-                      child: const Text('Mark Complete'),
+                      child: const Text('Complete'),
                     ),
                   if (onCancelPressed != null)
                     TextButton(

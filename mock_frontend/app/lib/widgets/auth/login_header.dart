@@ -5,14 +5,17 @@ class LoginHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
           decoration: BoxDecoration(
-            color: Colors.blue,
-            borderRadius: BorderRadius.circular(20),
+            gradient: LinearGradient(
+              colors: [colorScheme.primary, colorScheme.secondary],
+            ),
+            borderRadius: BorderRadius.circular(999),
           ),
           child: const Text(
             'BMJ',
@@ -26,12 +29,15 @@ class LoginHeader extends StatelessWidget {
         const SizedBox(height: 24),
         const Text(
           'Log In',
-          style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
         Text(
           'Welcome back to Barangay Microjobs',
-          style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
+          style: TextStyle(
+            fontSize: 15,
+            color: colorScheme.onSurface.withValues(alpha: 0.68),
+          ),
         ),
       ],
     );
