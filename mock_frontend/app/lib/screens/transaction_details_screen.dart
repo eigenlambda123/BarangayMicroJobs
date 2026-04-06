@@ -119,7 +119,7 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
 
   void _showRatingDialog() {
     final transaction = _transactionData!;
-    final providerName = transaction['provider']['full_name'] ?? 'Provider';
+    final providerName = transaction['provider']['name'] ?? 'Provider';
 
     showDialog(
       context: context,

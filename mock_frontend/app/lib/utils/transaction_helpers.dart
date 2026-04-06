@@ -36,14 +36,26 @@ class TransactionHelpers {
 
   /// Check if transaction can show completion actions
   static bool canShowCompletionActions(Map<String, dynamic> transaction) {
-    return transaction['status'] == 'hired' ||
-        transaction['status'] == 'applied';
+    if (transaction['status'] != 'hired') {
+      return false;
+    }
+
+    final isRequester = transaction['is_requester'] as bool;
+    final requesterCompleted =
+        transaction['requester_completed'] as bool? ?? false;
+    final providerCompleted =
+        transaction['provider_completed'] as bool? ?? false;
+
+    if (isRequester) {
+      return providerCompleted && !requesterCompleted;
+    }
+
+    return !providerCompleted;
   }
 
   /// Check if transaction can show completion status
   static bool canShowCompletionStatus(Map<String, dynamic> transaction) {
-    return transaction['status'] == 'hired' ||
-        transaction['status'] == 'applied';
+    return transaction['status'] == 'hired';
   }
 }
 

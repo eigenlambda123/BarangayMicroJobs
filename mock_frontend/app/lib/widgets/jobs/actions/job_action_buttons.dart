@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class JobActionButtons extends StatelessWidget {
   final bool isJobPoster;
   final bool hasApplied;
+  final bool isJobOpen;
   final bool isLoading;
   final VoidCallback onApplyPressed;
   final VoidCallback onDeletePressed;
@@ -11,6 +12,7 @@ class JobActionButtons extends StatelessWidget {
     super.key,
     required this.isJobPoster,
     required this.hasApplied,
+    required this.isJobOpen,
     required this.isLoading,
     required this.onApplyPressed,
     required this.onDeletePressed,
@@ -26,6 +28,8 @@ class JobActionButtons extends StatelessWidget {
             child: ElevatedButton.icon(
               onPressed: hasApplied
                   ? null
+                  : (!isJobOpen)
+                  ? null
                   : (isLoading ? null : onApplyPressed),
               icon: isLoading
                   ? const SizedBox(
@@ -37,6 +41,8 @@ class JobActionButtons extends StatelessWidget {
               label: Text(
                 hasApplied
                     ? 'Applied'
+                    : (!isJobOpen)
+                    ? 'Job Not Open'
                     : (isLoading ? 'Applying...' : 'Apply for Job'),
               ),
               style: hasApplied

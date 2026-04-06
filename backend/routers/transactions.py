@@ -114,6 +114,12 @@ def apply_for_job(
             detail="You cannot apply to your own job"
         )
 
+    if job.status != "open":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="This job is no longer open for applications"
+        )
+
     # Check if user has already applied to this job
     existing_application = session.exec(
         select(JobTransaction).where(
@@ -158,13 +164,32 @@ def hire_provider(
     # Ensure the transaction exists and belongs to the current user as requester
     if transaction.requester_id != current_user.id:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Transaction not found")
+
+    if transaction.status != TransactionStatus.APPLIED:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Only pending applications can be hired")
     
-    # Udpate statuses
-    transaction.status = TransactionStatus.HIRED
     job = get_job_safe(session, transaction.job_id)
+    if job.status != "open":
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="This job already has a hired provider")
+
+    # Update selected applicant as hired
+    transaction.status = TransactionStatus.HIRED
     job.status = "assigned"
 
-    # TODO: Reject other applications for the same job
+    # Reject other pending applications for the same job
+    other_transactions = session.exec(
+        select(JobTransaction).where(
+            JobTransaction.job_id == transaction.job_id,
+            JobTransaction.id != transaction.id,
+            JobTransaction.status == TransactionStatus.APPLIED
+        )
+    ).all()
+    for other in other_transactions:
+        other.status = TransactionStatus.CANCELED
+        session.add(other)
+
+    # Only one active hired provider remains for this job
+    job.applicants_count = 1
 
     session.add(transaction)
     session.add(job)
@@ -182,18 +207,24 @@ def get_applicants(
     if job.poster_id != current_user.id:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Job not found")
 
-    # Get all transactions for the job
-    statement = select(JobTransaction).where(JobTransaction.job_id == job_id)
+    # Get all non-canceled transactions for the job
+    statement = select(JobTransaction).where(
+        JobTransaction.job_id == job_id,
+        JobTransaction.status != TransactionStatus.CANCELED,
+    )
     transactions = session.exec(statement).all()
 
     applicants = []
     for transaction in transactions:
         provider = get_user_safe(session, transaction.provider_id)
         applicants.append(ApplicantsInfo(
+            transaction_id=transaction.id,
             id=provider.id,
             name=provider.full_name,
-            rating=0,  # TODO: Calculate average rating for the provider
-            phone_number=provider.phone_number
+            rating=provider.rating,
+            review_count=provider.review_count,
+            phone_number=provider.phone_number,
+            status=transaction.status.value,
         ))
 
     return {"applicants": applicants}
@@ -211,10 +242,23 @@ def mark_job_as_completed(
     if transaction.requester_id != current_user.id and transaction.provider_id != current_user.id:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only the requester or provider can mark the job as completed")
 
+    # Completion is only valid after a provider is hired
+    if transaction.status != TransactionStatus.HIRED:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Job must be hired before completion can be marked")
+
     # Set completion flag based on who's marking it as completed
     if transaction.requester_id == current_user.id:
+        if not transaction.provider_completed:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Provider must mark completion first before requester can confirm"
+            )
+        if transaction.requester_completed:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Requester already confirmed completion")
         transaction.requester_completed = True
     else:
+        if transaction.provider_completed:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Provider already confirmed completion")
         transaction.provider_completed = True
 
     # Only mark as completed if both have confirmed

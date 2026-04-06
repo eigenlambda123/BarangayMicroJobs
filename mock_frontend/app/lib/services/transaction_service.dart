@@ -74,6 +74,36 @@ class TransactionService {
     }
   }
 
+  // Hire a provider: PATCH /transactions/hire/{transaction_id}
+  Future<Map<String, dynamic>> hireProvider(String transactionId) async {
+    try {
+      final token = await AuthService().getToken();
+
+      if (token == null) {
+        throw Exception('Not authenticated. Please log in.');
+      }
+
+      final response = await http.patch(
+        Uri.parse('$baseUrl/transactions/hire/$transactionId'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else {
+        final error = jsonDecode(response.body);
+        throw Exception(
+          error['detail'] ?? 'Failed to hire provider: ${response.statusCode}',
+        );
+      }
+    } catch (e) {
+      throw Exception('Hire provider error: $e');
+    }
+  }
+
   // Get my transactions: GET /transactions/me
   Future<List<Map<String, dynamic>>> getMyTransactions() async {
     try {

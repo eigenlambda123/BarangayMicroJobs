@@ -19,25 +19,29 @@ class _PostedJobsSectionState extends State<PostedJobsSection> {
   static const int itemsPerPage = 3;
   int _currentPage = 1;
 
-  late List<Map<String, dynamic>> _postedJobs;
+  late List<Map<String, dynamic>> _hiredJobs;
 
   @override
   void initState() {
     super.initState();
-    _postedJobs = widget.transactions
-        .where((t) => t['is_requester'] as bool)
+    _hiredJobs = widget.transactions
+        .where(
+          (t) =>
+              (t['is_requester'] as bool) &&
+              ((t['status'] == 'hired') || (t['status'] == 'completed')),
+        )
         .toList();
   }
 
-  int get _totalPages => (_postedJobs.length / itemsPerPage).ceil();
+  int get _totalPages => (_hiredJobs.length / itemsPerPage).ceil();
 
   List<Map<String, dynamic>> get _paginatedJobs {
-    if (_postedJobs.isEmpty) return [];
+    if (_hiredJobs.isEmpty) return [];
     final startIndex = (_currentPage - 1) * itemsPerPage;
     final endIndex = startIndex + itemsPerPage;
-    return _postedJobs.sublist(
+    return _hiredJobs.sublist(
       startIndex,
-      endIndex > _postedJobs.length ? _postedJobs.length : endIndex,
+      endIndex > _hiredJobs.length ? _hiredJobs.length : endIndex,
     );
   }
 
@@ -47,11 +51,11 @@ class _PostedJobsSectionState extends State<PostedJobsSection> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'My Posted Jobs (${_postedJobs.length})',
+          'Jobs I\'ve Hired For (${_hiredJobs.length})',
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 12),
-        if (_postedJobs.isEmpty)
+        if (_hiredJobs.isEmpty)
           Card(
             child: Padding(
               padding: const EdgeInsets.all(24),
@@ -60,7 +64,7 @@ class _PostedJobsSectionState extends State<PostedJobsSection> {
                   Icon(Icons.work_outline, size: 48, color: Colors.grey[400]),
                   const SizedBox(height: 16, width: double.infinity),
                   const Text(
-                    'No jobs posted yet',
+                    'No hired jobs yet',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w500,
@@ -69,7 +73,7 @@ class _PostedJobsSectionState extends State<PostedJobsSection> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Share your skills and post a job to get started',
+                    'Hire an applicant from your posted jobs to see activity here',
                     style: TextStyle(color: Colors.grey[600], fontSize: 14),
                     textAlign: TextAlign.center,
                   ),
@@ -80,7 +84,12 @@ class _PostedJobsSectionState extends State<PostedJobsSection> {
         else ...[
           ..._paginatedJobs.map((transaction) {
             final status = transaction['status'];
-            final canComplete = status == 'hired';
+            final providerCompleted =
+                transaction['provider_completed'] as bool? ?? false;
+            final requesterCompleted =
+                transaction['requester_completed'] as bool? ?? false;
+            final canComplete =
+                status == 'hired' && providerCompleted && !requesterCompleted;
 
             return TransactionHistoryCard(
               transaction: transaction,
@@ -92,7 +101,7 @@ class _PostedJobsSectionState extends State<PostedJobsSection> {
             );
           }),
           // Pagination Controls
-          if (_postedJobs.isNotEmpty)
+          if (_hiredJobs.isNotEmpty)
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 16.0),
               child: Row(
