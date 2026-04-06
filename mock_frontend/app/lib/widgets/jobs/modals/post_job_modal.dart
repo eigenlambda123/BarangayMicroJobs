@@ -20,7 +20,87 @@ class _PostJobModalState extends State<PostJobModal> {
   final _descriptionController = TextEditingController();
   final _salaryController = TextEditingController();
   final _imageController = TextEditingController();
-  String _location = 'Zone 1';
+  static const List<String> _lucenaBarangays = [
+    'Barangay 1',
+    'Barangay 2',
+    'Barangay 3',
+    'Barangay 4',
+    'Barangay 5',
+    'Barangay 6',
+    'Barangay 7',
+    'Barangay 8',
+    'Barangay 9',
+    'Barangay 10',
+    'Barangay 11',
+    'Barangay 12',
+    'Barangay 13',
+    'Barangay 14',
+    'Barangay 15',
+    'Barangay 16',
+    'Barangay 17',
+    'Barangay 18',
+    'Barangay 19',
+    'Barangay 20',
+    'Barangay 21',
+    'Barangay 22',
+    'Barangay 23',
+    'Barangay 24',
+    'Barangay 25',
+    'Barangay 26',
+    'Barangay 27',
+    'Barangay 28',
+    'Barangay 29',
+    'Barangay 30',
+    'Barangay 31',
+    'Barangay 32',
+    'Barangay 33',
+    'Barangay 34',
+    'Barangay 35',
+    'Barangay 36',
+    'Barangay 37',
+    'Barangay 38',
+    'Barangay 39',
+    'Barangay 40',
+    'Barangay 41',
+    'Barangay 42',
+    'Barangay 43',
+    'Barangay 44',
+    'Barangay 45',
+    'Barangay 46',
+    'Barangay 47',
+    'Barangay 48',
+    'Barangay 49',
+    'Barangay 50',
+    'Barangay 51',
+    'Barangay 52',
+    'Barangay 53',
+    'Barangay 54',
+    'Barangay 55',
+    'Barangay 56',
+    'Barangay 57',
+    'Barangay 58',
+    'Barangay 59',
+    'Barangay 60',
+    'Barangay 61',
+    'Barangay 62',
+    'Barangay 63',
+    'Barangay 64',
+    'Barangay Bocohan',
+    'Barangay Dalahican',
+    'Barangay Gulang-Gulang',
+    'Barangay Ibabang Dupay',
+    'Barangay Ilayang Dupay',
+    'Barangay Isabang',
+    'Barangay Market View',
+    'Barangay Mayao Kanluran',
+    'Barangay Mayao Castillo',
+    'Barangay Mayao Crossing',
+    'Barangay Ransohan',
+    'Barangay Salinas',
+    'Barangay Talao-Talao',
+  ];
+
+  String _location = _lucenaBarangays.first;
   bool _isLoading = false;
 
   @override
@@ -113,27 +193,19 @@ class _PostJobModalState extends State<PostJobModal> {
                 children: [
                   Expanded(
                     child: DropdownButtonFormField<String>(
-                      value: _location,
-                      items: const [
-                        DropdownMenuItem(
-                          value: 'Zone 1',
-                          child: Text('Location 1'),
-                        ),
-                        DropdownMenuItem(
-                          value: 'Zone 2',
-                          child: Text('Location 2'),
-                        ),
-                        DropdownMenuItem(
-                          value: 'Zone 3',
-                          child: Text('Location 3'),
-                        ),
-                        DropdownMenuItem(
-                          value: 'Zone 4',
-                          child: Text('Location 4'),
-                        ),
-                      ],
+                      initialValue: _location,
+                      items: _lucenaBarangays
+                          .map(
+                            (barangay) => DropdownMenuItem(
+                              value: barangay,
+                              child: Text(barangay),
+                            ),
+                          )
+                          .toList(),
                       onChanged: (value) {
-                        setState(() => _location = value ?? 'Zone 1');
+                        setState(
+                          () => _location = value ?? _lucenaBarangays.first,
+                        );
                       },
                       decoration: const InputDecoration(
                         labelText: 'LOCATION',
