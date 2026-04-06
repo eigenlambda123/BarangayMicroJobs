@@ -7,7 +7,7 @@ class ProfileHeader extends StatefulWidget {
   final Function(File)? onImageSelected;
 
   const ProfileHeader({
-    super.key, 
+    super.key,
     required this.userData,
     this.onImageSelected,
   });
@@ -33,9 +33,9 @@ class _ProfileHeaderState extends State<ProfileHeader> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error picking image: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error picking image: $e')));
       }
     }
   }
@@ -83,15 +83,16 @@ class _ProfileHeaderState extends State<ProfileHeader> {
                 child: CircleAvatar(
                   radius: 50,
                   backgroundColor: Colors.blue,
-                  backgroundImage: _selectedImage != null 
-                    ? FileImage(_selectedImage!)
-                    : (profileImage != null && profileImage.isNotEmpty)
+                  backgroundImage: _selectedImage != null
+                      ? FileImage(_selectedImage!)
+                      : (profileImage != null && profileImage.isNotEmpty)
                       ? NetworkImage(profileImage) as ImageProvider
                       : null,
-                  child: (_selectedImage == null && 
-                         (profileImage == null || profileImage.isEmpty))
-                    ? const Icon(Icons.person, size: 50, color: Colors.white)
-                    : null,
+                  child:
+                      (_selectedImage == null &&
+                          (profileImage == null || profileImage.isEmpty))
+                      ? const Icon(Icons.person, size: 50, color: Colors.white)
+                      : null,
                 ),
               ),
               Positioned(
@@ -104,11 +105,18 @@ class _ProfileHeaderState extends State<ProfileHeader> {
                     border: Border.all(color: Colors.white, width: 2),
                   ),
                   child: IconButton(
-                    icon: const Icon(Icons.camera_alt, color: Colors.white, size: 20),
+                    icon: const Icon(
+                      Icons.camera_alt,
+                      color: Colors.white,
+                      size: 20,
+                    ),
                     onPressed: _showImageSourceDialog,
                     iconSize: 20,
                     padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+                    constraints: const BoxConstraints(
+                      minWidth: 40,
+                      minHeight: 40,
+                    ),
                   ),
                 ),
               ),

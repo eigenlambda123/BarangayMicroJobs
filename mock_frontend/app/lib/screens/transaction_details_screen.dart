@@ -84,7 +84,7 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
   void _showCompleteConfirmation() {
     final transaction = _transactionData!;
     final isRequester = transaction['is_requester'] as bool;
-    
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -120,7 +120,7 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
   void _showRatingDialog() {
     final transaction = _transactionData!;
     final providerName = transaction['provider']['full_name'] ?? 'Provider';
-    
+
     showDialog(
       context: context,
       builder: (context) => RatingDialog(

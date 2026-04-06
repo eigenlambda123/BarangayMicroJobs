@@ -28,9 +28,9 @@ class _RatingDialogState extends State<RatingDialog> {
       await RatingService().rateProvider(
         transactionId: widget.transactionId,
         score: _rating,
-        comment: _commentController.text.isNotEmpty 
-          ? _commentController.text 
-          : null,
+        comment: _commentController.text.isNotEmpty
+            ? _commentController.text
+            : null,
       );
 
       if (mounted) {
@@ -43,9 +43,9 @@ class _RatingDialogState extends State<RatingDialog> {
     } catch (e) {
       if (mounted) {
         setState(() => _isSubmitting = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error submitting rating: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error submitting rating: $e')));
       }
     }
   }
@@ -69,7 +69,7 @@ class _RatingDialogState extends State<RatingDialog> {
               style: const TextStyle(fontWeight: FontWeight.w500),
             ),
             const SizedBox(height: 24),
-            
+
             // Star Rating
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -87,20 +87,17 @@ class _RatingDialogState extends State<RatingDialog> {
                 );
               }),
             ),
-            
+
             const SizedBox(height: 24),
-            
+
             // Rating display
             Text(
               '$_rating/5 stars',
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-              ),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),
-            
+
             const SizedBox(height: 24),
-            
+
             // Comment field
             TextField(
               controller: _commentController,
@@ -125,12 +122,12 @@ class _RatingDialogState extends State<RatingDialog> {
         ElevatedButton(
           onPressed: _isSubmitting ? null : _submitRating,
           child: _isSubmitting
-            ? const SizedBox(
-                width: 16,
-                height: 16,
-                child: CircularProgressIndicator(strokeWidth: 2),
-              )
-            : const Text('Submit Rating'),
+              ? const SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              : const Text('Submit Rating'),
         ),
       ],
     );
