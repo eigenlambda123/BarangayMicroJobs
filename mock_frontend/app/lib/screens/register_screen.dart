@@ -25,6 +25,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool _isLoading = false;
 
   @override
+  void initState() {
+    super.initState();
+    _redirectIfLoggedIn();
+  }
+
+  Future<void> _redirectIfLoggedIn() async {
+    final isLoggedIn = await AuthService().isLoggedIn();
+    if (!mounted || !isLoggedIn) {
+      return;
+    }
+
+    Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false);
+  }
+
+  @override
   void dispose() {
     _fullNameController.dispose();
     _phoneController.dispose();
@@ -74,7 +89,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
             content: Text('Registration successful! Please log in.'),
           ),
         );
-        Navigator.of(context).pushReplacementNamed('/login');
+        Navigator.of(
+          context,
+        ).pushNamedAndRemoveUntil('/login', (route) => false);
       }
     } catch (e) {
       if (mounted) {
