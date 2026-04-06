@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/transaction_service.dart';
 import '../widgets/transactions/transaction_details_content.dart';
+import '../widgets/transactions/rating_dialog.dart';
 import '../widgets/common/loading_state.dart';
 import '../widgets/common/error_state.dart';
 
@@ -81,6 +82,9 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
   }
 
   void _showCompleteConfirmation() {
+    final transaction = _transactionData!;
+    final isRequester = transaction['is_requester'] as bool;
+    
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -97,10 +101,32 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
             onPressed: () {
               Navigator.of(context).pop();
               _markAsCompleted();
+              // Show rating dialog if this is the job poster (requester)
+              if (isRequester) {
+                Future.delayed(const Duration(milliseconds: 500), () {
+                  if (mounted) {
+                    _showRatingDialog();
+                  }
+                });
+              }
             },
             child: const Text('Mark Complete'),
           ),
         ],
+      ),
+    );
+  }
+
+  void _showRatingDialog() {
+    final transaction = _transactionData!;
+    final providerName = transaction['provider']['full_name'] ?? 'Provider';
+    
+    showDialog(
+      context: context,
+      builder: (context) => RatingDialog(
+        providerName: providerName,
+        transactionId: widget.transactionId,
+        onRatingSubmitted: _loadTransactionDetails,
       ),
     );
   }

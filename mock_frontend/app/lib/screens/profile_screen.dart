@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:io';
 import '../services/auth_service.dart';
 import '../widgets/common/loading_state.dart';
 import '../widgets/common/error_state.dart';
@@ -47,6 +48,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  Future<void> _handleImageSelected(File imageFile) async {
+    // For now, we'll use the file path as a placeholder
+    // In a real app, you'd upload the image to a server and get a URL
+    try {
+      await AuthService().updateProfileImage(imageFile.path);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Profile image updated successfully')),
+        );
+        _loadUserData(); // Reload user data to show updated image
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error updating profile image: $e')),
+        );
+      }
+    }
+  }
+
   Future<void> _handleLogout() async {
     await AuthService().logout();
     if (mounted) {
@@ -76,7 +97,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
               style: Theme.of(context).textTheme.headlineSmall,
             ),
             const SizedBox(height: 24),
-            ProfileHeader(userData: _userData),
+            ProfileHeader(
+              userData: _userData,
+              onImageSelected: _handleImageSelected,
+            ),
             const SizedBox(height: 32),
             // _buildProviderToggle(),
             const SizedBox(height: 24),

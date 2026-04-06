@@ -149,4 +149,32 @@ class AuthService {
     await prefs.remove(_tokenKey);
     await prefs.remove(_userIdKey);
   }
+
+  // Update profile image endpoint: PUT /auth/me/profile-image
+  Future<Map<String, dynamic>> updateProfileImage(String imageUrl) async {
+    try {
+      final token = await getToken();
+      if (token == null) {
+        throw Exception('Not authenticated');
+      }
+
+      final response = await http.put(
+        Uri.parse('$baseUrl/auth/me/profile-image'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({'profile_image': imageUrl}),
+      );
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else {
+        final error = jsonDecode(response.body);
+        throw Exception(error['detail'] ?? 'Failed to update profile image');
+      }
+    } catch (e) {
+      throw Exception('Update profile image error: $e');
+    }
+  }
 }
