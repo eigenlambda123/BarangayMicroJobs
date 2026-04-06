@@ -15,6 +15,9 @@ class User(SQLModel, table=True):
     role: str = Field(default="resident") # "admin" or "resident"
     hashed_password: str
 
+    # Profile Information
+    profile_image: Optional[str] = None
+
     # Profile Stats
     rating: float = Field(default=0.0) 
     review_count: int = Field(default=0) 
