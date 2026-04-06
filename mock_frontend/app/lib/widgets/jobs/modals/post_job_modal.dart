@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'dart:typed_data';
+import 'package:image_picker/image_picker.dart';
 import '../../../services/job_service.dart';
 
 class PostJobModal extends StatefulWidget {
@@ -19,7 +22,7 @@ class _PostJobModalState extends State<PostJobModal> {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _salaryController = TextEditingController();
-  final _imageController = TextEditingController();
+  final ImagePicker _imagePicker = ImagePicker();
   static const List<String> _lucenaBarangays = [
     'Barangay Bocohan',
     'Barangay Dalahican',
@@ -37,6 +40,8 @@ class _PostJobModalState extends State<PostJobModal> {
   ];
 
   String _location = _lucenaBarangays.first;
+  Uint8List? _selectedImageBytes;
+  String? _selectedImageData;
   bool _isLoading = false;
 
   @override
@@ -44,8 +49,46 @@ class _PostJobModalState extends State<PostJobModal> {
     _titleController.dispose();
     _descriptionController.dispose();
     _salaryController.dispose();
-    _imageController.dispose();
     super.dispose();
+  }
+
+  String _getMimeType(String fileName) {
+    final lower = fileName.toLowerCase();
+    if (lower.endsWith('.png')) return 'image/png';
+    if (lower.endsWith('.webp')) return 'image/webp';
+    return 'image/jpeg';
+  }
+
+  Future<void> _pickImage(ImageSource source) async {
+    try {
+      final file = await _imagePicker.pickImage(
+        source: source,
+        imageQuality: 70,
+        maxWidth: 1280,
+        maxHeight: 1280,
+      );
+
+      if (file == null) {
+        return;
+      }
+
+      final bytes = await file.readAsBytes();
+      final mimeType = _getMimeType(file.name);
+      final dataUrl = 'data:$mimeType;base64,${base64Encode(bytes)}';
+
+      if (mounted) {
+        setState(() {
+          _selectedImageBytes = bytes;
+          _selectedImageData = dataUrl;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Failed to pick image: $e')));
+      }
+    }
   }
 
   Future<void> _handlePostJob() async {
@@ -66,7 +109,7 @@ class _PostJobModalState extends State<PostJobModal> {
         description: _descriptionController.text,
         location: _location,
         salary: _salaryController.text,
-        image: _imageController.text.isNotEmpty ? _imageController.text : null,
+        image: _selectedImageData,
       );
 
       if (mounted) {
@@ -192,14 +235,74 @@ class _PostJobModalState extends State<PostJobModal> {
                 maxLines: 4,
               ),
               const SizedBox(height: 10),
-              TextField(
-                controller: _imageController,
-                decoration: const InputDecoration(
-                  labelText: 'IMAGE URL (Optional)',
-                  hintText: 'https://example.com/image.jpg',
-                  border: OutlineInputBorder(),
+              const Text(
+                'IMAGE (Optional)',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () => _pickImage(ImageSource.camera),
+                      icon: const Icon(Icons.camera_alt_outlined),
+                      label: const Text('Use Camera'),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () => _pickImage(ImageSource.gallery),
+                      icon: const Icon(Icons.photo_library_outlined),
+                      label: const Text('Choose Photo'),
+                    ),
+                  ),
+                ],
+              ),
+              if (_selectedImageBytes != null) ...[
+                const SizedBox(height: 10),
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey.shade300),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(6),
+                        child: Image.memory(
+                          _selectedImageBytes!,
+                          width: 56,
+                          height: 56,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      const Expanded(
+                        child: Text(
+                          'Image selected',
+                          style: TextStyle(fontSize: 13),
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          setState(() {
+                            _selectedImageBytes = null;
+                            _selectedImageData = null;
+                          });
+                        },
+                        icon: const Icon(Icons.close),
+                        tooltip: 'Remove image',
+                      ),
+                    ],
+                  ),
+                ),
+              ],
               const SizedBox(height: 20),
               SizedBox(
                 width: double.infinity,
