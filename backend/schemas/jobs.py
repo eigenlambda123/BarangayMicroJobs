@@ -1,6 +1,6 @@
 from pydantic import BaseModel, field_validator
 from typing import Optional
-from ..utils.locations import is_valid_location
+from utils.locations import is_valid_location
 
 class JobCreateRequest(BaseModel):
     title: str
