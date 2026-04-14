@@ -85,6 +85,9 @@ class AuthService {
 
       if (response.statusCode == 200) {
         return jsonDecode(response.body);
+      } else if (response.statusCode == 401 || response.statusCode == 403) {
+        await logout();
+        throw Exception('Session expired');
       } else {
         throw Exception('Failed to get user');
       }
@@ -141,7 +144,32 @@ class AuthService {
 
   Future<bool> isLoggedIn() async {
     final token = await getToken();
-    return token != null;
+    if (token == null || token.isEmpty) {
+      return false;
+    }
+
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/auth/me'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return true;
+      }
+
+      if (response.statusCode == 401 || response.statusCode == 403) {
+        await logout();
+      }
+
+      return false;
+    } catch (_) {
+      // Keep the user signed in during transient connectivity issues.
+      return true;
+    }
   }
 
   Future<void> logout() async {

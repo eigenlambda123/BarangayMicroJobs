@@ -26,19 +26,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _loadUserData();
   }
 
+  void _redirectToLogin() {
+    if (!mounted) {
+      return;
+    }
+
+    Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
+  }
+
   Future<void> _loadUserData() async {
     try {
       final token = await AuthService().getToken();
-      if (token != null) {
-        final userData = await AuthService().getCurrentUser();
-        if (mounted) {
-          setState(() {
-            _userData = userData;
-            _isLoading = false;
-          });
-        }
+      if (token == null || token.isEmpty) {
+        _redirectToLogin();
+        return;
+      }
+
+      final userData = await AuthService().getCurrentUser();
+      if (mounted) {
+        setState(() {
+          _userData = userData;
+          _isLoading = false;
+        });
       }
     } catch (e) {
+      final errorText = e.toString().toLowerCase();
+      if (errorText.contains('session expired') ||
+          errorText.contains('not authenticated')) {
+        _redirectToLogin();
+        return;
+      }
+
       if (mounted) {
         setState(() {
           _errorMessage = 'Failed to load profile: ${e.toString()}';
