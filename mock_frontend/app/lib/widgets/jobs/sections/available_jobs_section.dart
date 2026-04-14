@@ -46,55 +46,83 @@ class _AvailableJobsSectionState extends State<AvailableJobsSection> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              'Available Jobs (${widget.jobs.length})',
-              style: Theme.of(context).textTheme.titleLarge,
+            Row(
+              children: [
+                Text(
+                  'Available Jobs',
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+                const SizedBox(width: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: colorScheme.secondary.withValues(alpha: 0.16),
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+                  child: Text(
+                    '${widget.jobs.length}',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      color: colorScheme.secondary,
+                    ),
+                  ),
+                ),
+              ],
             ),
-            GestureDetector(
+            InkWell(
               onTap: widget.onRefresh,
-              child: Icon(Icons.refresh, color: Colors.blue.shade700),
+              borderRadius: BorderRadius.circular(10),
+              child: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: colorScheme.primary.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(Icons.refresh, color: colorScheme.primary),
+              ),
             ),
           ],
         ),
         const SizedBox(height: 12),
-        ..._paginatedJobs.map((job) {
-          return Column(
-            children: [
-              PostingCard(
-                title: job['title'] ?? 'Unknown Job',
-                price: '₱${job['salary'] ?? '0'}',
-                location: job['location'] ?? 'Unknown Location',
-                applicants: job['applicants_count'] ?? 0,
-                status: 'OPEN',
-                date: job['last_modified'] != null
-                    ? formatDate(job['last_modified'])
-                    : null,
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return JobDetailsScreen(
-                          jobTitle: job['title'] ?? 'Job',
-                          price: '₱${job['salary'] ?? '0'}',
-                          location: job['location'] ?? 'Unknown',
-                          jobId: job['id'] ?? '',
-                          posterId: job['poster_id'] ?? '',
-                        );
-                      },
-                    ),
-                  );
-                },
-              ),
-              const SizedBox(height: 12),
-            ],
-          );
-        }).toList(),
+        for (int i = 0; i < _paginatedJobs.length; i++) ...[
+          PostingCard(
+            title: _paginatedJobs[i]['title'] ?? 'Unknown Job',
+            price: '₱${_paginatedJobs[i]['salary'] ?? '0'}',
+            location: _paginatedJobs[i]['location'] ?? 'Unknown Location',
+            applicants: _paginatedJobs[i]['applicants_count'] ?? 0,
+            status: 'OPEN',
+            date: _paginatedJobs[i]['last_modified'] != null
+                ? formatDate(_paginatedJobs[i]['last_modified'])
+                : null,
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) {
+                    return JobDetailsScreen(
+                      jobTitle: _paginatedJobs[i]['title'] ?? 'Job',
+                      price: '₱${_paginatedJobs[i]['salary'] ?? '0'}',
+                      location: _paginatedJobs[i]['location'] ?? 'Unknown',
+                      jobId: _paginatedJobs[i]['id'] ?? '',
+                      posterId: _paginatedJobs[i]['poster_id'] ?? '',
+                    );
+                  },
+                ),
+              );
+            },
+          ),
+          if (i < _paginatedJobs.length - 1) const SizedBox(height: 12),
+        ],
         // Pagination Controls
         if (widget.jobs.isNotEmpty)
           Padding(

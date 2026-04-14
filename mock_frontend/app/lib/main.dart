@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'screens/marketplace_screen.dart';
 import 'screens/history_screen.dart';
 import 'screens/profile_screen.dart';
@@ -15,111 +14,40 @@ class BarangayMicrojobsApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final base = ThemeData(useMaterial3: true);
     const colorScheme = ColorScheme.light(
       primary: Color(0xFF0D5C63),
       onPrimary: Colors.white,
       secondary: Color(0xFFDB7C26),
       onSecondary: Colors.white,
       surface: Color(0xFFFFFCF6),
-      onSurface: Color(0xFF1A1A1A),
-      error: Color(0xFFB42318),
-    );
-
-    final textTheme = GoogleFonts.manropeTextTheme(base.textTheme).copyWith(
-      displayLarge: GoogleFonts.dmSerifDisplay(
-        fontSize: 48,
-        color: colorScheme.onSurface,
-      ),
-      displayMedium: GoogleFonts.dmSerifDisplay(
-        fontSize: 40,
-        color: colorScheme.onSurface,
-      ),
-      headlineLarge: GoogleFonts.dmSerifDisplay(
-        fontSize: 34,
-        color: colorScheme.onSurface,
-      ),
-      headlineSmall: GoogleFonts.dmSerifDisplay(
-        fontSize: 28,
-        color: colorScheme.onSurface,
-      ),
-      titleLarge: GoogleFonts.manrope(
-        fontWeight: FontWeight.w800,
-        fontSize: 21,
-      ),
-      bodyMedium: GoogleFonts.manrope(fontSize: 14, height: 1.4),
-      labelLarge: GoogleFonts.manrope(
-        fontWeight: FontWeight.w700,
-        fontSize: 15,
-      ),
+      onSurface: Color(0xFF1D2428),
     );
 
     return MaterialApp(
       title: 'Barangay Microjobs',
       theme: ThemeData(
         colorScheme: colorScheme,
-        textTheme: textTheme,
-        useMaterial3: true,
-        scaffoldBackgroundColor: const Color(0xFFF8F2E9),
-        appBarTheme: AppBarTheme(
-          backgroundColor: colorScheme.surface,
-          foregroundColor: colorScheme.onSurface,
+        scaffoldBackgroundColor: const Color(0xFFF4EEE4),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.transparent,
+          foregroundColor: Color(0xFF1D2428),
           elevation: 0,
           scrolledUnderElevation: 0,
-          centerTitle: false,
-          titleTextStyle: textTheme.titleLarge,
         ),
-        cardTheme: CardThemeData(
-          color: colorScheme.surface,
-          elevation: 0,
-          shadowColor: Colors.transparent,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(18),
-            side: BorderSide(
-              color: colorScheme.primary.withValues(alpha: 0.12),
-            ),
-          ),
+        navigationBarTheme: NavigationBarThemeData(
+          backgroundColor: Colors.white,
+          elevation: 8,
+          height: 72,
+          indicatorColor: colorScheme.primary.withValues(alpha: 0.14),
+          labelTextStyle: WidgetStateProperty.resolveWith((states) {
+            final isSelected = states.contains(WidgetState.selected);
+            return TextStyle(
+              fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+              color: isSelected ? colorScheme.primary : const Color(0xFF6A7278),
+            );
+          }),
         ),
-        inputDecorationTheme: InputDecorationTheme(
-          filled: true,
-          fillColor: Colors.white.withValues(alpha: 0.88),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(14),
-            borderSide: BorderSide(
-              color: colorScheme.primary.withValues(alpha: 0.18),
-            ),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(14),
-            borderSide: BorderSide(
-              color: colorScheme.primary.withValues(alpha: 0.18),
-            ),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(14),
-            borderSide: BorderSide(color: colorScheme.primary, width: 1.6),
-          ),
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 14,
-          ),
-        ),
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: colorScheme.primary,
-            foregroundColor: colorScheme.onPrimary,
-            minimumSize: const Size.fromHeight(52),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(14),
-            ),
-            textStyle: textTheme.labelLarge,
-          ),
-        ),
-        snackBarTheme: SnackBarThemeData(
-          behavior: SnackBarBehavior.floating,
-          backgroundColor: colorScheme.onSurface,
-          contentTextStyle: textTheme.bodyMedium?.copyWith(color: Colors.white),
-        ),
+        useMaterial3: true,
       ),
       home: const AuthGate(),
       routes: {
@@ -161,20 +89,93 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
 
+  static const List<String> _titles = ['Marketplace', 'History', 'Profile'];
+
+  static const List<String> _subtitles = [
+    'Find and post local microjobs',
+    'Track your completed and active work',
+    'Manage your account and preferences',
+  ];
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Barangay Microjobs')),
+      appBar: AppBar(
+        toolbarHeight: 92,
+        titleSpacing: 16,
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Barangay Microjobs',
+              style: TextStyle(
+                fontSize: 21,
+                fontWeight: FontWeight.w800,
+                color: colorScheme.onSurface,
+              ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              _subtitles[_selectedIndex],
+              style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: Color(0xFF6A7278),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 16),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: colorScheme.primary.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(999),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    width: 8,
+                    height: 8,
+                    decoration: const BoxDecoration(
+                      color: Color(0xFF2FB344),
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    'ONLINE',
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      color: colorScheme.primary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [colorScheme.surface, const Color(0xFFF8F2E9)],
+            colors: [Color(0xFFFFFCF6), Color(0xFFF4EEE4)],
           ),
         ),
-        child: _buildBody(_selectedIndex),
+        child: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 220),
+          child: KeyedSubtree(
+            key: ValueKey(_selectedIndex),
+            child: _buildBody(_selectedIndex),
+          ),
+        ),
       ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _selectedIndex,
@@ -183,14 +184,21 @@ class _HomePageState extends State<HomePage> {
             _selectedIndex = index;
           });
         },
-        backgroundColor: colorScheme.surface,
-        indicatorColor: colorScheme.primary.withValues(alpha: 0.16),
-        destinations: const [
-          NavigationDestination(icon: Icon(Icons.storefront), label: 'Market'),
-          NavigationDestination(icon: Icon(Icons.assignment), label: 'History'),
+        destinations: [
           NavigationDestination(
-            icon: Icon(Icons.account_circle),
-            label: 'Profile',
+            icon: const Icon(Icons.storefront_outlined),
+            selectedIcon: Icon(Icons.storefront, color: colorScheme.primary),
+            label: _titles[0],
+          ),
+          NavigationDestination(
+            icon: const Icon(Icons.timeline_outlined),
+            selectedIcon: Icon(Icons.timeline, color: colorScheme.primary),
+            label: _titles[1],
+          ),
+          NavigationDestination(
+            icon: const Icon(Icons.person_outline),
+            selectedIcon: Icon(Icons.person, color: colorScheme.primary),
+            label: _titles[2],
           ),
         ],
       ),

@@ -116,21 +116,27 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
     return Stack(
       children: [
         Scaffold(
-          floatingActionButton: FloatingActionButton(
+          floatingActionButton: FloatingActionButton.extended(
             onPressed: () {
               setState(() => _showPostJobModal = true);
             },
-            child: const Icon(Icons.add),
+            backgroundColor: const Color(0xFF0D5C63),
+            foregroundColor: Colors.white,
+            icon: const Icon(Icons.add),
+            label: const Text(
+              'Post Job',
+              style: TextStyle(fontWeight: FontWeight.w700),
+            ),
             tooltip: 'Post a Job',
           ),
           body: SingleChildScrollView(
             child: Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const MarketplaceHeader(),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 20),
                   _buildActivePostingsSection(context),
                 ],
               ),

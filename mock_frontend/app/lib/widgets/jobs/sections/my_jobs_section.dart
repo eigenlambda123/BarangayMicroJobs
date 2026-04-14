@@ -10,46 +10,63 @@ class MyJobsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'My Posted Jobs (${jobs.length})',
-          style: Theme.of(context).textTheme.titleLarge,
+        Row(
+          children: [
+            Text(
+              'My Posted Jobs',
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            const SizedBox(width: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: colorScheme.primary.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(999),
+              ),
+              child: Text(
+                '${jobs.length}',
+                style: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  color: colorScheme.primary,
+                ),
+              ),
+            ),
+          ],
         ),
         const SizedBox(height: 12),
-        ...jobs.map((job) {
-          return Column(
-            children: [
-              PostingCard(
-                title: job['title'] ?? 'Unknown Job',
-                price: '₱${job['salary'] ?? '0'}',
-                location: job['location'] ?? 'Unknown Location',
-                applicants: job['applicants_count'] ?? 0,
-                status: 'OPEN',
-                date: job['last_modified'] != null
-                    ? formatDate(job['last_modified'])
-                    : null,
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return JobDetailsScreen(
-                          jobTitle: job['title'] ?? 'Job',
-                          price: '₱${job['salary'] ?? '0'}',
-                          location: job['location'] ?? 'Unknown',
-                          jobId: job['id'] ?? '',
-                          posterId: job['poster_id'] ?? '',
-                        );
-                      },
-                    ),
-                  );
-                },
-              ),
-              const SizedBox(height: 8),
-            ],
-          );
-        }).toList(),
+        for (int i = 0; i < jobs.length; i++) ...[
+          PostingCard(
+            title: jobs[i]['title'] ?? 'Unknown Job',
+            price: '₱${jobs[i]['salary'] ?? '0'}',
+            location: jobs[i]['location'] ?? 'Unknown Location',
+            applicants: jobs[i]['applicants_count'] ?? 0,
+            status: 'OPEN',
+            date: jobs[i]['last_modified'] != null
+                ? formatDate(jobs[i]['last_modified'])
+                : null,
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) {
+                    return JobDetailsScreen(
+                      jobTitle: jobs[i]['title'] ?? 'Job',
+                      price: '₱${jobs[i]['salary'] ?? '0'}',
+                      location: jobs[i]['location'] ?? 'Unknown',
+                      jobId: jobs[i]['id'] ?? '',
+                      posterId: jobs[i]['poster_id'] ?? '',
+                    );
+                  },
+                ),
+              );
+            },
+          ),
+          if (i < jobs.length - 1) const SizedBox(height: 12),
+        ],
         const SizedBox(height: 24),
       ],
     );
