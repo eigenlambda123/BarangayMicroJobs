@@ -74,31 +74,47 @@ class StatusItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final markerColor = isCompleted
+        ? const Color(0xFF2A6A31)
+        : const Color(0xFF9AA0A5);
+
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          width: 12,
-          height: 12,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: isCompleted ? Colors.green : Colors.grey,
-          ),
+          width: 14,
+          height: 14,
+          decoration: BoxDecoration(shape: BoxShape.circle, color: markerColor),
         ),
         const SizedBox(width: 12),
         Expanded(
-          child: Text(
-            status,
-            style: TextStyle(
-              fontSize: 14,
-              color: isCompleted ? Colors.black : Colors.grey,
-            ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                status,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  color: isCompleted
+                      ? const Color(0xFF1F2529)
+                      : const Color(0xFF7A7F83),
+                ),
+              ),
+              if (timestamp != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: 2),
+                  child: Text(
+                    TransactionHelpers.formatDateTime(timestamp!),
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: Color(0xFF7A7F83),
+                    ),
+                  ),
+                ),
+            ],
           ),
         ),
-        if (timestamp != null)
-          Text(
-            TransactionHelpers.formatDateTime(timestamp!),
-            style: const TextStyle(fontSize: 12, color: Colors.grey),
-          ),
       ],
     );
   }
@@ -140,25 +156,36 @@ class CompletionStatusIndicator extends StatelessWidget {
       statusColor = Colors.grey;
     }
 
-    return Row(
-      children: [
-        Container(
-          width: 12,
-          height: 12,
-          decoration: BoxDecoration(shape: BoxShape.circle, color: statusColor),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Text(
-            statusText,
-            style: TextStyle(
-              fontSize: 14,
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: statusColor.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 12,
+            height: 12,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
               color: statusColor,
-              fontStyle: FontStyle.italic,
             ),
           ),
-        ),
-      ],
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              statusText,
+              style: TextStyle(
+                fontSize: 13,
+                color: statusColor,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

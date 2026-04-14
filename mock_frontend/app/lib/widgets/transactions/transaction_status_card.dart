@@ -9,41 +9,51 @@ class TransactionStatusCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Status & Timeline',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 16),
-            StatusItem(
-              status: 'Applied',
-              timestamp: transaction['accepted_at'],
-              isCompleted: true,
-            ),
-            const SizedBox(height: 8),
-            StatusItem(
-              status: 'Hired',
-              timestamp: transaction['accepted_at'],
-              isCompleted: transaction['status'] != 'applied',
-            ),
-            const SizedBox(height: 8),
-            StatusItem(
-              status: 'Completed',
-              timestamp: transaction['completed_at'],
-              isCompleted: transaction['status'] == 'completed',
-            ),
-            // Show completion confirmation status
-            if (TransactionHelpers.canShowCompletionStatus(transaction)) ...[
-              const SizedBox(height: 8),
-              CompletionStatusIndicator(transaction: transaction),
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFDAD2C7)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Row(
+            children: [
+              Icon(Icons.timeline, size: 18),
+              SizedBox(width: 8),
+              Text(
+                'Status & Timeline',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+              ),
             ],
+          ),
+          const SizedBox(height: 14),
+          StatusItem(
+            status: 'Applied',
+            timestamp: transaction['accepted_at'],
+            isCompleted: true,
+          ),
+          const SizedBox(height: 10),
+          StatusItem(
+            status: 'Hired',
+            timestamp: transaction['accepted_at'],
+            isCompleted: transaction['status'] != 'applied',
+          ),
+          const SizedBox(height: 10),
+          StatusItem(
+            status: 'Completed',
+            timestamp: transaction['completed_at'],
+            isCompleted: transaction['status'] == 'completed',
+          ),
+          // Show completion confirmation status
+          if (TransactionHelpers.canShowCompletionStatus(transaction)) ...[
+            const SizedBox(height: 10),
+            CompletionStatusIndicator(transaction: transaction),
           ],
-        ),
+        ],
       ),
     );
   }

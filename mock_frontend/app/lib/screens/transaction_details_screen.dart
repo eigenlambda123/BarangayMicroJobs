@@ -199,10 +199,19 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Transaction Details')),
-      body: TransactionDetailsContent(
-        transaction: transaction,
-        onCompletePressed: _showCompleteConfirmation,
-        onCancelPressed: _showCancelConfirmation,
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color(0xFFFFFCF6), Color(0xFFF4EEE4)],
+          ),
+        ),
+        child: TransactionDetailsContent(
+          transaction: transaction,
+          onCompletePressed: _showCompleteConfirmation,
+          onCancelPressed: _showCancelConfirmation,
+        ),
       ),
     );
   }

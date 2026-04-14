@@ -16,11 +16,24 @@ class TransactionActionButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFDAD2C7)),
+      ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          const Text(
+            'Available Actions',
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+          ),
+          const SizedBox(height: 10),
           if (TransactionHelpers.canShowCompletionActions(transaction))
             ElevatedButton.icon(
               onPressed: onCompletePressed,
@@ -29,24 +42,30 @@ class TransactionActionButtons extends StatelessWidget {
                 TransactionHelpers.getCompletionButtonText(transaction),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
+                backgroundColor: colorScheme.primary,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 24,
                   vertical: 12,
                 ),
                 minimumSize: const Size(double.infinity, 48),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
             ),
           const SizedBox(height: 12),
           OutlinedButton.icon(
             onPressed: onCancelPressed,
-            icon: const Icon(Icons.cancel, color: Colors.red),
+            icon: const Icon(Icons.cancel),
             label: const Text('Cancel Transaction'),
             style: OutlinedButton.styleFrom(
-              foregroundColor: Colors.red,
-              side: const BorderSide(color: Colors.red),
+              foregroundColor: const Color(0xFFB42318),
+              side: const BorderSide(color: Color(0xFFEF4444)),
               minimumSize: const Size(double.infinity, 48),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(999),
+              ),
             ),
           ),
         ],
