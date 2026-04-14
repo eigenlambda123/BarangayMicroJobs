@@ -167,101 +167,300 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
     }
   }
 
+  Color _applicantStatusColor(String status) {
+    switch (status) {
+      case 'hired':
+        return const Color(0xFF0D5C63);
+      case 'completed':
+        return const Color(0xFF2A6A31);
+      default:
+        return const Color(0xFFDB7C26);
+    }
+  }
+
+  Widget _buildJobSnapshot({
+    required bool isJobPoster,
+    required bool isJobOpen,
+  }) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFDAD2C7)),
+      ),
+      child: Wrap(
+        spacing: 8,
+        runSpacing: 8,
+        children: [
+          _snapshotChip(
+            icon: Icons.person_outline,
+            label: isJobPoster ? 'You posted this job' : 'You can apply now',
+            color: colorScheme.primary,
+          ),
+          _snapshotChip(
+            icon: Icons.work_outline,
+            label: isJobOpen ? 'Status: Open' : 'Status: Closed',
+            color: isJobOpen
+                ? const Color(0xFF2A6A31)
+                : const Color(0xFF7A7F83),
+          ),
+          _snapshotChip(
+            icon: Icons.group_outlined,
+            label: '${_applicants.length} applicants',
+            color: const Color(0xFFDB7C26),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _snapshotChip({
+    required IconData icon,
+    required String label,
+    required Color color,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: color),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: color,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildActionPanel({
+    required bool isJobPoster,
+    required bool isJobOpen,
+  }) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFDAD2C7)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            isJobPoster ? 'Management Action' : 'Application Action',
+            style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
+          ),
+          const SizedBox(height: 10),
+          JobActionButtons(
+            isJobPoster: isJobPoster,
+            hasApplied: _hasApplied,
+            isJobOpen: isJobOpen,
+            isLoading: _isLoading,
+            onApplyPressed: _applyForJob,
+            onDeletePressed: _deleteJob,
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildApplicantsSection() {
     if (_currentUserId != widget.posterId) {
       return const SizedBox.shrink();
     }
 
     final isJobOpen = (_jobData?['status'] ?? 'open') == 'open';
+    final colorScheme = Theme.of(context).colorScheme;
 
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Applications (${_applicants.length})',
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 12),
-            if (_isLoadingApplicants)
-              const Center(child: CircularProgressIndicator())
-            else if (_applicants.isEmpty)
-              const Text('No applications yet.')
-            else
-              ..._applicants.map((applicant) {
-                final status = (applicant['status'] ?? 'applied').toString();
-                final canHire = isJobOpen && status == 'applied';
-                final transactionId = applicant['transaction_id']?.toString();
-                final isHiring =
-                    transactionId != null &&
-                    _hiringTransactionId == transactionId;
-
-                return Container(
-                  margin: const EdgeInsets.only(bottom: 10),
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey.shade300),
-                    borderRadius: BorderRadius.circular(8),
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFDAD2C7)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Applications (${_applicants.length})',
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+              IconButton(
+                onPressed: _isLoadingApplicants ? null : _loadApplicants,
+                icon: Icon(Icons.refresh, color: colorScheme.primary),
+                tooltip: 'Refresh applications',
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          const Text(
+            'Review applicants and hire directly from this list.',
+            style: TextStyle(fontSize: 12, color: Color(0xFF6A7278)),
+          ),
+          const SizedBox(height: 12),
+          if (_isLoadingApplicants)
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 16),
+              child: Center(child: CircularProgressIndicator()),
+            )
+          else if (_applicants.isEmpty)
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 20),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF7F4EE),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Column(
+                children: [
+                  Icon(Icons.hourglass_empty_rounded, color: Color(0xFF7A7F83)),
+                  SizedBox(height: 8),
+                  Text(
+                    'No applications yet',
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        applicant['name'] ?? 'Unknown Applicant',
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 15,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Rating: ${(applicant['rating'] ?? 0).toString()} (${applicant['review_count'] ?? 0} reviews)',
-                        style: const TextStyle(fontSize: 13),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Phone: ${applicant['phone_number'] ?? '-'}',
-                        style: const TextStyle(fontSize: 13),
-                      ),
-                      const SizedBox(height: 8),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            status.toUpperCase(),
+                  SizedBox(height: 4),
+                  Text(
+                    'Applications will appear here once people apply.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 12, color: Color(0xFF6A7278)),
+                  ),
+                ],
+              ),
+            )
+          else
+            ..._applicants.map((applicant) {
+              final status = (applicant['status'] ?? 'applied').toString();
+              final canHire = isJobOpen && status == 'applied';
+              final transactionId = applicant['transaction_id']?.toString();
+              final isHiring =
+                  transactionId != null &&
+                  _hiringTransactionId == transactionId;
+              final statusColor = _applicantStatusColor(status);
+
+              return Container(
+                margin: const EdgeInsets.only(bottom: 10),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFFFCF7),
+                  border: Border.all(color: const Color(0xFFDAD2C7)),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 18,
+                          backgroundColor: statusColor.withValues(alpha: 0.16),
+                          child: Text(
+                            (applicant['name'] ?? '?')
+                                .toString()
+                                .substring(0, 1)
+                                .toUpperCase(),
                             style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: status == 'hired'
-                                  ? Colors.blue
-                                  : (status == 'completed'
-                                        ? Colors.green
-                                        : Colors.orange),
+                              color: statusColor,
+                              fontWeight: FontWeight.w700,
                             ),
                           ),
-                          ElevatedButton(
-                            onPressed: canHire && !isHiring
-                                ? () => _hireApplicant(applicant)
-                                : null,
-                            child: isHiring
-                                ? const SizedBox(
-                                    width: 16,
-                                    height: 16,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                    ),
-                                  )
-                                : const Text('Hire'),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            applicant['name'] ?? 'Unknown Applicant',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 15,
+                            ),
                           ),
-                        ],
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 9,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: statusColor.withValues(alpha: 0.16),
+                            borderRadius: BorderRadius.circular(999),
+                          ),
+                          child: Text(
+                            status.toUpperCase(),
+                            style: TextStyle(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 11,
+                              color: statusColor,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        _snapshotChip(
+                          icon: Icons.star_outline,
+                          label:
+                              '${(applicant['rating'] ?? 0).toString()} (${applicant['review_count'] ?? 0} reviews)',
+                          color: const Color(0xFFDB7C26),
+                        ),
+                        _snapshotChip(
+                          icon: Icons.phone_outlined,
+                          label: applicant['phone_number'] ?? '-',
+                          color: const Color(0xFF0D5C63),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: FilledButton.icon(
+                        onPressed: canHire && !isHiring
+                            ? () => _hireApplicant(applicant)
+                            : null,
+                        icon: isHiring
+                            ? const SizedBox(
+                                width: 14,
+                                height: 14,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : const Icon(Icons.person_add_alt_1),
+                        label: Text(isHiring ? 'Hiring...' : 'Hire Applicant'),
                       ),
-                    ],
-                  ),
-                );
-              }),
-          ],
-        ),
+                    ),
+                  ],
+                ),
+              );
+            }),
+        ],
       ),
     );
   }
@@ -333,31 +532,41 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Job Details')),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              JobHeaderCard(
-                jobTitle: widget.jobTitle,
-                price: widget.price,
-                location: widget.location,
-                jobData: _jobData,
-                posterData: _posterData,
-              ),
-              const SizedBox(height: 32),
-              JobActionButtons(
-                isJobPoster: isJobPoster,
-                hasApplied: _hasApplied,
-                isJobOpen: isJobOpen,
-                isLoading: _isLoading,
-                onApplyPressed: _applyForJob,
-                onDeletePressed: _deleteJob,
-              ),
-              const SizedBox(height: 16),
-              _buildApplicantsSection(),
-            ],
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color(0xFFFFFCF6), Color(0xFFF4EEE4)],
+          ),
+        ),
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 28),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                JobHeaderCard(
+                  jobTitle: widget.jobTitle,
+                  price: widget.price,
+                  location: widget.location,
+                  jobData: _jobData,
+                  posterData: _posterData,
+                ),
+                const SizedBox(height: 14),
+                _buildJobSnapshot(
+                  isJobPoster: isJobPoster,
+                  isJobOpen: isJobOpen,
+                ),
+                const SizedBox(height: 14),
+                _buildActionPanel(
+                  isJobPoster: isJobPoster,
+                  isJobOpen: isJobOpen,
+                ),
+                const SizedBox(height: 14),
+                _buildApplicantsSection(),
+              ],
+            ),
           ),
         ),
       ),
