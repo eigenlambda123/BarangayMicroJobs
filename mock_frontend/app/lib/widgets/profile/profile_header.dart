@@ -68,12 +68,21 @@ class _ProfileHeaderState extends State<ProfileHeader> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final fullName = widget.userData?['full_name'] ?? 'User';
     final rating = (widget.userData?['rating'] ?? 0.0).toStringAsFixed(1);
     final reviewCount = widget.userData?['review_count'] ?? 0;
     final profileImage = widget.userData?['profile_image'];
+    final phone = widget.userData?['phone_number']?.toString() ?? 'No phone';
 
-    return Center(
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(16, 18, 16, 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: const Color(0xFFDAD2C7)),
+      ),
       child: Column(
         children: [
           Stack(
@@ -82,7 +91,7 @@ class _ProfileHeaderState extends State<ProfileHeader> {
                 onTap: _showImageSourceDialog,
                 child: CircleAvatar(
                   radius: 50,
-                  backgroundColor: Colors.blue,
+                  backgroundColor: colorScheme.primary,
                   backgroundImage: _selectedImage != null
                       ? FileImage(_selectedImage!)
                       : (profileImage != null && profileImage.isNotEmpty)
@@ -91,7 +100,7 @@ class _ProfileHeaderState extends State<ProfileHeader> {
                   child:
                       (_selectedImage == null &&
                           (profileImage == null || profileImage.isEmpty))
-                      ? const Icon(Icons.person, size: 50, color: Colors.white)
+                      ? const Icon(Icons.person, size: 52, color: Colors.white)
                       : null,
                 ),
               ),
@@ -100,7 +109,7 @@ class _ProfileHeaderState extends State<ProfileHeader> {
                 right: 0,
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.blue,
+                    color: colorScheme.primary,
                     shape: BoxShape.circle,
                     border: Border.all(color: Colors.white, width: 2),
                   ),
@@ -108,33 +117,71 @@ class _ProfileHeaderState extends State<ProfileHeader> {
                     icon: const Icon(
                       Icons.camera_alt,
                       color: Colors.white,
-                      size: 20,
+                      size: 19,
                     ),
                     onPressed: _showImageSourceDialog,
-                    iconSize: 20,
+                    iconSize: 19,
                     padding: EdgeInsets.zero,
                     constraints: const BoxConstraints(
-                      minWidth: 40,
-                      minHeight: 40,
+                      minWidth: 38,
+                      minHeight: 38,
                     ),
                   ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 14),
           Text(
             fullName,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 23),
           ),
           const SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            alignment: WrapAlignment.center,
             children: [
-              const Icon(Icons.star, color: Colors.amber, size: 20),
-              const SizedBox(width: 4),
-              Text('$rating ($reviewCount reviews)'),
+              _infoChip(
+                icon: Icons.star_rounded,
+                label: '$rating ($reviewCount reviews)',
+                color: const Color(0xFFDB7C26),
+              ),
+              _infoChip(
+                icon: Icons.phone_outlined,
+                label: phone,
+                color: const Color(0xFF0D5C63),
+              ),
             ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _infoChip({
+    required IconData icon,
+    required String label,
+    required Color color,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: color),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: color,
+            ),
           ),
         ],
       ),

@@ -103,29 +103,81 @@ class _ProfileScreenState extends State<ProfileScreen> {
       return ErrorState(errorMessage: _errorMessage!, onRetry: _loadUserData);
     }
 
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 16),
-            Text(
-              'My Profile',
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
-            const SizedBox(height: 24),
-            ProfileHeader(
-              userData: _userData,
-              onImageSelected: _handleImageSelected,
-            ),
-            const SizedBox(height: 32),
-            // _buildProviderToggle(),
-            const SizedBox(height: 24),
-            StatsCard(userData: _userData),
-            const SizedBox(height: 24),
-            LogoutButton(onPressed: _handleLogout),
-          ],
+    final colorScheme = Theme.of(context).colorScheme;
+    final role = (_userData?['role'] ?? 'resident').toString();
+
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Color(0xFFFFFCF6), Color(0xFFF4EEE4)],
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Text(
+                    'My Profile',
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  const Spacer(),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: colorScheme.primary.withValues(alpha: 0.14),
+                      borderRadius: BorderRadius.circular(999),
+                    ),
+                    child: Text(
+                      role.toUpperCase(),
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        color: colorScheme.primary,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: const Color(0xFFDAD2C7)),
+                ),
+                child: const Text(
+                  'Manage your profile photo, view reputation, and track your contribution in the community.',
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: Color(0xFF616A70),
+                    height: 1.35,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              ProfileHeader(
+                userData: _userData,
+                onImageSelected: _handleImageSelected,
+              ),
+              const SizedBox(height: 14),
+              StatsCard(userData: _userData),
+              const SizedBox(height: 16),
+              LogoutButton(onPressed: _handleLogout),
+            ],
+          ),
         ),
       ),
     );
