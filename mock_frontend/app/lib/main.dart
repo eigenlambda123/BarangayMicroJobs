@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'screens/marketplace_screen.dart';
 import 'screens/history_screen.dart';
 import 'screens/profile_screen.dart';
+import 'screens/onboarding_screen.dart';
 import 'screens/login_screen.dart';
 import 'services/auth_service.dart';
 import 'widgets/common/brand_logo.dart';
@@ -51,10 +52,64 @@ class BarangayMicrojobsApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: const AuthGate(),
+      home: const LaunchGate(),
       routes: {
         '/home': (context) => const HomePage(),
+        '/onboarding': (context) => const OnboardingScreen(),
         '/login': (context) => const LoginScreen(),
+      },
+    );
+  }
+}
+
+enum _LaunchDestination { onboarding, login, home }
+
+class LaunchGate extends StatefulWidget {
+  const LaunchGate({super.key});
+
+  @override
+  State<LaunchGate> createState() => _LaunchGateState();
+}
+
+class _LaunchGateState extends State<LaunchGate> {
+  late Future<_LaunchDestination> _launchDestination;
+
+  @override
+  void initState() {
+    super.initState();
+    _launchDestination = _resolveLaunchDestination();
+  }
+
+  Future<_LaunchDestination> _resolveLaunchDestination() async {
+    final onboardingSeen = await OnboardingScreen.isCompleted();
+    if (!onboardingSeen) {
+      return _LaunchDestination.onboarding;
+    }
+
+    final isLoggedIn = await AuthService().isLoggedIn();
+    return isLoggedIn ? _LaunchDestination.home : _LaunchDestination.login;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<_LaunchDestination>(
+      future: _launchDestination,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState != ConnectionState.done) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        switch (snapshot.data) {
+          case _LaunchDestination.onboarding:
+            return const OnboardingScreen();
+          case _LaunchDestination.home:
+            return const HomePage();
+          case _LaunchDestination.login:
+          default:
+            return const LoginScreen();
+        }
       },
     );
   }
