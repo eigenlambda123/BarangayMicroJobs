@@ -74,6 +74,7 @@ class _ProfileHeaderState extends State<ProfileHeader> {
     final reviewCount = widget.userData?['review_count'] ?? 0;
     final profileImage = widget.userData?['profile_image'];
     final phone = widget.userData?['phone_number']?.toString() ?? 'No phone';
+    final role = (widget.userData?['role'] ?? 'resident').toString();
 
     return Container(
       width: double.infinity,
@@ -146,6 +147,11 @@ class _ProfileHeaderState extends State<ProfileHeader> {
             runSpacing: 8,
             alignment: WrapAlignment.center,
             children: [
+              _infoChip(
+                icon: Icons.verified_user_outlined,
+                label: role.toUpperCase(),
+                color: colorScheme.primary,
+              ),
               _infoChip(
                 icon: Icons.star_rounded,
                 label: '$rating ($reviewCount reviews)',

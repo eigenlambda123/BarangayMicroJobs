@@ -91,7 +91,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
 
-  static const List<String> _titles = ['Marketplace', 'History', 'Profile'];
+  static const List<String> _titles = ['Marketplace', 'Activity', 'Profile'];
 
   static const List<String> _subtitles = [
     'Find and post local microjobs',
