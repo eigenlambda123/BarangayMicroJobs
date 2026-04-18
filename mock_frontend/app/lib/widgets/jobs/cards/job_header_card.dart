@@ -29,9 +29,9 @@ class JobHeaderCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFDAD2C7)),
+        border: Border.all(color: colorScheme.primary.withValues(alpha: 0.12)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -62,15 +62,17 @@ class JobHeaderCard extends StatelessWidget {
             runSpacing: 8,
             children: [
               _metaChip(
+                colorScheme: colorScheme,
                 icon: Icons.person_outline,
                 label: 'Posted by $postedBy',
                 color: colorScheme.primary,
               ),
               if (postedOn != null)
                 _metaChip(
+                  colorScheme: colorScheme,
                   icon: Icons.calendar_today_outlined,
                   label: postedOn,
-                  color: const Color(0xFF7A7F83),
+                  color: colorScheme.onSurface.withValues(alpha: 0.62),
                 ),
             ],
           ),
@@ -80,21 +82,24 @@ class JobHeaderCard extends StatelessWidget {
             runSpacing: 10,
             children: [
               _valueBlock(
+                colorScheme: colorScheme,
                 title: 'Price',
                 value: price,
-                color: const Color(0xFF0D5C63),
+                color: colorScheme.primary,
                 icon: Icons.payments_outlined,
               ),
               _valueBlock(
+                colorScheme: colorScheme,
                 title: 'Location',
                 value: location,
-                color: const Color(0xFFDB7C26),
+                color: colorScheme.secondary,
                 icon: Icons.location_on_outlined,
               ),
               _valueBlock(
+                colorScheme: colorScheme,
                 title: 'Status',
                 value: 'OPEN',
-                color: const Color(0xFF2A6A31),
+                color: colorScheme.primary,
                 icon: Icons.work_outline,
               ),
             ],
@@ -105,6 +110,7 @@ class JobHeaderCard extends StatelessWidget {
   }
 
   Widget _metaChip({
+    required ColorScheme colorScheme,
     required IconData icon,
     required String label,
     required Color color,
@@ -134,6 +140,7 @@ class JobHeaderCard extends StatelessWidget {
   }
 
   Widget _valueBlock({
+    required ColorScheme colorScheme,
     required String title,
     required String value,
     required Color color,
@@ -167,7 +174,11 @@ class JobHeaderCard extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             value,
-            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w800),
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w800,
+              color: colorScheme.onSurface,
+            ),
           ),
         ],
       ),

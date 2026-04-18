@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../common/brand_logo.dart';
 
 class LoginHeader extends StatelessWidget {
   const LoginHeader({super.key});
@@ -23,15 +24,7 @@ class LoginHeader extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(
-                width: double.infinity,
-                height: 66,
-                child: FittedBox(
-                  alignment: Alignment.centerLeft,
-                  fit: BoxFit.contain,
-                  child: Image.asset('assets/logo.png'),
-                ),
-              ),
+              const BrandLogo(height: 66),
               const SizedBox(height: 16),
               Container(
                 padding: const EdgeInsets.symmetric(

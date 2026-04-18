@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../common/brand_logo.dart';
 
 class RegisterHeader extends StatelessWidget {
   const RegisterHeader({super.key});
@@ -14,24 +15,16 @@ class RegisterHeader extends StatelessWidget {
           width: double.infinity,
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: colorScheme.secondary.withValues(alpha: 0.08),
+            color: colorScheme.primary.withValues(alpha: 0.08),
             borderRadius: BorderRadius.circular(28),
             border: Border.all(
-              color: colorScheme.secondary.withValues(alpha: 0.12),
+              color: colorScheme.primary.withValues(alpha: 0.12),
             ),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(
-                width: double.infinity,
-                height: 66,
-                child: FittedBox(
-                  alignment: Alignment.centerLeft,
-                  fit: BoxFit.contain,
-                  child: Image.asset('assets/logo.png'),
-                ),
-              ),
+              const BrandLogo(height: 66),
               const SizedBox(height: 16),
               Container(
                 padding: const EdgeInsets.symmetric(

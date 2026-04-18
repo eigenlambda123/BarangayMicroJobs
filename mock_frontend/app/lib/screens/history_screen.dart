@@ -131,11 +131,14 @@ class _HistoryScreenState extends State<HistoryScreen> {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [Color(0xFFFFFCF6), Color(0xFFF4EEE4)],
+          colors: [
+            colorScheme.surface,
+            Theme.of(context).scaffoldBackgroundColor,
+          ],
         ),
       ),
       child: Padding(
@@ -164,9 +167,11 @@ class _HistoryScreenState extends State<HistoryScreen> {
               width: double.infinity,
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: colorScheme.surface,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: const Color(0xFFDAD2C7)),
+                border: Border.all(
+                  color: colorScheme.primary.withValues(alpha: 0.12),
+                ),
               ),
               child: Wrap(
                 spacing: 8,
@@ -192,7 +197,11 @@ class _HistoryScreenState extends State<HistoryScreen> {
             ),
             const SizedBox(height: 14),
             if (_isLoading)
-              const Expanded(child: Center(child: CircularProgressIndicator()))
+              Expanded(
+                child: Center(
+                  child: CircularProgressIndicator(color: colorScheme.primary),
+                ),
+              )
             else if (_errorMessage != null)
               Expanded(
                 child: Center(
@@ -200,9 +209,11 @@ class _HistoryScreenState extends State<HistoryScreen> {
                     width: double.infinity,
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: colorScheme.surface,
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: const Color(0xFFDAD2C7)),
+                      border: Border.all(
+                        color: colorScheme.primary.withValues(alpha: 0.12),
+                      ),
                     ),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
@@ -230,7 +241,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 ),
               )
             else if (_transactions.isEmpty)
-              const Expanded(
+              Expanded(
                 child: Center(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -246,12 +257,15 @@ class _HistoryScreenState extends State<HistoryScreen> {
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
+                          color: colorScheme.onSurface,
                         ),
                       ),
                       SizedBox(height: 4),
                       Text(
                         'Your accepted and posted job activity will appear here.',
-                        style: TextStyle(color: Color(0xFF6A7278)),
+                        style: TextStyle(
+                          color: colorScheme.onSurface.withValues(alpha: 0.66),
+                        ),
                         textAlign: TextAlign.center,
                       ),
                     ],

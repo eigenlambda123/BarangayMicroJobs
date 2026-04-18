@@ -11,10 +11,13 @@ class MarketplaceHeader extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(18),
-        gradient: const LinearGradient(
+        gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xFFE8F4F4), Color(0xFFF8F4EC)],
+          colors: [
+            colorScheme.primary.withValues(alpha: 0.08),
+            colorScheme.secondary.withValues(alpha: 0.08),
+          ],
         ),
         border: Border.all(color: colorScheme.primary.withValues(alpha: 0.14)),
       ),
@@ -35,9 +38,12 @@ class MarketplaceHeader extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 4),
-                const Text(
+                Text(
                   'Post a quick job or apply to nearby listings.',
-                  style: TextStyle(fontSize: 12, color: Color(0xFF6A7278)),
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: colorScheme.onSurface.withValues(alpha: 0.66),
+                  ),
                 ),
               ],
             ),
@@ -47,12 +53,12 @@ class MarketplaceHeader extends StatelessWidget {
             width: 36,
             height: 36,
             decoration: BoxDecoration(
-              color: colorScheme.primary.withValues(alpha: 0.14),
+              color: colorScheme.secondary.withValues(alpha: 0.14),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
               Icons.campaign_outlined,
-              color: colorScheme.primary,
+              color: colorScheme.secondary,
               size: 20,
             ),
           ),

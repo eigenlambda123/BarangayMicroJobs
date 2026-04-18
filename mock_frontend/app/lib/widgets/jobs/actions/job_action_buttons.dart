@@ -20,6 +20,8 @@ class JobActionButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Column(
       children: [
         if (!isJobPoster)
@@ -32,10 +34,13 @@ class JobActionButtons extends StatelessWidget {
                   ? null
                   : (isLoading ? null : onApplyPressed),
               icon: isLoading
-                  ? const SizedBox(
+                  ? SizedBox(
                       width: 20,
                       height: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2),
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: colorScheme.onPrimary,
+                      ),
                     )
                   : const Icon(Icons.check_circle),
               label: Text(
@@ -47,8 +52,10 @@ class JobActionButtons extends StatelessWidget {
               ),
               style: hasApplied
                   ? ElevatedButton.styleFrom(
-                      backgroundColor: Colors.grey,
-                      foregroundColor: Colors.white,
+                      backgroundColor: colorScheme.onSurface.withValues(
+                        alpha: 0.4,
+                      ),
+                      foregroundColor: colorScheme.onPrimary,
                     )
                   : null,
             ),
@@ -61,8 +68,8 @@ class JobActionButtons extends StatelessWidget {
               icon: const Icon(Icons.delete),
               label: const Text('Delete Job'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
-                foregroundColor: Colors.white,
+                backgroundColor: colorScheme.error,
+                foregroundColor: colorScheme.onPrimary,
               ),
             ),
           ),

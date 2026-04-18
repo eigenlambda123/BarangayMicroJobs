@@ -119,8 +119,8 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
             onPressed: () {
               setState(() => _showPostJobModal = true);
             },
-            backgroundColor: const Color(0xFF0D5C63),
-            foregroundColor: Colors.white,
+            backgroundColor: Theme.of(context).colorScheme.primary,
+            foregroundColor: Theme.of(context).colorScheme.onPrimary,
             icon: const Icon(Icons.add),
             label: const Text(
               'Post Job',

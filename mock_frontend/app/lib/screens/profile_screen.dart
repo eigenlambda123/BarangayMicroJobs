@@ -107,11 +107,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final role = (_userData?['role'] ?? 'resident').toString();
 
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [Color(0xFFFFFCF6), Color(0xFFF4EEE4)],
+          colors: [
+            colorScheme.surface,
+            Theme.of(context).scaffoldBackgroundColor,
+          ],
         ),
       ),
       child: Padding(
@@ -154,15 +157,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 width: double.infinity,
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: colorScheme.surface,
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: const Color(0xFFDAD2C7)),
+                  border: Border.all(
+                    color: colorScheme.primary.withValues(alpha: 0.12),
+                  ),
                 ),
-                child: const Text(
+                child: Text(
                   'Manage your profile photo, view reputation, and track your contribution in the community.',
                   style: TextStyle(
                     fontSize: 13,
-                    color: Color(0xFF616A70),
+                    color: colorScheme.onSurface.withValues(alpha: 0.66),
                     height: 1.35,
                   ),
                 ),

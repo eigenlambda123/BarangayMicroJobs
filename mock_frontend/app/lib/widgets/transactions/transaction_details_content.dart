@@ -53,9 +53,11 @@ class TransactionDetailsContent extends StatelessWidget {
             width: double.infinity,
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: colorScheme.surface,
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: const Color(0xFFDAD2C7)),
+              border: Border.all(
+                color: colorScheme.primary.withValues(alpha: 0.12),
+              ),
             ),
             child: Wrap(
               spacing: 8,
@@ -74,7 +76,7 @@ class TransactionDetailsContent extends StatelessWidget {
                 _summaryChip(
                   icon: Icons.payments_outlined,
                   label: '₱${job['salary'] ?? 0}',
-                  color: const Color(0xFF0D5C63),
+                  color: colorScheme.primary,
                 ),
               ],
             ),

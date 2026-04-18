@@ -22,16 +22,20 @@ class TransactionActionButtons extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFDAD2C7)),
+        border: Border.all(color: colorScheme.primary.withValues(alpha: 0.12)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Available Actions',
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+              color: colorScheme.onSurface,
+            ),
           ),
           const SizedBox(height: 10),
           if (TransactionHelpers.canShowCompletionActions(transaction))
@@ -60,8 +64,8 @@ class TransactionActionButtons extends StatelessWidget {
             icon: const Icon(Icons.cancel),
             label: const Text('Cancel Transaction'),
             style: OutlinedButton.styleFrom(
-              foregroundColor: const Color(0xFFB42318),
-              side: const BorderSide(color: Color(0xFFEF4444)),
+              foregroundColor: colorScheme.error,
+              side: BorderSide(color: colorScheme.error),
               minimumSize: const Size(double.infinity, 48),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(999),

@@ -16,16 +16,20 @@ class StatsCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFDAD2C7)),
+        border: Border.all(color: colorScheme.primary.withValues(alpha: 0.12)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Your Activity',
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
+            style: TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.w700,
+              color: colorScheme.onSurface,
+            ),
           ),
           const SizedBox(height: 12),
           Row(
@@ -35,7 +39,7 @@ class StatsCard extends StatelessWidget {
                   icon: Icons.task_alt_outlined,
                   value: jobsDone.toString(),
                   label: 'Jobs Done',
-                  color: const Color(0xFF2A6A31),
+                  color: colorScheme.primary,
                 ),
               ),
               const SizedBox(width: 10),
@@ -44,7 +48,7 @@ class StatsCard extends StatelessWidget {
                   icon: Icons.campaign_outlined,
                   value: jobsPosted.toString(),
                   label: 'Posted',
-                  color: colorScheme.primary,
+                  color: colorScheme.secondary,
                 ),
               ),
               const SizedBox(width: 10),
@@ -53,7 +57,7 @@ class StatsCard extends StatelessWidget {
                   icon: Icons.payments_outlined,
                   value: '₱$totalEarned',
                   label: 'Earned',
-                  color: const Color(0xFFDB7C26),
+                  color: colorScheme.secondary,
                 ),
               ),
             ],
@@ -86,7 +90,10 @@ class StatsCard extends StatelessWidget {
           const SizedBox(height: 3),
           Text(
             label,
-            style: const TextStyle(fontSize: 11, color: Color(0xFF60686E)),
+            style: TextStyle(
+              fontSize: 11,
+              color: Colors.black.withValues(alpha: 0.62),
+            ),
           ),
         ],
       ),

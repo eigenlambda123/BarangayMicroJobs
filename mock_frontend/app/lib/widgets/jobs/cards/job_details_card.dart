@@ -8,13 +8,15 @@ class JobDetailsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFDAD2C7)),
+        border: Border.all(color: colorScheme.primary.withValues(alpha: 0.12)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -43,9 +45,9 @@ class JobDetailsCard extends StatelessWidget {
                 ),
                 child: Text(
                   '₱${job['salary'] ?? 0}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 13,
-                    color: Color(0xFF2A6A31),
+                    color: colorScheme.primary,
                     fontWeight: FontWeight.w800,
                   ),
                 ),
@@ -55,7 +57,10 @@ class JobDetailsCard extends StatelessWidget {
           const SizedBox(height: 10),
           Text(
             (job['description'] ?? 'No description available').toString(),
-            style: const TextStyle(fontSize: 14, color: Color(0xFF434A4F)),
+            style: TextStyle(
+              fontSize: 14,
+              color: colorScheme.onSurface.withValues(alpha: 0.78),
+            ),
           ),
           const SizedBox(height: 12),
           Wrap(
@@ -63,10 +68,12 @@ class JobDetailsCard extends StatelessWidget {
             runSpacing: 8,
             children: [
               _metaChip(
+                colorScheme: colorScheme,
                 icon: Icons.location_on_outlined,
                 label: (job['location'] ?? 'Unknown location').toString(),
               ),
               _metaChip(
+                colorScheme: colorScheme,
                 icon: Icons.schedule_outlined,
                 label: 'Transaction linked',
               ),
@@ -77,24 +84,28 @@ class JobDetailsCard extends StatelessWidget {
     );
   }
 
-  Widget _metaChip({required IconData icon, required String label}) {
+  Widget _metaChip({
+    required ColorScheme colorScheme,
+    required IconData icon,
+    required String label,
+  }) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: const Color(0xFFF4EFE6),
+        color: colorScheme.primary.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(999),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           const SizedBox(width: 1),
-          Icon(icon, size: 13, color: const Color(0xFF6A7278)),
+          Icon(icon, size: 13, color: colorScheme.primary),
           const SizedBox(width: 5),
           Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 12,
-              color: Color(0xFF5B6368),
+              color: colorScheme.onSurface.withValues(alpha: 0.72),
               fontWeight: FontWeight.w600,
             ),
           ),

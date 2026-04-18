@@ -13,36 +13,48 @@ class TransactionPartiesCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFDAD2C7)),
+        border: Border.all(color: colorScheme.primary.withValues(alpha: 0.12)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Row(
+          Row(
             children: [
-              Icon(Icons.people_alt_outlined, size: 18),
-              SizedBox(width: 8),
+              Icon(
+                Icons.people_alt_outlined,
+                size: 18,
+                color: colorScheme.primary,
+              ),
+              const SizedBox(width: 8),
               Text(
                 'Parties Involved',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w800,
+                  color: colorScheme.onSurface,
+                ),
               ),
             ],
           ),
           const SizedBox(height: 14),
           _partyTile(
-            color: const Color(0xFF0D5C63),
+            context: context,
+            color: colorScheme.primary,
             role: 'Job Poster',
             name: (requester['name'] ?? 'Unknown').toString(),
           ),
           const SizedBox(height: 10),
           _partyTile(
-            color: const Color(0xFF2A6A31),
+            context: context,
+            color: colorScheme.secondary,
             role: 'Service Provider',
             name: (provider['name'] ?? 'Unknown').toString(),
           ),
@@ -52,6 +64,7 @@ class TransactionPartiesCard extends StatelessWidget {
   }
 
   Widget _partyTile({
+    required BuildContext context,
     required Color color,
     required String role,
     required String name,
@@ -89,9 +102,10 @@ class TransactionPartiesCard extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   name,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
               ],

@@ -79,9 +79,9 @@ class _ProfileHeaderState extends State<ProfileHeader> {
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(16, 18, 16, 16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colorScheme.surface,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: const Color(0xFFDAD2C7)),
+        border: Border.all(color: colorScheme.primary.withValues(alpha: 0.12)),
       ),
       child: Column(
         children: [
@@ -134,7 +134,11 @@ class _ProfileHeaderState extends State<ProfileHeader> {
           const SizedBox(height: 14),
           Text(
             fullName,
-            style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 23),
+            style: TextStyle(
+              fontWeight: FontWeight.w800,
+              fontSize: 23,
+              color: colorScheme.onSurface,
+            ),
           ),
           const SizedBox(height: 8),
           Wrap(
@@ -145,12 +149,12 @@ class _ProfileHeaderState extends State<ProfileHeader> {
               _infoChip(
                 icon: Icons.star_rounded,
                 label: '$rating ($reviewCount reviews)',
-                color: const Color(0xFFDB7C26),
+                color: colorScheme.secondary,
               ),
               _infoChip(
                 icon: Icons.phone_outlined,
                 label: phone,
-                color: const Color(0xFF0D5C63),
+                color: colorScheme.primary,
               ),
             ],
           ),

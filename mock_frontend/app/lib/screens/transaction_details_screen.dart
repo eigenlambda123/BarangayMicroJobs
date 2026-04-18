@@ -178,6 +178,8 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     if (_isLoading) {
       return Scaffold(
         appBar: AppBar(title: const Text('Transaction Details')),
@@ -200,11 +202,14 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
     return Scaffold(
       appBar: AppBar(title: const Text('Transaction Details')),
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Color(0xFFFFFCF6), Color(0xFFF4EEE4)],
+            colors: [
+              colorScheme.surface,
+              Theme.of(context).scaffoldBackgroundColor,
+            ],
           ),
         ),
         child: TransactionDetailsContent(

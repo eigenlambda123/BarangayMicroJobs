@@ -527,17 +527,21 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final isJobPoster = _currentUserId == widget.posterId;
     final isJobOpen = (_jobData?['status'] ?? 'open') == 'open';
 
     return Scaffold(
       appBar: AppBar(title: const Text('Job Details')),
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Color(0xFFFFFCF6), Color(0xFFF4EEE4)],
+            colors: [
+              colorScheme.surface,
+              Theme.of(context).scaffoldBackgroundColor,
+            ],
           ),
         ),
         child: SingleChildScrollView(

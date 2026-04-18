@@ -4,6 +4,7 @@ import 'screens/history_screen.dart';
 import 'screens/profile_screen.dart';
 import 'screens/login_screen.dart';
 import 'services/auth_service.dart';
+import 'widgets/common/brand_logo.dart';
 
 void main() {
   runApp(const BarangayMicrojobsApp());
@@ -21,6 +22,7 @@ class BarangayMicrojobsApp extends StatelessWidget {
       onSecondary: Colors.white,
       surface: Color(0xFFFFFCF6),
       onSurface: Color(0xFF1D2428),
+      error: Color(0xFFB42318),
     );
 
     return MaterialApp(
@@ -107,22 +109,26 @@ class _HomePageState extends State<HomePage> {
         titleSpacing: 16,
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              'Barangay Microjobs',
-              style: TextStyle(
-                fontSize: 21,
-                fontWeight: FontWeight.w800,
-                color: colorScheme.onSurface,
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+              decoration: BoxDecoration(
+                color: colorScheme.primary.withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: colorScheme.primary.withValues(alpha: 0.12),
+                ),
               ),
+              child: const BrandLogo(height: 32),
             ),
-            const SizedBox(height: 2),
+            const SizedBox(height: 4),
             Text(
               _subtitles[_selectedIndex],
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
-                color: Color(0xFF6A7278),
+                color: colorScheme.onSurface.withValues(alpha: 0.62),
               ),
             ),
           ],
@@ -162,11 +168,14 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Color(0xFFFFFCF6), Color(0xFFF4EEE4)],
+            colors: [
+              colorScheme.surface,
+              Theme.of(context).scaffoldBackgroundColor,
+            ],
           ),
         ),
         child: AnimatedSwitcher(
