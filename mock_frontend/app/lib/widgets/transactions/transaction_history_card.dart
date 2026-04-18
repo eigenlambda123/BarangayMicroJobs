@@ -18,6 +18,7 @@ class TransactionHistoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final job = transaction['job'];
     final provider = transaction['provider'];
     final requester = transaction['requester'];
@@ -36,23 +37,23 @@ class TransactionHistoryCard extends StatelessWidget {
     String statusText;
     switch (status) {
       case 'completed':
-        statusColor = Colors.green;
+        statusColor = const Color(0xFF2A6A31);
         statusText = 'COMPLETED';
         break;
       case 'hired':
-        statusColor = Colors.blue;
+        statusColor = colorScheme.primary;
         statusText = 'IN PROGRESS';
         break;
       case 'applied':
-        statusColor = Colors.orange;
+        statusColor = colorScheme.secondary;
         statusText = 'APPLIED';
         break;
       case 'canceled':
-        statusColor = Colors.red;
+        statusColor = colorScheme.error;
         statusText = 'CANCELED';
         break;
       default:
-        statusColor = Colors.grey;
+        statusColor = colorScheme.onSurface.withValues(alpha: 0.54);
         statusText = status.toUpperCase();
     }
 

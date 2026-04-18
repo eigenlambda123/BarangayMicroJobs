@@ -98,22 +98,35 @@ class _PostedJobsSectionState extends State<PostedJobsSection> {
             width: double.infinity,
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: colorScheme.surface,
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: const Color(0xFFDAD2C7)),
+              border: Border.all(
+                color: colorScheme.primary.withValues(alpha: 0.12),
+              ),
             ),
             child: Column(
               children: [
-                Icon(Icons.work_outline, size: 42, color: Colors.grey[500]),
+                Icon(
+                  Icons.work_outline,
+                  size: 42,
+                  color: colorScheme.onSurface.withValues(alpha: 0.5),
+                ),
                 const SizedBox(height: 10),
-                const Text(
+                Text(
                   'No hired jobs yet',
-                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                    color: colorScheme.onSurface,
+                  ),
                 ),
                 const SizedBox(height: 5),
                 Text(
                   'Hire an applicant from your posted jobs to track it here.',
-                  style: TextStyle(color: Colors.grey[600], fontSize: 13),
+                  style: TextStyle(
+                    color: colorScheme.onSurface.withValues(alpha: 0.66),
+                    fontSize: 13,
+                  ),
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -158,13 +171,18 @@ class _PostedJobsSectionState extends State<PostedJobsSection> {
                       vertical: 8,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: colorScheme.surface,
                       borderRadius: BorderRadius.circular(999),
-                      border: Border.all(color: const Color(0xFFDAD2C7)),
+                      border: Border.all(
+                        color: colorScheme.primary.withValues(alpha: 0.12),
+                      ),
                     ),
                     child: Text(
                       'Page $_currentPage of $_totalPages',
-                      style: const TextStyle(fontWeight: FontWeight.w600),
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: colorScheme.onSurface,
+                      ),
                     ),
                   ),
                   const SizedBox(width: 10),

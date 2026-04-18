@@ -40,6 +40,7 @@ class StatsCard extends StatelessWidget {
                   value: jobsDone.toString(),
                   label: 'Jobs Done',
                   color: colorScheme.primary,
+                  labelColor: colorScheme.onSurface.withValues(alpha: 0.62),
                 ),
               ),
               const SizedBox(width: 10),
@@ -49,6 +50,7 @@ class StatsCard extends StatelessWidget {
                   value: jobsPosted.toString(),
                   label: 'Posted',
                   color: colorScheme.secondary,
+                  labelColor: colorScheme.onSurface.withValues(alpha: 0.62),
                 ),
               ),
               const SizedBox(width: 10),
@@ -58,6 +60,7 @@ class StatsCard extends StatelessWidget {
                   value: '₱$totalEarned',
                   label: 'Earned',
                   color: colorScheme.secondary,
+                  labelColor: colorScheme.onSurface.withValues(alpha: 0.62),
                 ),
               ),
             ],
@@ -72,6 +75,7 @@ class StatsCard extends StatelessWidget {
     required String value,
     required String label,
     required Color color,
+    required Color labelColor,
   }) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
@@ -88,13 +92,7 @@ class StatsCard extends StatelessWidget {
             style: TextStyle(fontWeight: FontWeight.w800, color: color),
           ),
           const SizedBox(height: 3),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 11,
-              color: Colors.black.withValues(alpha: 0.62),
-            ),
-          ),
+          Text(label, style: TextStyle(fontSize: 11, color: labelColor)),
         ],
       ),
     );

@@ -28,14 +28,16 @@ class ActivityCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFDAD2C7)),
+        border: Border.all(color: colorScheme.primary.withValues(alpha: 0.12)),
         boxShadow: const [
           BoxShadow(
-            color: Color(0x0D000000),
+            color: Color(0x0E000000),
             blurRadius: 8,
             offset: Offset(0, 3),
           ),
@@ -60,18 +62,21 @@ class ActivityCard extends StatelessWidget {
                           title,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontWeight: FontWeight.w800,
                             fontSize: 15,
+                            color: colorScheme.onSurface,
                           ),
                         ),
                         const SizedBox(height: 4),
                         Row(
                           children: [
-                            const Icon(
+                            Icon(
                               Icons.person_outline,
                               size: 13,
-                              color: Color(0xFF6A7278),
+                              color: colorScheme.onSurface.withValues(
+                                alpha: 0.62,
+                              ),
                             ),
                             const SizedBox(width: 4),
                             Expanded(
@@ -79,9 +84,11 @@ class ActivityCard extends StatelessWidget {
                                 worker,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 12,
-                                  color: Color(0xFF6A7278),
+                                  color: colorScheme.onSurface.withValues(
+                                    alpha: 0.62,
+                                  ),
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -98,7 +105,7 @@ class ActivityCard extends StatelessWidget {
                       vertical: 6,
                     ),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFE4D2EC),
+                      color: const Color(0xFF3BAF4A),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Text(
@@ -106,7 +113,7 @@ class ActivityCard extends StatelessWidget {
                       style: const TextStyle(
                         fontWeight: FontWeight.w800,
                         fontSize: 12,
-                        color: Color(0xFF4B2D59),
+                        color: Colors.white,
                       ),
                     ),
                   ),
@@ -118,9 +125,9 @@ class ActivityCard extends StatelessWidget {
                 children: [
                   Text(
                     date,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 11,
-                      color: Color(0xFF7A7F83),
+                      color: colorScheme.onSurface.withValues(alpha: 0.56),
                     ),
                   ),
                   Container(
