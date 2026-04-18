@@ -101,14 +101,13 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
         .map((transaction) => transaction['job']['id'])
         .toSet();
 
-    return _jobs
-        .where(
-          (job) =>
-              job['poster_id'] !=
-                  _currentUserId && // Not posted by current user
-              !appliedJobIds.contains(job['id']),
-        ) // Not already applied for
-        .toList();
+    return _jobs.where((job) {
+      final jobStatus = (job['status'] ?? '').toString().toLowerCase();
+      return job['poster_id'] != _currentUserId && // Not posted by current user
+          !appliedJobIds.contains(job['id']) && // Not already applied for
+          jobStatus == 'open'; // Hide jobs that already have a hired worker
+    }) // Not already applied for
+    .toList();
   }
 
   @override

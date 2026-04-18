@@ -108,55 +108,29 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
-      appBar: AppBar(title: const Text('Create Account')),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              colorScheme.secondary.withValues(alpha: 0.12),
-              colorScheme.surface,
-              const Color(0xFFF8F2E9),
+      appBar: AppBar(title: const Text('Create Account'), elevation: 0),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              RegisterHeader(),
+              const SizedBox(height: 32),
+              FullNameField(controller: _fullNameController),
+              const SizedBox(height: 20),
+              PhoneField(controller: _phoneController),
+              const SizedBox(height: 20),
+              PasswordField(controller: _passwordController),
+              const SizedBox(height: 20),
+              ConfirmPasswordField(controller: _confirmPasswordController),
+              const SizedBox(height: 32),
+              RegisterButton(isLoading: _isLoading, onPressed: _handleRegister),
+              const SizedBox(height: 16),
+              LoginLink(),
+              const SizedBox(height: 24),
             ],
-          ),
-        ),
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.78),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: colorScheme.primary.withValues(alpha: 0.16),
-                ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  RegisterHeader(),
-                  const SizedBox(height: 28),
-                  FullNameField(controller: _fullNameController),
-                  const SizedBox(height: 16),
-                  PhoneField(controller: _phoneController),
-                  const SizedBox(height: 16),
-                  PasswordField(controller: _passwordController),
-                  const SizedBox(height: 16),
-                  ConfirmPasswordField(controller: _confirmPasswordController),
-                  const SizedBox(height: 28),
-                  RegisterButton(
-                    isLoading: _isLoading,
-                    onPressed: _handleRegister,
-                  ),
-                  const SizedBox(height: 12),
-                  LoginLink(),
-                ],
-              ),
-            ),
           ),
         ),
       ),
