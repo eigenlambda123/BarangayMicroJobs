@@ -45,6 +45,19 @@ class _AvailableJobsSectionState extends State<AvailableJobsSection> {
   }
 
   @override
+  void didUpdateWidget(covariant AvailableJobsSection oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.jobs.isEmpty) {
+      _currentPage = 1;
+      return;
+    }
+
+    if (_currentPage > _totalPages) {
+      _currentPage = _totalPages;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
@@ -56,6 +69,15 @@ class _AvailableJobsSectionState extends State<AvailableJobsSection> {
           children: [
             Row(
               children: [
+                Container(
+                  width: 10,
+                  height: 10,
+                  decoration: BoxDecoration(
+                    color: colorScheme.secondary,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                const SizedBox(width: 10),
                 Text(
                   'Available Jobs',
                   style: Theme.of(context).textTheme.titleLarge,
@@ -94,7 +116,16 @@ class _AvailableJobsSectionState extends State<AvailableJobsSection> {
             ),
           ],
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 4),
+        Text(
+          'Browse open opportunities and jump into the ones that fit your schedule.',
+          style: TextStyle(
+            fontSize: 13,
+            height: 1.35,
+            color: colorScheme.onSurface.withValues(alpha: 0.62),
+          ),
+        ),
+        const SizedBox(height: 14),
         for (int i = 0; i < _paginatedJobs.length; i++) ...[
           PostingCard(
             title: _paginatedJobs[i]['title'] ?? 'Unknown Job',
@@ -124,24 +155,38 @@ class _AvailableJobsSectionState extends State<AvailableJobsSection> {
           if (i < _paginatedJobs.length - 1) const SizedBox(height: 12),
         ],
         // Pagination Controls
-        if (widget.jobs.isNotEmpty)
+        if (widget.jobs.isNotEmpty && _totalPages > 1)
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+            child: Wrap(
+              alignment: WrapAlignment.center,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              spacing: 12,
+              runSpacing: 12,
               children: [
-                ElevatedButton.icon(
+                OutlinedButton.icon(
                   onPressed: _currentPage > 1 ? _goToPreviousPage : null,
                   icon: const Icon(Icons.arrow_back),
                   label: const Text('Previous'),
                 ),
-                const SizedBox(width: 16),
-                Text(
-                  'Page $_currentPage of $_totalPages',
-                  style: const TextStyle(fontWeight: FontWeight.w500),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 10,
+                  ),
+                  decoration: BoxDecoration(
+                    color: colorScheme.primary.withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+                  child: Text(
+                    'Page $_currentPage of $_totalPages',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: colorScheme.primary,
+                    ),
+                  ),
                 ),
-                const SizedBox(width: 16),
-                ElevatedButton.icon(
+                FilledButton.tonalIcon(
                   onPressed: _currentPage < _totalPages ? _goToNextPage : null,
                   icon: const Icon(Icons.arrow_forward),
                   label: const Text('Next'),

@@ -41,6 +41,20 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
     _loadUserTransactions();
   }
 
+  Future<void> _refreshMarketplace() async {
+    if (mounted) {
+      setState(() {
+        _errorMessage = null;
+      });
+    }
+
+    await Future.wait([
+      _loadCurrentUser(),
+      _loadJobs(),
+      _loadUserTransactions(),
+    ]);
+  }
+
   Future<void> _loadCurrentUser() async {
     try {
       final userId = await AuthService().getUserId();
@@ -112,15 +126,45 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Stack(
       children: [
+        Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                colorScheme.surface,
+                Theme.of(context).scaffoldBackgroundColor,
+              ],
+            ),
+          ),
+          child: const SizedBox.expand(),
+        ),
+        Positioned(
+          top: -64,
+          right: -72,
+          child: _GlowOrb(color: colorScheme.primary.withValues(alpha: 0.12)),
+        ),
+        Positioned(
+          bottom: 180,
+          left: -90,
+          child: _GlowOrb(
+            color: colorScheme.secondary.withValues(alpha: 0.12),
+            size: 220,
+          ),
+        ),
         Scaffold(
+          backgroundColor: Colors.transparent,
           floatingActionButton: FloatingActionButton.extended(
             onPressed: () {
               setState(() => _showPostJobModal = true);
             },
-            backgroundColor: Theme.of(context).colorScheme.primary,
-            foregroundColor: Theme.of(context).colorScheme.onPrimary,
+            backgroundColor: colorScheme.primary,
+            foregroundColor: colorScheme.onPrimary,
+            elevation: 6,
             icon: const Icon(Icons.add),
             label: const Text(
               'Post Job',
@@ -128,16 +172,27 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
             ),
             tooltip: 'Post a Job',
           ),
-          body: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const MarketplaceHeader(),
-                  const SizedBox(height: 20),
-                  _buildActivePostingsSection(context),
-                ],
+          body: SafeArea(
+            child: RefreshIndicator(
+              color: colorScheme.primary,
+              onRefresh: _refreshMarketplace,
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const MarketplaceHeader(),
+                      const SizedBox(height: 16),
+                      _buildMarketplaceOverview(context),
+                      const SizedBox(height: 18),
+                      _MarketplaceSectionShell(
+                        child: _buildActivePostingsSection(context),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
           ),
@@ -157,6 +212,126 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
             },
           ),
       ],
+    );
+  }
+
+  Widget _buildMarketplaceOverview(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final availableCount = _availableJobs.length;
+    final myJobsCount = _myJobs.length;
+    final totalCount = _jobs.length;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.8),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: colorScheme.primary.withValues(alpha: 0.1)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 24,
+            offset: const Offset(0, 12),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: colorScheme.primary.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Icon(
+                  Icons.space_dashboard_rounded,
+                  color: colorScheme.primary,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Live marketplace',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                        color: colorScheme.primary,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Track what you posted and what you can apply for right now.',
+                      style: TextStyle(
+                        fontSize: 13,
+                        height: 1.35,
+                        color: colorScheme.onSurface.withValues(alpha: 0.68),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: _MarketplaceMetricCard(
+                  title: 'Total jobs',
+                  value: '$totalCount',
+                  icon: Icons.view_list_rounded,
+                  tint: colorScheme.secondary,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _MarketplaceMetricCard(
+                  title: 'My postings',
+                  value: '$myJobsCount',
+                  icon: Icons.cases_outlined,
+                  tint: colorScheme.primary,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            decoration: BoxDecoration(
+              color: colorScheme.secondary.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(18),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.local_fire_department_outlined,
+                  size: 18,
+                  color: colorScheme.secondary,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    '$availableCount open opportunities nearby',
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: colorScheme.onSurface,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -183,6 +358,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
         if (_myJobs.isNotEmpty) MyJobsSection(jobs: _myJobs),
 
         // Available Jobs Section (All other jobs)
+        if (_availableJobs.isNotEmpty) const SizedBox(height: 20),
         if (_availableJobs.isNotEmpty)
           AvailableJobsSection(jobs: _availableJobs, onRefresh: _loadJobs)
         else if (_myJobs.isNotEmpty)
@@ -194,6 +370,116 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
             ),
           ),
       ],
+    );
+  }
+}
+
+class _MarketplaceSectionShell extends StatelessWidget {
+  const _MarketplaceSectionShell({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(16, 18, 16, 14),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.72),
+        borderRadius: BorderRadius.circular(28),
+        border: Border.all(color: colorScheme.primary.withValues(alpha: 0.08)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 24,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: child,
+    );
+  }
+}
+
+class _MarketplaceMetricCard extends StatelessWidget {
+  const _MarketplaceMetricCard({
+    required this.title,
+    required this.value,
+    required this.icon,
+    required this.tint,
+  });
+
+  final String title;
+  final String value;
+  final IconData icon;
+  final Color tint;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: tint.withValues(alpha: 0.09),
+        borderRadius: BorderRadius.circular(18),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: tint.withValues(alpha: 0.14),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Icon(icon, color: tint, size: 18),
+          ),
+          const SizedBox(width: 10),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                value,
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w900,
+                  color: tint,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.62),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _GlowOrb extends StatelessWidget {
+  const _GlowOrb({required this.color, this.size = 220});
+
+  final Color color;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: RadialGradient(colors: [color, color.withValues(alpha: 0.0)]),
+      ),
     );
   }
 }
