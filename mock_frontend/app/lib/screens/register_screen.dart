@@ -109,28 +109,32 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(automaticallyImplyLeading: false, elevation: 0),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              RegisterHeader(),
-              const SizedBox(height: 32),
-              FullNameField(controller: _fullNameController),
-              const SizedBox(height: 20),
-              PhoneField(controller: _phoneController),
-              const SizedBox(height: 20),
-              PasswordField(controller: _passwordController),
-              const SizedBox(height: 20),
-              ConfirmPasswordField(controller: _confirmPasswordController),
-              const SizedBox(height: 32),
-              RegisterButton(isLoading: _isLoading, onPressed: _handleRegister),
-              const SizedBox(height: 16),
-              LoginLink(),
-              const SizedBox(height: 24),
-            ],
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                RegisterHeader(),
+                const SizedBox(height: 32),
+                FullNameField(controller: _fullNameController),
+                const SizedBox(height: 20),
+                PhoneField(controller: _phoneController),
+                const SizedBox(height: 20),
+                PasswordField(controller: _passwordController),
+                const SizedBox(height: 20),
+                ConfirmPasswordField(controller: _confirmPasswordController),
+                const SizedBox(height: 32),
+                RegisterButton(
+                  isLoading: _isLoading,
+                  onPressed: _handleRegister,
+                ),
+                const SizedBox(height: 16),
+                LoginLink(),
+                const SizedBox(height: 24),
+              ],
+            ),
           ),
         ),
       ),
