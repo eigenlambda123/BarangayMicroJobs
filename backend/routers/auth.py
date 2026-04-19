@@ -6,7 +6,7 @@ from uuid import UUID
 from database import get_session
 from models import User 
 
-from schemas.auth import RegisterRequest, LoginRequest
+from schemas.auth import RegisterRequest, LoginRequest, UpdateProfileRequest
 from utils.auth_utils import verify_password, create_access_token, get_current_user
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
@@ -18,6 +18,9 @@ def build_user_profile(user: User) -> dict:
         "id": user.id,
         "full_name": user.full_name,
         "phone_number": user.phone_number,
+        "email": user.email,
+        "location": user.location,
+        "skills": user.skills or [],
         "role": user.role,
         "is_verified": user.is_verified,
         "rating": user.rating,
@@ -92,3 +95,54 @@ def get_user(user_id: UUID, session: Session = Depends(get_session)):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
     
     return build_user_profile(user)
+
+@router.put("/profile")
+def update_profile(
+    profile_data: UpdateProfileRequest,
+    current_user: User = Depends(get_current_user),
+    session: Session = Depends(get_session),
+):
+    """
+    Update current user profile (phone, email, location, skills)
+    """
+    # Fetch fresh user instance from DB
+    user = session.get(User, current_user.id)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
+        )
+
+    # Update fields only if provided
+    if profile_data.phone is not None:
+        # Check if phone is already taken by another user
+        existing = session.exec(
+            select(User).where(
+                (User.phone_number == profile_data.phone)
+                & (User.id != user.id)
+            )
+        ).first()
+        if existing:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Phone number already in use",
+            )
+        user.phone_number = profile_data.phone
+
+    if profile_data.email is not None:
+        user.email = profile_data.email
+
+    if profile_data.location is not None:
+        user.location = profile_data.location
+
+    if profile_data.skills is not None:
+        user.skills = profile_data.skills
+
+    # Save changes
+    session.add(user)
+    session.commit()
+    session.refresh(user)
+
+    return {
+        "message": "Profile updated successfully",
+        "user": build_user_profile(user),
+    }

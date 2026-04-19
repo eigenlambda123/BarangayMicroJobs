@@ -205,4 +205,43 @@ class AuthService {
       throw Exception('Update profile image error: $e');
     }
   }
+
+  // Update profile endpoint: PUT /auth/profile
+  Future<Map<String, dynamic>> updateProfile({
+    String? phone,
+    String? email,
+    String? location,
+    List<String>? skills,
+  }) async {
+    try {
+      final token = await getToken();
+      if (token == null) {
+        throw Exception('Not authenticated');
+      }
+
+      final body = <String, dynamic>{};
+      if (phone != null) body['phone'] = phone;
+      if (email != null) body['email'] = email;
+      if (location != null) body['location'] = location;
+      if (skills != null) body['skills'] = skills;
+
+      final response = await http.put(
+        Uri.parse('$baseUrl/auth/profile'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(body),
+      );
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else {
+        final error = jsonDecode(response.body);
+        throw Exception(error['detail'] ?? 'Failed to update profile');
+      }
+    } catch (e) {
+      throw Exception('Update profile error: $e');
+    }
+  }
 }

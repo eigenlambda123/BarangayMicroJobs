@@ -1,7 +1,8 @@
 from datetime import datetime
 from typing import Optional, List
 from uuid import UUID, uuid4
-from sqlmodel import Field, SQLModel, Relationship
+from sqlmodel import Field, SQLModel, Relationship, Column
+from sqlalchemy import JSON
 from enum import Enum
 
 class User(SQLModel, table=True):
@@ -17,6 +18,9 @@ class User(SQLModel, table=True):
 
     # Profile Information
     profile_image: Optional[str] = None
+    email: Optional[str] = None
+    location: Optional[str] = None
+    skills: Optional[List[str]] = Field(default=None, sa_column=Column(JSON))
 
     # Profile Stats
     rating: float = Field(default=0.0) 
