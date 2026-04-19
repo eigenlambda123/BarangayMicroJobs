@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../services/auth_service.dart';
-import '../widgets/common/branded_loading_screen.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -30,6 +29,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       description:
           'Browse barangay errands, repairs, deliveries, and quick tasks from people around you.',
       accentColor: Color(0xFF0D5C63),
+      highlights: ['See open tasks in your area', 'Filter by pay and category'],
     ),
     _OnboardingPageData(
       icon: Icons.post_add_rounded,
@@ -37,6 +37,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       description:
           'Create a task, set your budget, and connect with residents ready to help right away.',
       accentColor: Color(0xFFDB7C26),
+      highlights: [
+        'Create posts in under a minute',
+        'Reach helpers in your barangay',
+      ],
     ),
     _OnboardingPageData(
       icon: Icons.verified_rounded,
@@ -44,6 +48,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       description:
           'Follow status updates, conversations, and completed jobs in one simple workspace.',
       accentColor: Color(0xFF2FB344),
+      highlights: [
+        'Receive real-time status updates',
+        'Keep records of completed jobs',
+      ],
     ),
   ];
 
@@ -273,18 +281,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 ),
               ),
             ),
-            Positioned.fill(
-              child: IgnorePointer(
-                ignoring: !_isCompleting,
-                child: AnimatedOpacity(
-                  duration: const Duration(milliseconds: 180),
-                  opacity: _isCompleting ? 1 : 0,
-                  child: const BrandedLoadingOverlay(
-                    message: 'Setting up your account...',
-                  ),
-                ),
-              ),
-            ),
           ],
         ),
       ),
@@ -337,7 +333,9 @@ class _OnboardingPage extends StatelessWidget {
               color: colorScheme.onSurface.withValues(alpha: 0.56),
             ),
           ),
-          const SizedBox(height: 22),
+          const SizedBox(height: 16),
+          _CenterFeatureCard(page: page),
+          const SizedBox(height: 14),
           Wrap(
             alignment: WrapAlignment.center,
             spacing: 10,
@@ -347,6 +345,83 @@ class _OnboardingPage extends StatelessWidget {
               _FeatureChip(label: 'Fast matching'),
               _FeatureChip(label: 'Simple tracking'),
             ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _CenterFeatureCard extends StatelessWidget {
+  const _CenterFeatureCard({required this.page});
+
+  final _OnboardingPageData page;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.78),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: page.accentColor.withValues(alpha: 0.16)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: page.accentColor.withValues(alpha: 0.14),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(page.icon, size: 16, color: page.accentColor),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                page.title,
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w800,
+                  color: colorScheme.onSurface,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          ...page.highlights.map(
+            (item) => Padding(
+              padding: const EdgeInsets.only(bottom: 4),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '•',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w800,
+                      color: page.accentColor,
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      item,
+                      style: TextStyle(
+                        fontSize: 12,
+                        height: 1.3,
+                        color: colorScheme.onSurface.withValues(alpha: 0.76),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ],
       ),
@@ -407,10 +482,12 @@ class _OnboardingPageData {
     required this.title,
     required this.description,
     required this.accentColor,
+    required this.highlights,
   });
 
   final IconData icon;
   final String title;
   final String description;
   final Color accentColor;
+  final List<String> highlights;
 }
