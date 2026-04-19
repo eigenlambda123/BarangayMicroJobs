@@ -216,6 +216,7 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
           transaction: transaction,
           onCompletePressed: _showCompleteConfirmation,
           onCancelPressed: _showCancelConfirmation,
+          onJobUpdated: _loadTransactionDetails,
         ),
       ),
     );

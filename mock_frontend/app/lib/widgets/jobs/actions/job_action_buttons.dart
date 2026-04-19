@@ -7,6 +7,7 @@ class JobActionButtons extends StatelessWidget {
   final bool isLoading;
   final VoidCallback onApplyPressed;
   final VoidCallback onDeletePressed;
+  final VoidCallback onEditPressed;
 
   const JobActionButtons({
     super.key,
@@ -16,6 +17,7 @@ class JobActionButtons extends StatelessWidget {
     required this.isLoading,
     required this.onApplyPressed,
     required this.onDeletePressed,
+    required this.onEditPressed,
   });
 
   @override
@@ -61,17 +63,34 @@ class JobActionButtons extends StatelessWidget {
             ),
           ),
         if (isJobPoster)
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: onDeletePressed,
-              icon: const Icon(Icons.delete),
-              label: const Text('Delete Job'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: colorScheme.error,
-                foregroundColor: colorScheme.onPrimary,
+          Column(
+            children: [
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: onEditPressed,
+                  icon: const Icon(Icons.edit),
+                  label: const Text('Edit Job'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF0D5C63),
+                    foregroundColor: Colors.white,
+                  ),
+                ),
               ),
-            ),
+              const SizedBox(height: 10),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: onDeletePressed,
+                  icon: const Icon(Icons.delete),
+                  label: const Text('Delete Job'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: colorScheme.error,
+                    foregroundColor: colorScheme.onPrimary,
+                  ),
+                ),
+              ),
+            ],
           ),
       ],
     );

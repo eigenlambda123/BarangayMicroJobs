@@ -8,12 +8,14 @@ class TransactionDetailsContent extends StatelessWidget {
   final Map<String, dynamic> transaction;
   final VoidCallback onCompletePressed;
   final VoidCallback onCancelPressed;
+  final VoidCallback onJobUpdated;
 
   const TransactionDetailsContent({
     super.key,
     required this.transaction,
     required this.onCompletePressed,
     required this.onCancelPressed,
+    required this.onJobUpdated,
   });
 
   @override
@@ -83,7 +85,7 @@ class TransactionDetailsContent extends StatelessWidget {
           ),
           const SizedBox(height: 14),
           // Job Details Card
-          JobDetailsCard(job: job),
+          JobDetailsCard(job: job, onJobUpdated: onJobUpdated),
 
           const SizedBox(height: 14),
 

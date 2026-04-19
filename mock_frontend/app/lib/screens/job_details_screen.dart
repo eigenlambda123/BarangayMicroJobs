@@ -274,6 +274,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
             isLoading: _isLoading,
             onApplyPressed: _applyForJob,
             onDeletePressed: _deleteJob,
+            onEditPressed: _editJob,
           ),
         ],
       ),
@@ -523,6 +524,17 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
         }
       }
     }
+  }
+
+  void _editJob() {
+    // Show a simple snackbar indicating edit functionality is available in transaction details
+    // The actual edit is implemented in JobDetailsCard within transaction details
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Edit job details in transaction or view full details below'),
+        duration: Duration(seconds: 2),
+      ),
+    );
   }
 
   @override

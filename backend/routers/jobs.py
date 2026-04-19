@@ -6,7 +6,7 @@ from uuid import UUID
 
 from database import get_session
 from models import JobPost, User, JobTransaction, TransactionStatus
-from schemas.jobs import JobCreateRequest
+from schemas.jobs import JobCreateRequest, UpdateJobRequest
 from utils.auth_utils import get_current_user
 
 router = APIRouter(prefix="/jobs", tags=["Jobs"])
@@ -96,6 +96,45 @@ def delete_job_post(
     session.commit()
     
     return {"message": "Job post deleted successfully"}
+
+@router.put("/{job_id}")
+def update_job_post(
+    job_id: UUID,
+    job_data: UpdateJobRequest,
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user)
+):
+    """Update a job post (only by the poster)"""
+    job = session.get(JobPost, job_id)
+    if not job:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Job not found")
+    
+    if job.poster_id != current_user.id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You can only edit your own job posts")
+    
+    # Update fields only if provided
+    if job_data.title is not None:
+        job.title = job_data.title
+    
+    if job_data.description is not None:
+        job.description = job_data.description
+    
+    if job_data.location is not None:
+        job.location = job_data.location
+    
+    if job_data.salary is not None:
+        job.salary = job_data.salary
+    
+    if job_data.image is not None:
+        job.image = job_data.image
+    
+    job.last_modified = datetime.utcnow()
+    
+    session.add(job)
+    session.commit()
+    session.refresh(job)
+    
+    return {"message": "Job post updated successfully", "job": job}
 
 @router.get("/user/{user_id}")
 def get_user_jobs(

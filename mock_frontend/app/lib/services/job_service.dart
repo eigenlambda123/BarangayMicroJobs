@@ -129,4 +129,46 @@ class JobService {
       throw Exception('Delete job error: $e');
     }
   }
+
+  // Update job: PUT /jobs/{job_id}
+  Future<Map<String, dynamic>> updateJob({
+    required String jobId,
+    String? title,
+    String? description,
+    String? location,
+    String? salary,
+    String? image,
+  }) async {
+    try {
+      final token = await AuthService().getToken();
+      if (token == null) {
+        throw Exception('Not authenticated');
+      }
+
+      final body = <String, dynamic>{};
+      if (title != null) body['title'] = title;
+      if (description != null) body['description'] = description;
+      if (location != null) body['location'] = location;
+      if (salary != null) body['salary'] = salary;
+      if (image != null) body['image'] = image;
+
+      final response = await http.put(
+        Uri.parse('$baseUrl/jobs/$jobId'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(body),
+      );
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else {
+        final error = jsonDecode(response.body);
+        throw Exception(error['detail'] ?? 'Failed to update job');
+      }
+    } catch (e) {
+      throw Exception('Update job error: $e');
+    }
+  }
 }
