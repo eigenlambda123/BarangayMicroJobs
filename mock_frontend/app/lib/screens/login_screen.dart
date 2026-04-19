@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
+import '../widgets/common/branded_loading_screen.dart';
 import '../widgets/auth/login_header.dart';
 import '../widgets/auth/phone_field.dart';
 import '../widgets/auth/password_field.dart';
@@ -80,27 +81,43 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 40),
-                const LoginHeader(),
-                const SizedBox(height: 48),
-                PhoneField(controller: _phoneController),
-                const SizedBox(height: 20),
-                PasswordField(controller: _passwordController),
-                const SizedBox(height: 32),
-                LoginButton(isLoading: _isLoading, onPressed: _handleLogin),
-                const SizedBox(height: 16),
-                const RegisterLink(),
-              ],
+      body: Stack(
+        children: [
+          SafeArea(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 40),
+                    const LoginHeader(),
+                    const SizedBox(height: 48),
+                    PhoneField(controller: _phoneController),
+                    const SizedBox(height: 20),
+                    PasswordField(controller: _passwordController),
+                    const SizedBox(height: 32),
+                    LoginButton(isLoading: _isLoading, onPressed: _handleLogin),
+                    const SizedBox(height: 16),
+                    const RegisterLink(),
+                  ],
+                ),
+              ),
             ),
           ),
-        ),
+          Positioned.fill(
+            child: IgnorePointer(
+              ignoring: !_isLoading,
+              child: AnimatedOpacity(
+                duration: const Duration(milliseconds: 180),
+                opacity: _isLoading ? 1 : 0,
+                child: const BrandedLoadingOverlay(
+                  message: 'Signing you in...',
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

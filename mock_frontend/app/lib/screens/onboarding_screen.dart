@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../services/auth_service.dart';
+import '../widgets/common/branded_loading_screen.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -160,7 +161,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           });
                         },
                         itemBuilder: (context, index) {
-                          return _OnboardingPage(page: _pages[index]);
+                          return _OnboardingPage(
+                            page: _pages[index],
+                            stepText: 'Step ${index + 1} of ${_pages.length}',
+                          );
                         },
                       ),
                     ),
@@ -269,6 +273,18 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 ),
               ),
             ),
+            Positioned.fill(
+              child: IgnorePointer(
+                ignoring: !_isCompleting,
+                child: AnimatedOpacity(
+                  duration: const Duration(milliseconds: 180),
+                  opacity: _isCompleting ? 1 : 0,
+                  child: const BrandedLoadingOverlay(
+                    message: 'Setting up your account...',
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -277,9 +293,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 }
 
 class _OnboardingPage extends StatelessWidget {
-  const _OnboardingPage({required this.page});
+  const _OnboardingPage({required this.page, required this.stepText});
 
   final _OnboardingPageData page;
+  final String stepText;
 
   @override
   Widget build(BuildContext context) {
@@ -311,7 +328,7 @@ class _OnboardingPage extends StatelessWidget {
           ),
           const SizedBox(height: 28),
           Text(
-            'Barangay Microjobs',
+            stepText,
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 13,
@@ -320,28 +337,7 @@ class _OnboardingPage extends StatelessWidget {
               color: colorScheme.onSurface.withValues(alpha: 0.56),
             ),
           ),
-          const SizedBox(height: 12),
-          Text(
-            page.title,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 32,
-              fontWeight: FontWeight.w900,
-              height: 1.05,
-              color: colorScheme.onSurface,
-            ),
-          ),
-          const SizedBox(height: 14),
-          Text(
-            page.description,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 16,
-              height: 1.55,
-              color: colorScheme.onSurface.withValues(alpha: 0.72),
-            ),
-          ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 22),
           Wrap(
             alignment: WrapAlignment.center,
             spacing: 10,

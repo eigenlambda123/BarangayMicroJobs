@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../services/auth_service.dart';
+import '../widgets/common/branded_loading_screen.dart';
 import 'home_page.dart';
 import 'login_screen.dart';
 import 'onboarding_screen.dart';
@@ -80,6 +81,8 @@ class _LoadingScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    return const BrandedLoadingScreen(
+      message: 'Preparing Barangay Microjobs...',
+    );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
+import '../widgets/common/branded_loading_screen.dart';
 import '../widgets/auth/register_header.dart';
 import '../widgets/auth/full_name_field.dart';
 import '../widgets/auth/phone_field.dart';
@@ -109,34 +110,52 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                RegisterHeader(),
-                const SizedBox(height: 32),
-                FullNameField(controller: _fullNameController),
-                const SizedBox(height: 20),
-                PhoneField(controller: _phoneController),
-                const SizedBox(height: 20),
-                PasswordField(controller: _passwordController),
-                const SizedBox(height: 20),
-                ConfirmPasswordField(controller: _confirmPasswordController),
-                const SizedBox(height: 32),
-                RegisterButton(
-                  isLoading: _isLoading,
-                  onPressed: _handleRegister,
+      body: Stack(
+        children: [
+          SafeArea(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    RegisterHeader(),
+                    const SizedBox(height: 32),
+                    FullNameField(controller: _fullNameController),
+                    const SizedBox(height: 20),
+                    PhoneField(controller: _phoneController),
+                    const SizedBox(height: 20),
+                    PasswordField(controller: _passwordController),
+                    const SizedBox(height: 20),
+                    ConfirmPasswordField(
+                      controller: _confirmPasswordController,
+                    ),
+                    const SizedBox(height: 32),
+                    RegisterButton(
+                      isLoading: _isLoading,
+                      onPressed: _handleRegister,
+                    ),
+                    const SizedBox(height: 16),
+                    LoginLink(),
+                    const SizedBox(height: 24),
+                  ],
                 ),
-                const SizedBox(height: 16),
-                LoginLink(),
-                const SizedBox(height: 24),
-              ],
+              ),
             ),
           ),
-        ),
+          Positioned.fill(
+            child: IgnorePointer(
+              ignoring: !_isLoading,
+              child: AnimatedOpacity(
+                duration: const Duration(milliseconds: 180),
+                opacity: _isLoading ? 1 : 0,
+                child: const BrandedLoadingOverlay(
+                  message: 'Creating your account...',
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
