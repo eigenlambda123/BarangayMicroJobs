@@ -15,10 +15,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
   List<Map<String, dynamic>> _transactions = [];
   bool _isLoading = true;
   String? _errorMessage;
-  final TextEditingController _searchController = TextEditingController();
-  final TextEditingController _locationController = TextEditingController();
-  String _selectedStatus = 'All';
-  String _selectedRole = 'All';
 
   @override
   void initState() {
@@ -26,21 +22,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
     _loadTransactions();
   }
 
-  @override
-  void dispose() {
-    _searchController.dispose();
-    _locationController.dispose();
-    super.dispose();
-  }
-
   Future<void> _loadTransactions() async {
     try {
-      final transactions = await TransactionService().getMyTransactions(
-        query: _searchController.text,
-        location: _locationController.text,
-        status: _selectedStatus == 'All' ? null : _selectedStatus,
-        role: _selectedRole == 'All' ? null : _selectedRole,
-      );
+      final transactions = await TransactionService().getMyTransactions();
       if (mounted) {
         setState(() {
           _transactions = transactions;
@@ -58,16 +42,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
         print('Error loading transactions: $e');
       }
     }
-  }
-
-  void _clearFilters() {
-    setState(() {
-      _searchController.clear();
-      _locationController.clear();
-      _selectedStatus = 'All';
-      _selectedRole = 'All';
-    });
-    _loadTransactions();
   }
 
   Future<void> _completeTransaction(String transactionId) async {
@@ -217,133 +191,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
                     icon: Icons.check_circle_outline,
                     label: '$_completedCount completed',
                     color: const Color(0xFF2A6A31),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 14),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                color: colorScheme.surface,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: colorScheme.primary.withValues(alpha: 0.12),
-                ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Search and filter activity',
-                    style: TextStyle(fontWeight: FontWeight.w700),
-                  ),
-                  const SizedBox(height: 10),
-                  TextField(
-                    controller: _searchController,
-                    textInputAction: TextInputAction.search,
-                    onSubmitted: (_) => _loadTransactions(),
-                    decoration: const InputDecoration(
-                      prefixIcon: Icon(Icons.search),
-                      hintText: 'Search title, location, or user',
-                      isDense: true,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  TextField(
-                    controller: _locationController,
-                    decoration: const InputDecoration(
-                      labelText: 'Location (exact)',
-                      isDense: true,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: DropdownButtonFormField<String>(
-                          value: _selectedStatus,
-                          items: const [
-                            DropdownMenuItem(
-                              value: 'All',
-                              child: Text('All statuses'),
-                            ),
-                            DropdownMenuItem(
-                              value: 'applied',
-                              child: Text('Applied'),
-                            ),
-                            DropdownMenuItem(
-                              value: 'hired',
-                              child: Text('Hired'),
-                            ),
-                            DropdownMenuItem(
-                              value: 'completed',
-                              child: Text('Completed'),
-                            ),
-                            DropdownMenuItem(
-                              value: 'canceled',
-                              child: Text('Canceled'),
-                            ),
-                          ],
-                          onChanged: (value) {
-                            if (value == null) return;
-                            setState(() => _selectedStatus = value);
-                          },
-                          decoration: const InputDecoration(
-                            labelText: 'Status',
-                            isDense: true,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: DropdownButtonFormField<String>(
-                          value: _selectedRole,
-                          items: const [
-                            DropdownMenuItem(
-                              value: 'All',
-                              child: Text('All roles'),
-                            ),
-                            DropdownMenuItem(
-                              value: 'requester',
-                              child: Text('Requester'),
-                            ),
-                            DropdownMenuItem(
-                              value: 'provider',
-                              child: Text('Provider'),
-                            ),
-                          ],
-                          onChanged: (value) {
-                            if (value == null) return;
-                            setState(() => _selectedRole = value);
-                          },
-                          decoration: const InputDecoration(
-                            labelText: 'Role',
-                            isDense: true,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: OutlinedButton(
-                          onPressed: _clearFilters,
-                          child: const Text('Clear'),
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: FilledButton.icon(
-                          onPressed: _loadTransactions,
-                          icon: const Icon(Icons.filter_alt_outlined),
-                          label: const Text('Apply Filters'),
-                        ),
-                      ),
-                    ],
                   ),
                 ],
               ),

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
-import '../widgets/jobs/headers/marketplace_header.dart';
 import '../widgets/common/loading_state.dart';
 import '../widgets/common/error_state.dart';
 import '../widgets/common/empty_state.dart';
@@ -135,6 +134,194 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
     _loadJobs();
   }
 
+  int get _activeFilterCount {
+    var count = 0;
+    if (_selectedLocation != 'All') count++;
+    if (_selectedStatus != 'All') count++;
+    if (_minSalaryController.text.trim().isNotEmpty) count++;
+    if (_maxSalaryController.text.trim().isNotEmpty) count++;
+    return count;
+  }
+
+  Future<void> _showFilterSheet() async {
+    var tempLocation = _selectedLocation;
+    var tempStatus = _selectedStatus;
+    final tempMinSalaryController = TextEditingController(
+      text: _minSalaryController.text,
+    );
+    final tempMaxSalaryController = TextEditingController(
+      text: _maxSalaryController.text,
+    );
+
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      builder: (context) {
+        final colorScheme = Theme.of(context).colorScheme;
+        final locationOptions = ['All', ..._lucenaBarangays];
+
+        return StatefulBuilder(
+          builder: (context, setSheetState) {
+            return SafeArea(
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(
+                  16,
+                  8,
+                  16,
+                  16 + MediaQuery.of(context).viewInsets.bottom,
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Filter jobs',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: DropdownButtonFormField<String>(
+                            value: tempLocation,
+                            isExpanded: true,
+                            items: locationOptions
+                                .map(
+                                  (location) => DropdownMenuItem(
+                                    value: location,
+                                    child: Text(
+                                      location,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                )
+                                .toList(),
+                            onChanged: (value) {
+                              if (value == null) return;
+                              setSheetState(() => tempLocation = value);
+                            },
+                            decoration: const InputDecoration(
+                              labelText: 'Location',
+                              isDense: true,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: DropdownButtonFormField<String>(
+                            value: tempStatus,
+                            items: const [
+                              DropdownMenuItem(
+                                value: 'All',
+                                child: Text('All statuses'),
+                              ),
+                              DropdownMenuItem(
+                                value: 'open',
+                                child: Text('Open'),
+                              ),
+                              DropdownMenuItem(
+                                value: 'assigned',
+                                child: Text('Assigned'),
+                              ),
+                              DropdownMenuItem(
+                                value: 'completed',
+                                child: Text('Completed'),
+                              ),
+                            ],
+                            onChanged: (value) {
+                              if (value == null) return;
+                              setSheetState(() => tempStatus = value);
+                            },
+                            decoration: const InputDecoration(
+                              labelText: 'Status',
+                              isDense: true,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: tempMinSalaryController,
+                            keyboardType: TextInputType.number,
+                            decoration: const InputDecoration(
+                              labelText: 'Min Salary',
+                              isDense: true,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: TextField(
+                            controller: tempMaxSalaryController,
+                            keyboardType: TextInputType.number,
+                            decoration: const InputDecoration(
+                              labelText: 'Max Salary',
+                              isDense: true,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 14),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: () {
+                              setSheetState(() {
+                                tempLocation = 'All';
+                                tempStatus = 'All';
+                                tempMinSalaryController.clear();
+                                tempMaxSalaryController.clear();
+                              });
+                            },
+                            child: const Text('Reset'),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: FilledButton.icon(
+                            onPressed: () {
+                              setState(() {
+                                _selectedLocation = tempLocation;
+                                _selectedStatus = tempStatus;
+                                _minSalaryController.text =
+                                    tempMinSalaryController.text;
+                                _maxSalaryController.text =
+                                    tempMaxSalaryController.text;
+                              });
+                              Navigator.of(context).pop();
+                              _loadJobs();
+                            },
+                            icon: const Icon(Icons.check),
+                            label: const Text('Apply'),
+                            style: FilledButton.styleFrom(
+                              backgroundColor: colorScheme.primary,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+
+    tempMinSalaryController.dispose();
+    tempMaxSalaryController.dispose();
+  }
+
   Future<void> _loadUserTransactions() async {
     try {
       final transactions = await TransactionService().getMyTransactions();
@@ -229,11 +416,9 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const MarketplaceHeader(),
-                      const SizedBox(height: 16),
-                      _buildMarketplaceOverview(context),
-                      const SizedBox(height: 12),
                       _buildJobFilters(context),
+                      const SizedBox(height: 12),
+                      _buildMarketplaceOverview(context),
                       const SizedBox(height: 18),
                       _MarketplaceSectionShell(
                         child: _buildActivePostingsSection(context),
@@ -265,141 +450,104 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
 
   Widget _buildJobFilters(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final locationOptions = ['All', ..._lucenaBarangays];
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: colorScheme.surface,
-        borderRadius: BorderRadius.circular(16),
+        color: Colors.white.withValues(alpha: 0.88),
+        borderRadius: BorderRadius.circular(18),
         border: Border.all(color: colorScheme.primary.withValues(alpha: 0.12)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Search and filter jobs',
-            style: TextStyle(
-              fontWeight: FontWeight.w700,
-              color: colorScheme.onSurface,
-            ),
-          ),
-          const SizedBox(height: 10),
-          TextField(
-            controller: _searchController,
-            textInputAction: TextInputAction.search,
-            onSubmitted: (_) => _loadJobs(),
-            decoration: InputDecoration(
-              prefixIcon: const Icon(Icons.search),
-              hintText: 'Search title or description',
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              isDense: true,
-            ),
-          ),
-          const SizedBox(height: 10),
           Row(
             children: [
               Expanded(
-                child: DropdownButtonFormField<String>(
-                  value: _selectedLocation,
-                  isExpanded: true,
-                  items: locationOptions
-                      .map(
-                        (location) => DropdownMenuItem(
-                          value: location,
-                          child: Text(
-                            location,
-                            overflow: TextOverflow.ellipsis,
+                child: TextField(
+                  controller: _searchController,
+                  textInputAction: TextInputAction.search,
+                  onSubmitted: (_) => _loadJobs(),
+                  decoration: InputDecoration(
+                    prefixIcon: const Icon(Icons.search),
+                    hintText: 'Search jobs',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    isDense: true,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  FilledButton.tonalIcon(
+                    onPressed: _showFilterSheet,
+                    icon: const Icon(Icons.tune),
+                    label: const Text('Filter'),
+                  ),
+                  if (_activeFilterCount > 0)
+                    Positioned(
+                      right: -6,
+                      top: -6,
+                      child: Container(
+                        width: 20,
+                        height: 20,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: colorScheme.primary,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Text(
+                          '$_activeFilterCount',
+                          style: TextStyle(
+                            color: colorScheme.onPrimary,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
                           ),
                         ),
-                      )
-                      .toList(),
-                  onChanged: (value) {
-                    if (value == null) return;
-                    setState(() => _selectedLocation = value);
-                  },
-                  decoration: const InputDecoration(
-                    labelText: 'Location',
-                    isDense: true,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: DropdownButtonFormField<String>(
-                  value: _selectedStatus,
-                  items: const [
-                    DropdownMenuItem(value: 'All', child: Text('All statuses')),
-                    DropdownMenuItem(value: 'open', child: Text('Open')),
-                    DropdownMenuItem(
-                      value: 'assigned',
-                      child: Text('Assigned'),
+                      ),
                     ),
-                    DropdownMenuItem(
-                      value: 'completed',
-                      child: Text('Completed'),
-                    ),
-                  ],
-                  onChanged: (value) {
-                    if (value == null) return;
-                    setState(() => _selectedStatus = value);
-                  },
-                  decoration: const InputDecoration(
-                    labelText: 'Status',
-                    isDense: true,
-                  ),
-                ),
+                ],
               ),
             ],
           ),
-          const SizedBox(height: 10),
-          Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: _minSalaryController,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    labelText: 'Min Salary',
-                    isDense: true,
+          if (_activeFilterCount > 0) const SizedBox(height: 8),
+          if (_activeFilterCount > 0)
+            Row(
+              children: [
+                Expanded(
+                  child: Wrap(
+                    spacing: 6,
+                    runSpacing: 6,
+                    children: [
+                      if (_selectedLocation != 'All')
+                        Chip(label: Text(_selectedLocation)),
+                      if (_selectedStatus != 'All')
+                        Chip(label: Text('Status: $_selectedStatus')),
+                      if (_minSalaryController.text.trim().isNotEmpty)
+                        Chip(
+                          label: Text(
+                            'Min: ${_minSalaryController.text.trim()}',
+                          ),
+                        ),
+                      if (_maxSalaryController.text.trim().isNotEmpty)
+                        Chip(
+                          label: Text(
+                            'Max: ${_maxSalaryController.text.trim()}',
+                          ),
+                        ),
+                    ],
                   ),
                 ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: TextField(
-                  controller: _maxSalaryController,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    labelText: 'Max Salary',
-                    isDense: true,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          Row(
-            children: [
-              Expanded(
-                child: OutlinedButton(
+                TextButton(
                   onPressed: _clearFilters,
                   child: const Text('Clear'),
                 ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: FilledButton.icon(
-                  onPressed: _loadJobs,
-                  icon: const Icon(Icons.filter_alt_outlined),
-                  label: const Text('Apply Filters'),
-                ),
-              ),
-            ],
-          ),
+              ],
+            ),
         ],
       ),
     );
