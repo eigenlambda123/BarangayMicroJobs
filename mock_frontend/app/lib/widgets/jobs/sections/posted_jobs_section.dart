@@ -152,45 +152,47 @@ class _PostedJobsSectionState extends State<PostedJobsSection> {
             );
           }),
           // Pagination Controls
-          if (_hiredJobs.isNotEmpty)
+          if (_hiredJobs.isNotEmpty && _totalPages > 1)
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8),
+              padding: const EdgeInsets.symmetric(vertical: 12),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  IconButton.filledTonal(
+                  IconButton(
                     onPressed: _currentPage > 1
                         ? () => setState(() => _currentPage--)
                         : null,
-                    icon: const Icon(Icons.arrow_back),
+                    icon: const Icon(Icons.chevron_left),
+                    tooltip: 'Previous',
                   ),
-                  const SizedBox(width: 10),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 8,
-                    ),
-                    decoration: BoxDecoration(
-                      color: colorScheme.surface,
-                      borderRadius: BorderRadius.circular(999),
-                      border: Border.all(
-                        color: colorScheme.primary.withValues(alpha: 0.12),
+                  const SizedBox(width: 8),
+                  ...List.generate(_totalPages, (index) {
+                    final pageNum = index + 1;
+                    final isActive = pageNum == _currentPage;
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: GestureDetector(
+                        onTap: () => setState(() => _currentPage = pageNum),
+                        child: Container(
+                          width: isActive ? 28 : 8,
+                          height: 8,
+                          decoration: BoxDecoration(
+                            color: isActive
+                                ? colorScheme.primary
+                                : colorScheme.primary.withValues(alpha: 0.2),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
                       ),
-                    ),
-                    child: Text(
-                      'Page $_currentPage of $_totalPages',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        color: colorScheme.onSurface,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  IconButton.filledTonal(
+                    );
+                  }),
+                  const SizedBox(width: 8),
+                  IconButton(
                     onPressed: _currentPage < _totalPages
                         ? () => setState(() => _currentPage++)
                         : null,
-                    icon: const Icon(Icons.arrow_forward),
+                    icon: const Icon(Icons.chevron_right),
+                    tooltip: 'Next',
                   ),
                 ],
               ),
