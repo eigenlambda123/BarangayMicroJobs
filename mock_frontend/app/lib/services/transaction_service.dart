@@ -46,7 +46,14 @@ class TransactionService {
   }
 
   // Get applicants for a job: GET /transactions/{job_id}/applicants
-  Future<List<Map<String, dynamic>>> getApplicants(String jobId) async {
+  Future<List<Map<String, dynamic>>> getApplicants(
+    String jobId, {
+    String? query,
+    String? status,
+    String? minRating,
+    String? minJobsDone,
+    String? skills,
+  }) async {
     try {
       final token = await AuthService().getToken();
 
@@ -54,8 +61,22 @@ class TransactionService {
         throw Exception('Not authenticated. Please log in.');
       }
 
+      final queryParams = <String, String>{
+        if (query != null && query.trim().isNotEmpty) 'q': query.trim(),
+        if (status != null && status.trim().isNotEmpty) 'status': status.trim(),
+        if (minRating != null && minRating.trim().isNotEmpty)
+          'min_rating': minRating.trim(),
+        if (minJobsDone != null && minJobsDone.trim().isNotEmpty)
+          'min_jobs_done': minJobsDone.trim(),
+        if (skills != null && skills.trim().isNotEmpty) 'skills': skills.trim(),
+      };
+
+      final uri = Uri.parse(
+        '$baseUrl/transactions/$jobId/applicants',
+      ).replace(queryParameters: queryParams.isEmpty ? null : queryParams);
+
       final response = await http.get(
-        Uri.parse('$baseUrl/transactions/$jobId/applicants'),
+        uri,
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
@@ -105,7 +126,12 @@ class TransactionService {
   }
 
   // Get my transactions: GET /transactions/me
-  Future<List<Map<String, dynamic>>> getMyTransactions() async {
+  Future<List<Map<String, dynamic>>> getMyTransactions({
+    String? query,
+    String? status,
+    String? location,
+    String? role,
+  }) async {
     try {
       final token = await AuthService().getToken();
 
@@ -113,8 +139,20 @@ class TransactionService {
         throw Exception('Not authenticated. Please log in.');
       }
 
+      final queryParams = <String, String>{
+        if (query != null && query.trim().isNotEmpty) 'q': query.trim(),
+        if (status != null && status.trim().isNotEmpty) 'status': status.trim(),
+        if (location != null && location.trim().isNotEmpty)
+          'location': location.trim(),
+        if (role != null && role.trim().isNotEmpty) 'role': role.trim(),
+      };
+
+      final uri = Uri.parse(
+        '$baseUrl/transactions/me',
+      ).replace(queryParameters: queryParams.isEmpty ? null : queryParams);
+
       final response = await http.get(
-        Uri.parse('$baseUrl/transactions/me'),
+        uri,
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',

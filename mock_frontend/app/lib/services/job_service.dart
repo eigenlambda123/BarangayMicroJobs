@@ -65,7 +65,14 @@ class JobService {
   }
 
   // Get all jobs: GET /jobs/
-  Future<List<Map<String, dynamic>>> getAllJobs() async {
+  Future<List<Map<String, dynamic>>> getAllJobs({
+    String? query,
+    String? location,
+    String? status,
+    String? minSalary,
+    String? maxSalary,
+    String? skills,
+  }) async {
     try {
       final token = await AuthService().getToken();
       final headers = {
@@ -73,10 +80,23 @@ class JobService {
         if (token != null) 'Authorization': 'Bearer $token',
       };
 
-      final response = await http.get(
-        Uri.parse('$baseUrl/jobs/'),
-        headers: headers,
-      );
+      final queryParams = <String, String>{
+        if (query != null && query.trim().isNotEmpty) 'q': query.trim(),
+        if (location != null && location.trim().isNotEmpty)
+          'location': location.trim(),
+        if (status != null && status.trim().isNotEmpty) 'status': status.trim(),
+        if (minSalary != null && minSalary.trim().isNotEmpty)
+          'min_salary': minSalary.trim(),
+        if (maxSalary != null && maxSalary.trim().isNotEmpty)
+          'max_salary': maxSalary.trim(),
+        if (skills != null && skills.trim().isNotEmpty) 'skills': skills.trim(),
+      };
+
+      final uri = Uri.parse(
+        '$baseUrl/jobs/',
+      ).replace(queryParameters: queryParams.isEmpty ? null : queryParams);
+
+      final response = await http.get(uri, headers: headers);
 
       if (response.statusCode == 200) {
         final List<dynamic> jobs = jsonDecode(response.body);

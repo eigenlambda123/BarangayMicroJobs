@@ -35,6 +35,11 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
   bool _isLoadingApplicants = false;
   String? _hiringTransactionId;
   List<Map<String, dynamic>> _applicants = [];
+  final TextEditingController _applicantSearchController =
+      TextEditingController();
+  final TextEditingController _minRatingController = TextEditingController();
+  final TextEditingController _skillsController = TextEditingController();
+  String _applicantStatusFilter = 'All';
 
   @override
   void initState() {
@@ -43,6 +48,14 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
     _loadJobDetails();
     _loadPoster();
     _checkApplicationStatus();
+  }
+
+  @override
+  void dispose() {
+    _applicantSearchController.dispose();
+    _minRatingController.dispose();
+    _skillsController.dispose();
+    super.dispose();
   }
 
   Future<void> _loadCurrentUser() async {
@@ -115,7 +128,13 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
 
     setState(() => _isLoadingApplicants = true);
     try {
-      final applicants = await TransactionService().getApplicants(widget.jobId);
+      final applicants = await TransactionService().getApplicants(
+        widget.jobId,
+        query: _applicantSearchController.text,
+        status: _applicantStatusFilter == 'All' ? null : _applicantStatusFilter,
+        minRating: _minRatingController.text,
+        skills: _skillsController.text,
+      );
       if (mounted) {
         setState(() {
           _applicants = applicants;
@@ -130,6 +149,16 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
         setState(() => _isLoadingApplicants = false);
       }
     }
+  }
+
+  void _clearApplicantFilters() {
+    setState(() {
+      _applicantSearchController.clear();
+      _minRatingController.clear();
+      _skillsController.clear();
+      _applicantStatusFilter = 'All';
+    });
+    _loadApplicants();
   }
 
   Future<void> _hireApplicant(Map<String, dynamic> applicant) async {
@@ -321,6 +350,88 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
           const Text(
             'Review applicants and hire directly from this list.',
             style: TextStyle(fontSize: 12, color: Color(0xFF6A7278)),
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: _applicantSearchController,
+            textInputAction: TextInputAction.search,
+            onSubmitted: (_) => _loadApplicants(),
+            decoration: const InputDecoration(
+              prefixIcon: Icon(Icons.search),
+              hintText: 'Search applicant name or phone',
+              isDense: true,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Expanded(
+                child: DropdownButtonFormField<String>(
+                  value: _applicantStatusFilter,
+                  items: const [
+                    DropdownMenuItem(value: 'All', child: Text('All statuses')),
+                    DropdownMenuItem(value: 'applied', child: Text('Applied')),
+                    DropdownMenuItem(value: 'hired', child: Text('Hired')),
+                    DropdownMenuItem(
+                      value: 'completed',
+                      child: Text('Completed'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'canceled',
+                      child: Text('Canceled'),
+                    ),
+                  ],
+                  onChanged: (value) {
+                    if (value == null) return;
+                    setState(() => _applicantStatusFilter = value);
+                  },
+                  decoration: const InputDecoration(
+                    labelText: 'Status',
+                    isDense: true,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: TextField(
+                  controller: _minRatingController,
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
+                  decoration: const InputDecoration(
+                    labelText: 'Min Rating',
+                    isDense: true,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          TextField(
+            controller: _skillsController,
+            decoration: const InputDecoration(
+              hintText: 'Skills (comma-separated)',
+              isDense: true,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: _clearApplicantFilters,
+                  child: const Text('Clear'),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: FilledButton.icon(
+                  onPressed: _loadApplicants,
+                  icon: const Icon(Icons.filter_alt_outlined),
+                  label: const Text('Apply Filters'),
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 12),
           if (_isLoadingApplicants)
@@ -531,7 +642,9 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
     // The actual edit is implemented in JobDetailsCard within transaction details
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('Edit job details in transaction or view full details below'),
+        content: Text(
+          'Edit job details in transaction or view full details below',
+        ),
         duration: Duration(seconds: 2),
       ),
     );

@@ -49,12 +49,15 @@ class _JobDetailsCardState extends State<JobDetailsCard> {
 
   void _initializeControllers() {
     _titleController = TextEditingController(text: widget.job['title'] ?? '');
-    _descriptionController =
-        TextEditingController(text: widget.job['description'] ?? '');
-    _salaryController =
-        TextEditingController(text: (widget.job['salary'] ?? 0).toString());
-    _locationController =
-        TextEditingController(text: widget.job['location'] ?? '');
+    _descriptionController = TextEditingController(
+      text: widget.job['description'] ?? '',
+    );
+    _salaryController = TextEditingController(
+      text: (widget.job['salary'] ?? 0).toString(),
+    );
+    _locationController = TextEditingController(
+      text: widget.job['location'] ?? '',
+    );
     _selectedLocation = widget.job['location'];
   }
 
@@ -97,9 +100,9 @@ class _JobDetailsCardState extends State<JobDetailsCard> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: ${e.toString()}')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
       }
     } finally {
       if (mounted) {
@@ -227,10 +230,7 @@ class _JobDetailsCardState extends State<JobDetailsCard> {
         children: [
           const Text(
             'Edit Job Details',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w800,
-            ),
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
           ),
           const SizedBox(height: 16),
           TextField(

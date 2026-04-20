@@ -1,7 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlmodel import Session, select
 from datetime import datetime
 from uuid import UUID
+from typing import List, Optional
 
 
 from database import get_session
@@ -11,6 +12,19 @@ from schemas.ratings import RatingRequest
 from utils.auth_utils import get_current_user
 
 router = APIRouter(prefix="/transactions", tags=["Transactions"])
+
+
+def _parse_csv_terms(value: Optional[str]) -> List[str]:
+    if not value:
+        return []
+    return [term.strip().lower() for term in value.split(",") if term.strip()]
+
+
+def _user_has_all_skills(user: User, required_skills: List[str]) -> bool:
+    if not required_skills:
+        return True
+    user_skills = {skill.lower() for skill in (user.skills or [])}
+    return all(skill in user_skills for skill in required_skills)
 
 def get_job_safe(session: Session, job_id: UUID) -> JobPost:
     """Safely get job by ID, raises 404 if not found"""
@@ -72,6 +86,10 @@ def build_transaction_data(transaction: JobTransaction, job: JobPost, provider: 
 
 @router.get("/me")
 def get_my_transactions(
+    q: Optional[str] = Query(default=None, description="Search by job title, location, or counterpart name"),
+    status_value: Optional[str] = Query(default=None, alias="status", description="Filter by transaction status"),
+    location: Optional[str] = Query(default=None, description="Filter by job location"),
+    role: Optional[str] = Query(default=None, description="Filter as requester or provider"),
     session: Session = Depends(get_session),
     current_user: User = Depends(get_current_user),
 ):
@@ -82,6 +100,11 @@ def get_my_transactions(
     transactions = session.exec(statement).all()
 
     result = []
+    lowered_query = q.lower() if q else None
+    lowered_status = status_value.lower() if status_value else None
+    lowered_location = location.lower() if location else None
+    lowered_role = role.lower() if role else None
+
     for transaction in transactions:
         job = session.get(JobPost, transaction.job_id)
         provider = session.get(User, transaction.provider_id)
@@ -93,6 +116,28 @@ def get_my_transactions(
         # Skip transactions where the requester has already rated (completed jobs that are rated)
         if transaction.requester_id == current_user.id and has_requester_rated(session, transaction.id, current_user.id):
             continue
+
+        if lowered_status and transaction.status.value.lower() != lowered_status:
+            continue
+
+        if lowered_location and (job.location or "").lower() != lowered_location:
+            continue
+
+        if lowered_role:
+            if lowered_role == "requester" and transaction.requester_id != current_user.id:
+                continue
+            if lowered_role == "provider" and transaction.provider_id != current_user.id:
+                continue
+
+        if lowered_query:
+            searchable_text = " ".join([
+                job.title or "",
+                job.location or "",
+                provider.full_name or "",
+                requester.full_name or "",
+            ]).lower()
+            if lowered_query not in searchable_text:
+                continue
         
         result.append(build_transaction_data(transaction, job, provider, requester, current_user.id))
 
@@ -199,6 +244,11 @@ def hire_provider(
 @router.get("/{job_id}/applicants")
 def get_applicants(
     job_id: UUID,
+    q: Optional[str] = Query(default=None, description="Search by applicant name or phone number"),
+    status_value: Optional[str] = Query(default=None, alias="status", description="Filter applicants by transaction status"),
+    min_rating: Optional[float] = Query(default=None, ge=0, le=5),
+    min_jobs_done: Optional[int] = Query(default=None, ge=0),
+    skills: Optional[str] = Query(default=None, description="Comma-separated required applicant skills"),
     session: Session = Depends(get_session),
     current_user: User = Depends(get_current_user),
 ):
@@ -215,8 +265,30 @@ def get_applicants(
     transactions = session.exec(statement).all()
 
     applicants = []
+    lowered_query = q.lower() if q else None
+    lowered_status = status_value.lower() if status_value else None
+    required_skills = _parse_csv_terms(skills)
+
     for transaction in transactions:
         provider = get_user_safe(session, transaction.provider_id)
+
+        if lowered_status and transaction.status.value.lower() != lowered_status:
+            continue
+
+        if min_rating is not None and provider.rating < min_rating:
+            continue
+
+        if min_jobs_done is not None and provider.jobs_done < min_jobs_done:
+            continue
+
+        if required_skills and not _user_has_all_skills(provider, required_skills):
+            continue
+
+        if lowered_query:
+            searchable_text = f"{provider.full_name} {provider.phone_number}".lower()
+            if lowered_query not in searchable_text:
+                continue
+
         applicants.append(ApplicantsInfo(
             transaction_id=transaction.id,
             id=provider.id,

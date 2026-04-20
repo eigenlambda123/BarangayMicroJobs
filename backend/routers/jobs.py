@@ -1,8 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlmodel import Session, select
-from typing import List
+from typing import List, Optional
 from datetime import datetime
 from uuid import UUID
+from sqlalchemy import func
 
 from database import get_session
 from models import JobPost, User, JobTransaction, TransactionStatus
@@ -10,6 +11,17 @@ from schemas.jobs import JobCreateRequest, UpdateJobRequest
 from utils.auth_utils import get_current_user
 
 router = APIRouter(prefix="/jobs", tags=["Jobs"])
+
+
+def _parse_csv_terms(value: Optional[str]) -> List[str]:
+    if not value:
+        return []
+    return [term.strip().lower() for term in value.split(",") if term.strip()]
+
+
+def _contains_any_term(text: str, terms: List[str]) -> bool:
+    lowered_text = text.lower()
+    return any(term in lowered_text for term in terms)
 
 def get_jobs_by_poster(session: Session, poster_id: UUID) -> List[JobPost]:
     """Get all jobs posted by a specific user"""
@@ -64,9 +76,50 @@ def create_job_post(
     return {"message": "Job posted successfully", "job_id": new_job.id}
 
 @router.get("/", response_model=List[JobPost])
-def get_all_jobs(session: Session = Depends(get_session)):
+def get_all_jobs(
+    q: Optional[str] = Query(default=None, description="Search text for title/description"),
+    location: Optional[str] = Query(default=None, description="Filter by exact location"),
+    status_value: Optional[str] = Query(default=None, alias="status", description="Filter by job status (open, assigned, completed)"),
+    min_salary: Optional[float] = Query(default=None, ge=0),
+    max_salary: Optional[float] = Query(default=None, ge=0),
+    poster_id: Optional[UUID] = Query(default=None, description="Filter jobs by poster"),
+    skills: Optional[str] = Query(default=None, description="Comma-separated skill keywords matched against title/description"),
+    session: Session = Depends(get_session),
+):
     statement = select(JobPost)
+
+    if location:
+        statement = statement.where(func.lower(JobPost.location) == location.lower())
+
+    if status_value:
+        statement = statement.where(func.lower(JobPost.status) == status_value.lower())
+
+    if min_salary is not None:
+        statement = statement.where(JobPost.salary >= min_salary)
+
+    if max_salary is not None:
+        statement = statement.where(JobPost.salary <= max_salary)
+
+    if poster_id is not None:
+        statement = statement.where(JobPost.poster_id == poster_id)
+
+    if q:
+        like_query = f"%{q.lower()}%"
+        statement = statement.where(
+            func.lower(JobPost.title).like(like_query)
+            | func.lower(JobPost.description).like(like_query)
+        )
+
+    statement = statement.order_by(JobPost.last_modified.desc())
     jobs = session.exec(statement).all()
+
+    skill_terms = _parse_csv_terms(skills)
+    if skill_terms:
+        jobs = [
+            job for job in jobs
+            if _contains_any_term(f"{job.title} {job.description}", skill_terms)
+        ]
+
     return jobs
 
 @router.get("/{job_id}", response_model=JobPost)

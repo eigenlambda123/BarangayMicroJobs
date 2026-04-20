@@ -25,6 +25,27 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
   bool _isLoading = true;
   String? _errorMessage;
   String? _currentUserId;
+  final TextEditingController _searchController = TextEditingController();
+  final TextEditingController _minSalaryController = TextEditingController();
+  final TextEditingController _maxSalaryController = TextEditingController();
+  String _selectedLocation = 'All';
+  String _selectedStatus = 'All';
+
+  static const List<String> _lucenaBarangays = [
+    'Barangay Bocohan',
+    'Barangay Dalahican',
+    'Barangay Gulang-Gulang',
+    'Barangay Ibabang Dupay',
+    'Barangay Ilayang Dupay',
+    'Barangay Isabang',
+    'Barangay Market View',
+    'Barangay Mayao Kanluran',
+    'Barangay Mayao Castillo',
+    'Barangay Mayao Crossing',
+    'Barangay Ransohan',
+    'Barangay Salinas',
+    'Barangay Talao-Talao',
+  ];
 
   @override
   void initState() {
@@ -32,6 +53,14 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
     _loadCurrentUser();
     _loadJobs();
     _loadUserTransactions();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    _minSalaryController.dispose();
+    _maxSalaryController.dispose();
+    super.dispose();
   }
 
   @override
@@ -72,7 +101,13 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
 
   Future<void> _loadJobs() async {
     try {
-      final jobs = await JobService().getAllJobs();
+      final jobs = await JobService().getAllJobs(
+        query: _searchController.text,
+        location: _selectedLocation == 'All' ? null : _selectedLocation,
+        status: _selectedStatus == 'All' ? null : _selectedStatus,
+        minSalary: _minSalaryController.text,
+        maxSalary: _maxSalaryController.text,
+      );
       if (mounted) {
         setState(() {
           _jobs = jobs;
@@ -87,6 +122,17 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
         });
       }
     }
+  }
+
+  void _clearFilters() {
+    setState(() {
+      _searchController.clear();
+      _minSalaryController.clear();
+      _maxSalaryController.clear();
+      _selectedLocation = 'All';
+      _selectedStatus = 'All';
+    });
+    _loadJobs();
   }
 
   Future<void> _loadUserTransactions() async {
@@ -186,6 +232,8 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                       const MarketplaceHeader(),
                       const SizedBox(height: 16),
                       _buildMarketplaceOverview(context),
+                      const SizedBox(height: 12),
+                      _buildJobFilters(context),
                       const SizedBox(height: 18),
                       _MarketplaceSectionShell(
                         child: _buildActivePostingsSection(context),
@@ -212,6 +260,148 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
             },
           ),
       ],
+    );
+  }
+
+  Widget _buildJobFilters(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final locationOptions = ['All', ..._lucenaBarangays];
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: colorScheme.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: colorScheme.primary.withValues(alpha: 0.12)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Search and filter jobs',
+            style: TextStyle(
+              fontWeight: FontWeight.w700,
+              color: colorScheme.onSurface,
+            ),
+          ),
+          const SizedBox(height: 10),
+          TextField(
+            controller: _searchController,
+            textInputAction: TextInputAction.search,
+            onSubmitted: (_) => _loadJobs(),
+            decoration: InputDecoration(
+              prefixIcon: const Icon(Icons.search),
+              hintText: 'Search title or description',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              isDense: true,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              Expanded(
+                child: DropdownButtonFormField<String>(
+                  value: _selectedLocation,
+                  isExpanded: true,
+                  items: locationOptions
+                      .map(
+                        (location) => DropdownMenuItem(
+                          value: location,
+                          child: Text(
+                            location,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      )
+                      .toList(),
+                  onChanged: (value) {
+                    if (value == null) return;
+                    setState(() => _selectedLocation = value);
+                  },
+                  decoration: const InputDecoration(
+                    labelText: 'Location',
+                    isDense: true,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: DropdownButtonFormField<String>(
+                  value: _selectedStatus,
+                  items: const [
+                    DropdownMenuItem(value: 'All', child: Text('All statuses')),
+                    DropdownMenuItem(value: 'open', child: Text('Open')),
+                    DropdownMenuItem(
+                      value: 'assigned',
+                      child: Text('Assigned'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'completed',
+                      child: Text('Completed'),
+                    ),
+                  ],
+                  onChanged: (value) {
+                    if (value == null) return;
+                    setState(() => _selectedStatus = value);
+                  },
+                  decoration: const InputDecoration(
+                    labelText: 'Status',
+                    isDense: true,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _minSalaryController,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    labelText: 'Min Salary',
+                    isDense: true,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: TextField(
+                  controller: _maxSalaryController,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    labelText: 'Max Salary',
+                    isDense: true,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: _clearFilters,
+                  child: const Text('Clear'),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: FilledButton.icon(
+                  onPressed: _loadJobs,
+                  icon: const Icon(Icons.filter_alt_outlined),
+                  label: const Text('Apply Filters'),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 

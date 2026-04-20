@@ -120,6 +120,22 @@ Invoke-RestMethod -Uri http://localhost:8000/jobs/create -Method POST -Body $bod
 Invoke-RestMethod -Uri http://localhost:8000/jobs/ -Method GET
 ```
 
+#### Search and Filter Jobs
+
+You can combine query parameters to find specific jobs.
+
+Supported params:
+- `q`: keyword in title/description
+- `location`: exact barangay/location
+- `status`: `open`, `assigned`, `completed`
+- `min_salary`, `max_salary`
+- `poster_id`
+- `skills`: comma-separated keywords matched against title/description
+
+```powershell
+Invoke-RestMethod -Uri "http://localhost:8000/jobs/?q=cleaning&location=Gulang-Gulang&status=open&min_salary=300&max_salary=800&skills=cleaning,laundry" -Method GET
+```
+
 **Expected Response:**
 ```json
 [
@@ -201,6 +217,33 @@ $headers = @{
 }
 
 Invoke-RestMethod -Uri "http://localhost:8000/transactions/$job_id/applicants" -Method GET -Headers $headers
+```
+
+#### Search and Filter Applications
+
+Supported params:
+- `q`: applicant name or phone
+- `status`: application status (`applied`, `hired`, `completed`, `canceled`)
+- `min_rating`: minimum applicant rating
+- `min_jobs_done`: minimum number of completed jobs
+- `skills`: comma-separated applicant skills (all listed skills are required)
+
+```powershell
+Invoke-RestMethod -Uri "http://localhost:8000/transactions/$job_id/applicants?status=applied&min_rating=4&min_jobs_done=3&skills=plumbing,electrical&q=juan" -Method GET -Headers $headers
+```
+
+### 4. Filter My Transactions
+
+You can also filter the authenticated user's transactions:
+
+Supported params:
+- `q`: keyword in job title/location/counterpart name
+- `status`: transaction status
+- `location`: exact job location
+- `role`: `requester` or `provider`
+
+```powershell
+Invoke-RestMethod -Uri "http://localhost:8000/transactions/me?status=hired&role=provider&q=repair" -Method GET -Headers $headers
 ```
 
 **Expected Response:**
