@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../common/compact_pagination_controls.dart';
 import '../cards/posting_card.dart';
 import '../../../screens/job_details_screen.dart';
 import '../../../utils/history_helpers.dart';
@@ -158,40 +159,61 @@ class _AvailableJobsSectionState extends State<AvailableJobsSection> {
         if (widget.jobs.isNotEmpty && _totalPages > 1)
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 16.0),
-            child: Wrap(
-              alignment: WrapAlignment.center,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              spacing: 12,
-              runSpacing: 12,
-              children: [
-                OutlinedButton.icon(
-                  onPressed: _currentPage > 1 ? _goToPreviousPage : null,
-                  icon: const Icon(Icons.arrow_back),
-                  label: const Text('Previous'),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: 10,
-                  ),
-                  decoration: BoxDecoration(
-                    color: colorScheme.primary.withValues(alpha: 0.08),
-                    borderRadius: BorderRadius.circular(999),
-                  ),
-                  child: Text(
-                    'Page $_currentPage of $_totalPages',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      color: colorScheme.primary,
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                if (constraints.maxWidth < 380) {
+                  return CompactPaginationControls(
+                    currentPage: _currentPage,
+                    totalPages: _totalPages,
+                    activeColor: colorScheme.primary,
+                    onPageChanged: (page) =>
+                        setState(() => _currentPage = page),
+                  );
+                }
+
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: 120,
+                      child: OutlinedButton.icon(
+                        onPressed: _currentPage > 1 ? _goToPreviousPage : null,
+                        icon: const Icon(Icons.arrow_back),
+                        label: const Text('Previous'),
+                      ),
                     ),
-                  ),
-                ),
-                FilledButton.tonalIcon(
-                  onPressed: _currentPage < _totalPages ? _goToNextPage : null,
-                  icon: const Icon(Icons.arrow_forward),
-                  label: const Text('Next'),
-                ),
-              ],
+                    const SizedBox(width: 12),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 10,
+                      ),
+                      decoration: BoxDecoration(
+                        color: colorScheme.primary.withValues(alpha: 0.08),
+                        borderRadius: BorderRadius.circular(999),
+                      ),
+                      child: Text(
+                        'Page $_currentPage of $_totalPages',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: colorScheme.primary,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    SizedBox(
+                      width: 120,
+                      child: FilledButton.tonalIcon(
+                        onPressed: _currentPage < _totalPages
+                            ? _goToNextPage
+                            : null,
+                        icon: const Icon(Icons.arrow_forward),
+                        label: const Text('Next'),
+                      ),
+                    ),
+                  ],
+                );
+              },
             ),
           ),
       ],
