@@ -45,18 +45,69 @@ class JobHeaderCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 10),
-          if (jobData?['image'] != null && jobData!['image'].isNotEmpty)
-            Container(
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: Container(
               height: 180,
               width: double.infinity,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                image: DecorationImage(
-                  image: NetworkImage(jobData!['image']),
-                  fit: BoxFit.cover,
-                ),
+              color: colorScheme.primary.withValues(alpha: 0.06),
+              child:
+                  jobData?['image'] != null &&
+                      jobData!['image'].toString().trim().isNotEmpty
+                  ? Image.network(
+                      jobData!['image'].toString(),
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                      errorBuilder: (context, error, stackTrace) =>
+                          _imageFallback(context, colorScheme),
+                    )
+                  : _imageFallback(context, colorScheme),
+            ),
+          ),
+          if (jobData?['description'] != null &&
+              jobData!['description'].toString().trim().isNotEmpty) ...[
+            const SizedBox(height: 12),
+            Text(
+              'Description',
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: colorScheme.primary,
+                letterSpacing: 0.2,
               ),
             ),
+            const SizedBox(height: 6),
+            Text(
+              jobData!['description'].toString(),
+              style: TextStyle(
+                fontSize: 14,
+                height: 1.45,
+                color: colorScheme.onSurface.withValues(alpha: 0.78),
+              ),
+            ),
+          ] else ...[
+            const SizedBox(height: 12),
+            Text(
+              'Description',
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: colorScheme.primary,
+                letterSpacing: 0.2,
+              ),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              'No description provided for this job yet.',
+              style: TextStyle(
+                fontSize: 14,
+                height: 1.45,
+                color: colorScheme.onSurface.withValues(alpha: 0.6),
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+          ],
+          const SizedBox(height: 12),
           Wrap(
             spacing: 8,
             runSpacing: 8,
@@ -178,6 +229,30 @@ class JobHeaderCard extends StatelessWidget {
               fontSize: 13,
               fontWeight: FontWeight.w800,
               color: colorScheme.onSurface,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _imageFallback(BuildContext context, ColorScheme colorScheme) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.image_outlined,
+            size: 42,
+            color: colorScheme.primary.withValues(alpha: 0.45),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'No job image available',
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: colorScheme.onSurface.withValues(alpha: 0.56),
             ),
           ),
         ],

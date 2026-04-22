@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 
-import '../../../services/auth_service.dart';
 import '../../../services/transaction_service.dart';
+import 'job_applicant_filters_sheet.dart';
 
 class JobApplicantsSection extends StatefulWidget {
   final String? currentUserId;
@@ -33,6 +33,13 @@ class _JobApplicantsSectionState extends State<JobApplicantsSection> {
   final TextEditingController _minRatingController = TextEditingController();
   final TextEditingController _skillsController = TextEditingController();
   String _applicantStatusFilter = 'All';
+
+  JobApplicantFilterSelection get _filterSelection =>
+      JobApplicantFilterSelection(
+        status: _applicantStatusFilter,
+        minRating: _minRatingController.text,
+        skills: _skillsController.text,
+      );
 
   @override
   void initState() {
@@ -98,6 +105,24 @@ class _JobApplicantsSectionState extends State<JobApplicantsSection> {
       _minRatingController.clear();
       _skillsController.clear();
       _applicantStatusFilter = 'All';
+    });
+    _loadApplicants();
+  }
+
+  Future<void> _openFilterSheet() async {
+    final result = await showJobApplicantFiltersSheet(
+      context: context,
+      initialSelection: _filterSelection,
+    );
+
+    if (result == null) {
+      return;
+    }
+
+    setState(() {
+      _applicantStatusFilter = result.status;
+      _minRatingController.text = result.minRating;
+      _skillsController.text = result.skills;
     });
     _loadApplicants();
   }
@@ -184,6 +209,7 @@ class _JobApplicantsSectionState extends State<JobApplicantsSection> {
     }
 
     final colorScheme = Theme.of(context).colorScheme;
+    final hasActiveFilters = _filterSelection.hasFilters;
 
     return Container(
       width: double.infinity,
@@ -219,87 +245,66 @@ class _JobApplicantsSectionState extends State<JobApplicantsSection> {
             style: TextStyle(fontSize: 12, color: Color(0xFF6A7278)),
           ),
           const SizedBox(height: 12),
-          TextField(
-            controller: _applicantSearchController,
-            textInputAction: TextInputAction.search,
-            onSubmitted: (_) => _loadApplicants(),
-            decoration: const InputDecoration(
-              prefixIcon: Icon(Icons.search),
-              hintText: 'Search applicant name or phone',
-              isDense: true,
-            ),
-          ),
-          const SizedBox(height: 8),
           Row(
             children: [
-              Expanded(
-                child: DropdownButtonFormField<String>(
-                  value: _applicantStatusFilter,
-                  items: const [
-                    DropdownMenuItem(value: 'All', child: Text('All statuses')),
-                    DropdownMenuItem(value: 'applied', child: Text('Applied')),
-                    DropdownMenuItem(value: 'hired', child: Text('Hired')),
-                    DropdownMenuItem(
-                      value: 'completed',
-                      child: Text('Completed'),
-                    ),
-                    DropdownMenuItem(
-                      value: 'canceled',
-                      child: Text('Canceled'),
-                    ),
-                  ],
-                  onChanged: (value) {
-                    if (value == null) return;
-                    setState(() => _applicantStatusFilter = value);
-                  },
-                  decoration: const InputDecoration(
-                    labelText: 'Status',
-                    isDense: true,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
               Expanded(
                 child: TextField(
-                  controller: _minRatingController,
-                  keyboardType: const TextInputType.numberWithOptions(
-                    decimal: true,
-                  ),
+                  controller: _applicantSearchController,
+                  textInputAction: TextInputAction.search,
+                  onSubmitted: (_) => _loadApplicants(),
                   decoration: const InputDecoration(
-                    labelText: 'Min Rating',
+                    prefixIcon: Icon(Icons.search),
+                    hintText: 'Search applicant name or phone',
                     isDense: true,
                   ),
                 ),
               ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          TextField(
-            controller: _skillsController,
-            decoration: const InputDecoration(
-              hintText: 'Skills (comma-separated)',
-              isDense: true,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Row(
-            children: [
-              Expanded(
-                child: OutlinedButton(
-                  onPressed: _clearApplicantFilters,
-                  child: const Text('Clear'),
-                ),
-              ),
               const SizedBox(width: 8),
-              Expanded(
-                child: FilledButton.icon(
-                  onPressed: _loadApplicants,
-                  icon: const Icon(Icons.filter_alt_outlined),
-                  label: const Text('Apply Filters'),
-                ),
+              Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  FilledButton.tonalIcon(
+                    onPressed: _openFilterSheet,
+                    icon: const Icon(Icons.tune),
+                    label: const Text('Filters'),
+                  ),
+                  if (hasActiveFilters)
+                    Positioned(
+                      right: -6,
+                      top: -6,
+                      child: Container(
+                        width: 20,
+                        height: 20,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: colorScheme.primary,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Text(
+                          '${_filterSelection.activeFilterCount}',
+                          style: TextStyle(
+                            color: colorScheme.onPrimary,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
               ),
             ],
           ),
+          if (hasActiveFilters) ...[
+            const SizedBox(height: 8),
+            Text(
+              '${_filterSelection.activeFilterCount} filters active',
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: colorScheme.onSurface.withValues(alpha: 0.62),
+              ),
+            ),
+          ],
           const SizedBox(height: 12),
           if (_isLoadingApplicants)
             const Padding(
