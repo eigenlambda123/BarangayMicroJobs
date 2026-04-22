@@ -7,6 +7,7 @@ import '../widgets/jobs/cards/job_header_card.dart';
 import '../widgets/jobs/cards/job_details_snapshot_card.dart';
 import '../widgets/jobs/cards/job_details_action_panel.dart';
 import '../widgets/jobs/sections/job_applicants_section.dart';
+import '../utils/status_display.dart';
 
 class JobDetailsScreen extends StatefulWidget {
   final String jobTitle;
@@ -183,7 +184,8 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final isJobPoster = _currentUserId == widget.posterId;
-    final isJobOpen = (_jobData?['status'] ?? 'open') == 'open';
+    final jobStatus = (_jobData?['status'] ?? 'open').toString();
+    final isJobOpen = StatusDisplay.normalize(jobStatus) == 'open';
 
     return Scaffold(
       appBar: AppBar(title: const Text('Job Details')),
@@ -214,13 +216,14 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                 const SizedBox(height: 14),
                 JobDetailsSnapshotCard(
                   isJobPoster: isJobPoster,
-                  isJobOpen: isJobOpen,
+                  jobStatus: jobStatus,
                   applicantsCount: null,
                 ),
                 const SizedBox(height: 14),
                 JobDetailsActionPanel(
                   isJobPoster: isJobPoster,
                   isJobOpen: isJobOpen,
+                  jobStatus: jobStatus,
                   hasApplied: _hasApplied,
                   isLoading: _isLoading,
                   onApplyPressed: _applyForJob,

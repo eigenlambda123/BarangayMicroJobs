@@ -3,6 +3,7 @@ import '../jobs/cards/activity_card.dart';
 import '../common/rating_dialog.dart';
 import '../../screens/transaction_details_screen.dart';
 import '../../utils/history_helpers.dart';
+import '../../utils/status_display.dart';
 
 class TransactionHistoryCard extends StatelessWidget {
   final Map<String, dynamic> transaction;
@@ -33,29 +34,8 @@ class TransactionHistoryCard extends StatelessWidget {
 
     // Determine status and color
     final status = transaction['status'];
-    Color statusColor;
-    String statusText;
-    switch (status) {
-      case 'completed':
-        statusColor = const Color(0xFF2A6A31);
-        statusText = 'COMPLETED';
-        break;
-      case 'hired':
-        statusColor = colorScheme.primary;
-        statusText = 'IN PROGRESS';
-        break;
-      case 'applied':
-        statusColor = colorScheme.secondary;
-        statusText = 'APPLIED';
-        break;
-      case 'canceled':
-        statusColor = colorScheme.error;
-        statusText = 'CANCELED';
-        break;
-      default:
-        statusColor = colorScheme.onSurface.withValues(alpha: 0.54);
-        statusText = status.toUpperCase();
-    }
+    final statusColor = StatusDisplay.color(status, colorScheme);
+    final statusText = StatusDisplay.label(status);
 
     return Column(
       children: [

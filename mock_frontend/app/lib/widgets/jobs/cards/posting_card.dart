@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../utils/status_display.dart';
 
 class PostingCard extends StatelessWidget {
   final String title;
@@ -23,6 +24,7 @@ class PostingCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final statusLabel = StatusDisplay.label(status);
     final statusColor = _statusColor(status);
 
     return GestureDetector(
@@ -185,7 +187,7 @@ class PostingCard extends StatelessWidget {
                           borderRadius: BorderRadius.circular(999),
                         ),
                         child: Text(
-                          status.toUpperCase(),
+                          statusLabel,
                           style: TextStyle(
                             color: statusColor,
                             fontSize: 11,
@@ -218,9 +220,14 @@ class PostingCard extends StatelessWidget {
     switch (status.toLowerCase()) {
       case 'open':
         return const Color(0xFF0D5C63);
+      case 'assigned':
+      case 'hired':
+      case 'applied':
+        return const Color(0xFFDB7C26);
       case 'completed':
-        return const Color(0xFF2F9E44);
+        return const Color(0xFF2A6A31);
       case 'closed':
+      case 'canceled':
         return const Color(0xFFB42318);
       default:
         return const Color(0xFF6A7278);

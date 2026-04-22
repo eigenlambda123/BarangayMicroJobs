@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import '../../../utils/status_display.dart';
 
 class JobDetailsSnapshotCard extends StatelessWidget {
   final bool isJobPoster;
-  final bool isJobOpen;
+  final String jobStatus;
   final int? applicantsCount;
 
   const JobDetailsSnapshotCard({
     required this.isJobPoster,
-    required this.isJobOpen,
+    required this.jobStatus,
     required this.applicantsCount,
     super.key,
   });
@@ -35,10 +36,8 @@ class JobDetailsSnapshotCard extends StatelessWidget {
           ),
           _snapshotChip(
             icon: Icons.work_outline,
-            label: isJobOpen ? 'Status: Open' : 'Status: Closed',
-            color: isJobOpen
-                ? const Color(0xFF2A6A31)
-                : const Color(0xFF7A7F83),
+            label: 'Status: ${StatusDisplay.label(jobStatus)}',
+            color: StatusDisplay.color(jobStatus, colorScheme),
           ),
           if (applicantsCount != null)
             _snapshotChip(

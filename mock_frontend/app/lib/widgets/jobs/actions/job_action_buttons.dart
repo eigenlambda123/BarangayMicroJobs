@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import '../../../utils/status_display.dart';
 
 class JobActionButtons extends StatelessWidget {
   final bool isJobPoster;
   final bool hasApplied;
   final bool isJobOpen;
+  final String jobStatus;
   final bool isLoading;
   final VoidCallback onApplyPressed;
   final VoidCallback onDeletePressed;
@@ -14,6 +16,7 @@ class JobActionButtons extends StatelessWidget {
     required this.isJobPoster,
     required this.hasApplied,
     required this.isJobOpen,
+    required this.jobStatus,
     required this.isLoading,
     required this.onApplyPressed,
     required this.onDeletePressed,
@@ -49,7 +52,7 @@ class JobActionButtons extends StatelessWidget {
                 hasApplied
                     ? 'Applied'
                     : (!isJobOpen)
-                    ? 'Job Not Open'
+                    ? 'Job ${StatusDisplay.label(jobStatus)}'
                     : (isLoading ? 'Applying...' : 'Apply for Job'),
               ),
               style: hasApplied

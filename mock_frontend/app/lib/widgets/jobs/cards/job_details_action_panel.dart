@@ -5,6 +5,7 @@ import '../actions/job_action_buttons.dart';
 class JobDetailsActionPanel extends StatelessWidget {
   final bool isJobPoster;
   final bool isJobOpen;
+  final String jobStatus;
   final bool hasApplied;
   final bool isLoading;
   final VoidCallback onApplyPressed;
@@ -14,6 +15,7 @@ class JobDetailsActionPanel extends StatelessWidget {
   const JobDetailsActionPanel({
     required this.isJobPoster,
     required this.isJobOpen,
+    required this.jobStatus,
     required this.hasApplied,
     required this.isLoading,
     required this.onApplyPressed,
@@ -44,6 +46,7 @@ class JobDetailsActionPanel extends StatelessWidget {
             isJobPoster: isJobPoster,
             hasApplied: hasApplied,
             isJobOpen: isJobOpen,
+            jobStatus: jobStatus,
             isLoading: isLoading,
             onApplyPressed: onApplyPressed,
             onDeletePressed: onDeletePressed,

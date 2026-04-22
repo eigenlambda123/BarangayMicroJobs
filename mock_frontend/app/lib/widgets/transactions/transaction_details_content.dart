@@ -3,6 +3,7 @@ import '../jobs/cards/job_details_card.dart';
 import 'transaction_status_card.dart';
 import 'transaction_parties_card.dart';
 import 'transaction_action_buttons.dart';
+import '../../utils/status_display.dart';
 
 class TransactionDetailsContent extends StatelessWidget {
   final Map<String, dynamic> transaction;
@@ -26,7 +27,7 @@ class TransactionDetailsContent extends StatelessWidget {
     final requester = transaction['requester'];
     final isRequester = transaction['is_requester'] as bool;
     final status = (transaction['status'] ?? 'unknown').toString();
-    final statusLabel = status.toUpperCase();
+    final statusLabel = StatusDisplay.label(status);
     final canEditJob =
         isRequester &&
         status == 'applied' &&

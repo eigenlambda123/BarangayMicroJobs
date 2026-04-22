@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../utils/transaction_helpers.dart';
+import '../../utils/status_display.dart';
 
 /// Card widget for displaying transaction status and timeline
 class TransactionStatusCard extends StatelessWidget {
@@ -38,19 +39,19 @@ class TransactionStatusCard extends StatelessWidget {
           ),
           const SizedBox(height: 14),
           StatusItem(
-            status: 'Applied',
+            status: StatusDisplay.label('applied'),
             timestamp: transaction['accepted_at'],
             isCompleted: true,
           ),
           const SizedBox(height: 10),
           StatusItem(
-            status: 'Hired',
+            status: StatusDisplay.label('assigned'),
             timestamp: transaction['accepted_at'],
             isCompleted: transaction['status'] != 'applied',
           ),
           const SizedBox(height: 10),
           StatusItem(
-            status: 'Completed',
+            status: StatusDisplay.label('completed'),
             timestamp: transaction['completed_at'],
             isCompleted: transaction['status'] == 'completed',
           ),

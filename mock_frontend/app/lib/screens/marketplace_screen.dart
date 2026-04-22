@@ -310,7 +310,8 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // My Posted Jobs Section
-        if (_myJobs.isNotEmpty) MyJobsSection(jobs: _myJobs),
+        if (_myJobs.isNotEmpty)
+          MyJobsSection(jobs: _myJobs, transactions: _userTransactions),
 
         // Available Jobs Section (All other jobs)
         if (_availableJobs.isNotEmpty) const SizedBox(height: 20),

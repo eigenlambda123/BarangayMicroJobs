@@ -6,8 +6,13 @@ import '../cards/posting_card.dart';
 
 class MyJobsSection extends StatefulWidget {
   final List<Map<String, dynamic>> jobs;
+  final List<Map<String, dynamic>> transactions;
 
-  const MyJobsSection({super.key, required this.jobs});
+  const MyJobsSection({
+    super.key,
+    required this.jobs,
+    required this.transactions,
+  });
 
   @override
   State<MyJobsSection> createState() => _MyJobsSectionState();
@@ -26,6 +31,36 @@ class _MyJobsSectionState extends State<MyJobsSection> {
       startIndex,
       endIndex > widget.jobs.length ? widget.jobs.length : endIndex,
     );
+  }
+
+  String _effectiveStatusForJob(Map<String, dynamic> job) {
+    final jobId = job['id']?.toString();
+    if (jobId == null || jobId.isEmpty) {
+      return (job['status'] ?? 'open').toString();
+    }
+
+    final linkedTransactions = widget.transactions.where((transaction) {
+      final linkedJob = transaction['job'];
+      return linkedJob is Map && linkedJob['id']?.toString() == jobId;
+    }).toList();
+
+    final completedTransaction = linkedTransactions.any(
+      (transaction) =>
+          (transaction['status'] ?? '').toString().toLowerCase() == 'completed',
+    );
+    if (completedTransaction) {
+      return 'completed';
+    }
+
+    final hiredTransaction = linkedTransactions.any(
+      (transaction) =>
+          (transaction['status'] ?? '').toString().toLowerCase() == 'hired',
+    );
+    if (hiredTransaction) {
+      return 'assigned';
+    }
+
+    return (job['status'] ?? 'open').toString();
   }
 
   @override
@@ -106,7 +141,7 @@ class _MyJobsSectionState extends State<MyJobsSection> {
             price: '₱${_paginatedJobs[i]['salary'] ?? '0'}',
             location: _paginatedJobs[i]['location'] ?? 'Unknown Location',
             applicants: _paginatedJobs[i]['applicants_count'] ?? 0,
-            status: 'OPEN',
+            status: _effectiveStatusForJob(_paginatedJobs[i]),
             date: _paginatedJobs[i]['last_modified'] != null
                 ? formatDate(_paginatedJobs[i]['last_modified'])
                 : null,
