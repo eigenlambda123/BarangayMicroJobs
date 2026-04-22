@@ -16,6 +16,7 @@ class JobHeaderCard extends StatelessWidget {
     this.jobData,
     this.posterData,
   });
+  static const String _apiBaseUrl = 'http://10.0.2.2:8000';
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +25,7 @@ class JobHeaderCard extends StatelessWidget {
     final postedOn = jobData?['last_modified'] != null
         ? formatDate(jobData!['last_modified'])
         : null;
+    final imageUrl = _resolveImageUrl(jobData?['image']?.toString());
 
     return Container(
       width: double.infinity,
@@ -51,11 +53,9 @@ class JobHeaderCard extends StatelessWidget {
               height: 180,
               width: double.infinity,
               color: colorScheme.primary.withValues(alpha: 0.06),
-              child:
-                  jobData?['image'] != null &&
-                      jobData!['image'].toString().trim().isNotEmpty
+              child: imageUrl != null && imageUrl.isNotEmpty
                   ? Image.network(
-                      jobData!['image'].toString(),
+                      imageUrl,
                       fit: BoxFit.cover,
                       width: double.infinity,
                       errorBuilder: (context, error, stackTrace) =>
@@ -158,6 +158,23 @@ class JobHeaderCard extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String? _resolveImageUrl(String? rawUrl) {
+    if (rawUrl == null) {
+      return null;
+    }
+    final trimmed = rawUrl.trim();
+    if (trimmed.isEmpty) {
+      return null;
+    }
+    if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+      return trimmed;
+    }
+    if (trimmed.startsWith('/')) {
+      return '$_apiBaseUrl$trimmed';
+    }
+    return '$_apiBaseUrl/$trimmed';
   }
 
   Widget _metaChip({

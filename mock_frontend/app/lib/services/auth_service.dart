@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -179,26 +180,28 @@ class AuthService {
   }
 
   // Update profile image endpoint: PUT /auth/me/profile-image
-  Future<Map<String, dynamic>> updateProfileImage(String imageUrl) async {
+  Future<Map<String, dynamic>> updateProfileImage(File imageFile) async {
     try {
       final token = await getToken();
       if (token == null) {
         throw Exception('Not authenticated');
       }
 
-      final response = await http.put(
+      final request = http.MultipartRequest(
+        'PUT',
         Uri.parse('$baseUrl/auth/me/profile-image'),
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode({'profile_image': imageUrl}),
       );
+      request.headers['Authorization'] = 'Bearer $token';
+      request.files.add(
+        await http.MultipartFile.fromPath('image', imageFile.path),
+      );
+      final response = await request.send();
+      final responseBody = await response.stream.bytesToString();
 
       if (response.statusCode == 200) {
-        return jsonDecode(response.body);
+        return jsonDecode(responseBody);
       } else {
-        final error = jsonDecode(response.body);
+        final error = jsonDecode(responseBody);
         throw Exception(error['detail'] ?? 'Failed to update profile image');
       }
     } catch (e) {

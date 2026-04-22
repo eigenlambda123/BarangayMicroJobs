@@ -106,6 +106,25 @@ $headers = @{
 Invoke-RestMethod -Uri http://localhost:8000/jobs/create -Method POST -Body $body -Headers $headers -ContentType "application/json"
 ```
 
+### 1b. Create a New Job Post With Image (Multipart)
+
+Use this endpoint when uploading an actual image file from Flutter or any client.
+
+```powershell
+$token = "put_your_jwt_token_here"
+$headers = @{ "Authorization" = "Bearer $token" }
+
+$form = @{
+    title = "House Cleaning"
+    description = "Need help cleaning house"
+    location = "Barangay Isabang"
+    salary = "500"
+    image = Get-Item "C:\path\to\job-image.jpg"
+}
+
+Invoke-RestMethod -Uri http://localhost:8000/jobs/create-with-image -Method POST -Headers $headers -Form $form
+```
+
 **Expected Response:**
 ```json
 {
@@ -171,6 +190,25 @@ $headers = @{
 
 Invoke-RestMethod -Uri "http://localhost:8000/transactions/apply/$job_id" -Method POST -Headers $headers
 ```
+
+---
+
+## Profile Image Upload
+
+### Update Current User Profile Image (Multipart)
+
+```powershell
+$token = "put_your_jwt_token_here"
+$headers = @{ "Authorization" = "Bearer $token" }
+
+$form = @{
+    image = Get-Item "C:\path\to\profile-image.jpg"
+}
+
+Invoke-RestMethod -Uri http://localhost:8000/auth/me/profile-image -Method PUT -Headers $headers -Form $form
+```
+
+The API stores images under `/uploads/...` and returns the saved path in `profile_image` or `image` fields.
 
 **Expected Response:**
 ```json

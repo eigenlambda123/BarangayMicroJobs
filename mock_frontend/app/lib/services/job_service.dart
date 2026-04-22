@@ -12,7 +12,7 @@ class JobService {
     required String description,
     required String location,
     required String salary,
-    String? image,
+    String? imagePath,
   }) async {
     try {
       final token = await AuthService().getToken();
@@ -25,36 +25,33 @@ class JobService {
         throw Exception('Not authenticated. Please log in.');
       }
 
-      final headers = {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      };
-
-      if (kDebugMode) {
-        print('DEBUG: Headers: $headers');
+      final request = http.MultipartRequest(
+        'POST',
+        Uri.parse('$baseUrl/jobs/create-with-image'),
+      );
+      request.headers['Authorization'] = 'Bearer $token';
+      request.fields['title'] = title;
+      request.fields['description'] = description;
+      request.fields['location'] = location;
+      request.fields['salary'] = salary;
+      if (imagePath != null && imagePath.isNotEmpty) {
+        request.files.add(
+          await http.MultipartFile.fromPath('image', imagePath),
+        );
       }
 
-      final response = await http.post(
-        Uri.parse('$baseUrl/jobs/create'),
-        headers: headers,
-        body: jsonEncode({
-          'title': title,
-          'description': description,
-          'location': location,
-          'salary': salary,
-          if (image != null && image.isNotEmpty) 'image': image,
-        }),
-      );
+      final response = await request.send();
+      final responseBody = await response.stream.bytesToString();
 
       if (kDebugMode) {
         print('DEBUG: Status: ${response.statusCode}');
-        print('DEBUG: Response: ${response.body}');
+        print('DEBUG: Response: $responseBody');
       }
 
       if (response.statusCode == 201) {
-        return jsonDecode(response.body);
+        return jsonDecode(responseBody);
       } else {
-        final error = jsonDecode(response.body);
+        final error = jsonDecode(responseBody);
         throw Exception(
           error['detail'] ?? 'Failed to create job: ${response.statusCode}',
         );

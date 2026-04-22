@@ -92,15 +92,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _handleImageSelected(File imageFile) async {
-    // For now, we'll use the file path as a placeholder
-    // In a real app, you'd upload the image to a server and get a URL
     try {
-      await AuthService().updateProfileImage(imageFile.path);
+      await AuthService().updateProfileImage(imageFile);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Profile image updated successfully')),
         );
-        _loadUserData(); // Reload user data to show updated image
+        _loadUserData();
       }
     } catch (e) {
       if (mounted) {

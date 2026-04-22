@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, UploadFile, File, Form, status
 from sqlmodel import Session, select
 from typing import List, Optional
 from datetime import datetime
@@ -9,6 +9,8 @@ from database import get_session
 from models import JobPost, User, JobTransaction, TransactionStatus
 from schemas.jobs import JobCreateRequest, UpdateJobRequest
 from utils.auth_utils import get_current_user
+from utils.file_uploads import save_uploaded_image
+from utils.locations import is_valid_location
 
 router = APIRouter(prefix="/jobs", tags=["Jobs"])
 
@@ -70,6 +72,52 @@ def create_job_post(
     current_user.jobs_posted += 1
     session.add(current_user)
     
+    session.commit()
+    session.refresh(new_job)
+
+    return {"message": "Job posted successfully", "job_id": new_job.id}
+
+
+@router.post("/create-with-image", status_code=status.HTTP_201_CREATED)
+def create_job_post_with_image(
+    title: str = Form(...),
+    description: str = Form(...),
+    location: str = Form(...),
+    salary: float = Form(...),
+    image: Optional[UploadFile] = File(default=None),
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user),
+):
+    if current_user.role != "resident":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only residents can post jobs",
+        )
+
+    if not is_valid_location(location):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Invalid location: {location}. Must be a valid barangay in Lucena City.",
+        )
+
+    image_path: Optional[str] = None
+    if image is not None:
+        image_path = save_uploaded_image(image, "jobs")
+
+    new_job = JobPost(
+        poster_id=current_user.id,
+        title=title,
+        description=description,
+        location=location,
+        salary=salary,
+        image=image_path,
+        last_modified=datetime.utcnow(),
+    )
+
+    session.add(new_job)
+    current_user.jobs_posted += 1
+    session.add(current_user)
+
     session.commit()
     session.refresh(new_job)
 

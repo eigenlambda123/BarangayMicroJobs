@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:convert';
 import 'dart:typed_data';
 import 'package:image_picker/image_picker.dart';
 import '../../../services/job_service.dart';
@@ -41,7 +40,7 @@ class _PostJobModalState extends State<PostJobModal> {
 
   String _location = _lucenaBarangays.first;
   Uint8List? _selectedImageBytes;
-  String? _selectedImageData;
+  String? _selectedImagePath;
   bool _isLoading = false;
 
   @override
@@ -50,13 +49,6 @@ class _PostJobModalState extends State<PostJobModal> {
     _descriptionController.dispose();
     _salaryController.dispose();
     super.dispose();
-  }
-
-  String _getMimeType(String fileName) {
-    final lower = fileName.toLowerCase();
-    if (lower.endsWith('.png')) return 'image/png';
-    if (lower.endsWith('.webp')) return 'image/webp';
-    return 'image/jpeg';
   }
 
   Future<void> _pickImage(ImageSource source) async {
@@ -73,13 +65,10 @@ class _PostJobModalState extends State<PostJobModal> {
       }
 
       final bytes = await file.readAsBytes();
-      final mimeType = _getMimeType(file.name);
-      final dataUrl = 'data:$mimeType;base64,${base64Encode(bytes)}';
-
       if (mounted) {
         setState(() {
           _selectedImageBytes = bytes;
-          _selectedImageData = dataUrl;
+          _selectedImagePath = file.path;
         });
       }
     } catch (e) {
@@ -109,7 +98,7 @@ class _PostJobModalState extends State<PostJobModal> {
         description: _descriptionController.text,
         location: _location,
         salary: _salaryController.text,
-        image: _selectedImageData,
+        imagePath: _selectedImagePath,
       );
 
       if (mounted) {
@@ -410,7 +399,7 @@ class _PostJobModalState extends State<PostJobModal> {
                                 onPressed: () {
                                   setState(() {
                                     _selectedImageBytes = null;
-                                    _selectedImageData = null;
+                                    _selectedImagePath = null;
                                   });
                                 },
                                 icon: const Icon(Icons.close),

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, status
 from sqlmodel import Session, select
 from passlib.context import CryptContext
 from uuid import UUID
@@ -8,6 +8,7 @@ from models import User
 
 from schemas.auth import RegisterRequest, LoginRequest, UpdateProfileRequest
 from utils.auth_utils import verify_password, create_access_token, get_current_user
+from utils.file_uploads import save_uploaded_image
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -18,6 +19,7 @@ def build_user_profile(user: User) -> dict:
         "id": user.id,
         "full_name": user.full_name,
         "phone_number": user.phone_number,
+        "profile_image": user.profile_image,
         "email": user.email,
         "location": user.location,
         "skills": user.skills or [],
@@ -144,5 +146,29 @@ def update_profile(
 
     return {
         "message": "Profile updated successfully",
+        "user": build_user_profile(user),
+    }
+
+
+@router.put("/me/profile-image")
+def update_profile_image(
+    image: UploadFile = File(...),
+    current_user: User = Depends(get_current_user),
+    session: Session = Depends(get_session),
+):
+    user = session.get(User, current_user.id)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found",
+        )
+
+    user.profile_image = save_uploaded_image(image, "profiles")
+    session.add(user)
+    session.commit()
+    session.refresh(user)
+
+    return {
+        "message": "Profile image updated successfully",
         "user": build_user_profile(user),
     }

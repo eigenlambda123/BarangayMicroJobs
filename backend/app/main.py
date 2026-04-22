@@ -1,5 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from pathlib import Path
 
 from database import create_db_and_tables
 
@@ -25,6 +27,10 @@ app.include_router(auth.router)
 app.include_router(jobs.router)
 app.include_router(transactions.router)
 app.include_router(rating.router)
+
+uploads_dir = Path(__file__).resolve().parents[1] / "uploads"
+uploads_dir.mkdir(parents=True, exist_ok=True)
+app.mount("/uploads", StaticFiles(directory=str(uploads_dir)), name="uploads")
 
 @app.on_event("startup")
 def on_startup():

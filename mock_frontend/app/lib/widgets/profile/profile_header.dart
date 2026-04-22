@@ -17,8 +17,20 @@ class ProfileHeader extends StatefulWidget {
 }
 
 class _ProfileHeaderState extends State<ProfileHeader> {
+  static const String _apiBaseUrl = 'http://10.0.2.2:8000';
   final ImagePicker _imagePicker = ImagePicker();
   File? _selectedImage;
+
+  String _resolveImageUrl(String value) {
+    final trimmed = value.trim();
+    if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+      return trimmed;
+    }
+    if (trimmed.startsWith('/')) {
+      return '$_apiBaseUrl$trimmed';
+    }
+    return '$_apiBaseUrl/$trimmed';
+  }
 
   Future<void> _pickImage(ImageSource source) async {
     try {
@@ -73,6 +85,10 @@ class _ProfileHeaderState extends State<ProfileHeader> {
     final rating = (widget.userData?['rating'] ?? 0.0).toStringAsFixed(1);
     final reviewCount = widget.userData?['review_count'] ?? 0;
     final profileImage = widget.userData?['profile_image'];
+    final profileImageUrl =
+        (profileImage != null && profileImage.toString().trim().isNotEmpty)
+        ? _resolveImageUrl(profileImage.toString())
+        : null;
     final phone = widget.userData?['phone_number']?.toString() ?? 'No phone';
     final role = (widget.userData?['role'] ?? 'resident').toString();
 
@@ -95,12 +111,12 @@ class _ProfileHeaderState extends State<ProfileHeader> {
                   backgroundColor: colorScheme.primary,
                   backgroundImage: _selectedImage != null
                       ? FileImage(_selectedImage!)
-                      : (profileImage != null && profileImage.isNotEmpty)
-                      ? NetworkImage(profileImage) as ImageProvider
+                      : (profileImageUrl != null && profileImageUrl.isNotEmpty)
+                      ? NetworkImage(profileImageUrl) as ImageProvider
                       : null,
                   child:
                       (_selectedImage == null &&
-                          (profileImage == null || profileImage.isEmpty))
+                          (profileImageUrl == null || profileImageUrl.isEmpty))
                       ? const Icon(Icons.person, size: 52, color: Colors.white)
                       : null,
                 ),
