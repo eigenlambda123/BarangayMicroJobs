@@ -1,0 +1,45 @@
+BARANGAY MICROJOBS - QUICK SETUP (WINDOWS)
+
+Run these commands in separate terminals.
+
+1) BACKEND SETUP + RUN
+
+cd C:\Users\rmvilla\Documents\flutter_apps\barangay_microjobs\backend
+
+python -m venv venv
+.\venv\Scripts\activate
+pip install -r requirements.txt
+
+python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+Optional backend checks:
+- Open in browser: http://127.0.0.1:8000/docs (from laptop)
+- Open in phone browser (same Wi-Fi): http://<YOUR_LAPTOP_IP>:8000/docs
+
+2) FRONTEND SETUP + RUN
+
+cd C:\Users\rmvilla\Documents\flutter_apps\barangay_microjobs\mock_frontend\app
+
+flutter pub get
+flutter devices
+
+For Android emulator:
+flutter run --dart-define=API_BASE_URL=http://10.0.2.2:8000
+
+For physical phone on same Wi-Fi:
+flutter run --dart-define=API_BASE_URL=http://<YOUR_LAPTOP_IP>:8000
+
+3) FIND YOUR LAPTOP IP (FOR PHONE)
+
+cd C:\Users\rmvilla\Documents\flutter_apps\barangay_microjobs
+ipconfig
+
+Use the Wi-Fi IPv4 Address value, example:
+flutter run --dart-define=API_BASE_URL=http://192.168.1.4:8000
+
+4) TROUBLESHOOTING
+
+- If Flutter says "No pubspec.yaml file found", run from:
+  C:\Users\rmvilla\Documents\flutter_apps\barangay_microjobs\mock_frontend\app
+- If phone cannot connect, make sure backend uses --host 0.0.0.0 and both devices are on the same network.
+- If Windows firewall prompts, allow Python for private networks.

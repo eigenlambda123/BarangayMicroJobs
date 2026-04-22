@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import '../../config/api_config.dart';
 
 class ProfileHeader extends StatefulWidget {
   final Map<String, dynamic>? userData;
@@ -17,7 +18,7 @@ class ProfileHeader extends StatefulWidget {
 }
 
 class _ProfileHeaderState extends State<ProfileHeader> {
-  static const String _apiBaseUrl = 'http://10.0.2.2:8000';
+  static const String _apiBaseUrl = ApiConfig.baseUrl;
   final ImagePicker _imagePicker = ImagePicker();
   File? _selectedImage;
 

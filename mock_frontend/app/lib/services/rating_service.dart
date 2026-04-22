@@ -1,9 +1,10 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import '../config/api_config.dart';
 import 'auth_service.dart';
 
 class RatingService {
-  static const String baseUrl = 'http://10.0.2.2:8000';
+  static const String baseUrl = ApiConfig.baseUrl;
 
   // Rate a provider: POST /ratings/{transaction_id}/rate
   Future<Map<String, dynamic>> rateProvider({

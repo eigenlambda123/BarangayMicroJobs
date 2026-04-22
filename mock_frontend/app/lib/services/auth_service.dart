@@ -2,10 +2,10 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import '../config/api_config.dart';
 
 class AuthService {
-  static const String baseUrl =
-      'http://10.0.2.2:8000'; // Android emulator uses 10.0.2.2 for host localhost
+  static const String baseUrl = ApiConfig.baseUrl;
   static const String _tokenKey = 'auth_token';
   static const String _userIdKey = 'user_id';
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../utils/history_helpers.dart';
+import '../../../config/api_config.dart';
 
 class JobHeaderCard extends StatelessWidget {
   final String jobTitle;
@@ -16,7 +17,7 @@ class JobHeaderCard extends StatelessWidget {
     this.jobData,
     this.posterData,
   });
-  static const String _apiBaseUrl = 'http://10.0.2.2:8000';
+  static const String _apiBaseUrl = ApiConfig.baseUrl;
 
   @override
   Widget build(BuildContext context) {

@@ -107,6 +107,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final page = _pages[_currentPage];
+    final availableHeight = MediaQuery.of(context).size.height;
+    final isCompact = availableHeight < 760;
 
     return Scaffold(
       body: Container(
@@ -137,7 +139,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             ),
             SafeArea(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
+                padding: EdgeInsets.fromLTRB(20, isCompact ? 8 : 12, 20, 20),
                 child: Column(
                   children: [
                     Row(
@@ -158,7 +160,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 12),
+                    SizedBox(height: isCompact ? 8 : 12),
                     Expanded(
                       child: PageView.builder(
                         controller: _pageController,
@@ -176,7 +178,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         },
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: isCompact ? 6 : 8),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: List.generate(_pages.length, (index) {
@@ -195,10 +197,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         );
                       }),
                     ),
-                    const SizedBox(height: 20),
+                    SizedBox(height: isCompact ? 12 : 20),
                     Container(
                       width: double.infinity,
-                      padding: const EdgeInsets.all(18),
+                      padding: EdgeInsets.all(isCompact ? 14 : 18),
                       decoration: BoxDecoration(
                         color: Colors.white.withValues(alpha: 0.86),
                         borderRadius: BorderRadius.circular(28),
@@ -220,29 +222,19 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             page.title,
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              fontSize: 20,
+                              fontSize: isCompact ? 18 : 20,
                               fontWeight: FontWeight.w800,
                               color: colorScheme.onSurface,
                             ),
                           ),
-                          const SizedBox(height: 8),
-                          Text(
-                            page.description,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 14,
-                              height: 1.45,
-                              color: colorScheme.onSurface.withValues(
-                                alpha: 0.7,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 16),
+                          SizedBox(height: isCompact ? 12 : 16),
                           FilledButton(
                             onPressed: _isCompleting ? null : _goToNextPage,
                             style: FilledButton.styleFrom(
                               backgroundColor: page.accentColor,
-                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              padding: EdgeInsets.symmetric(
+                                vertical: isCompact ? 14 : 16,
+                              ),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(18),
                               ),
@@ -267,7 +259,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                     ),
                                   ),
                           ),
-                          const SizedBox(height: 10),
+                          SizedBox(height: isCompact ? 6 : 10),
                           TextButton(
                             onPressed: _isCompleting
                                 ? null
@@ -298,56 +290,74 @@ class _OnboardingPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            width: 170,
-            height: 170,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  page.accentColor.withValues(alpha: 0.18),
-                  page.accentColor.withValues(alpha: 0.05),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isCompact = constraints.maxHeight < 520;
+        final orbSize = isCompact ? 132.0 : 170.0;
+        final iconSize = isCompact ? 56.0 : 74.0;
+
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: constraints.maxHeight),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: orbSize,
+                    height: orbSize,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          page.accentColor.withValues(alpha: 0.18),
+                          page.accentColor.withValues(alpha: 0.05),
+                        ],
+                      ),
+                      border: Border.all(
+                        color: page.accentColor.withValues(alpha: 0.16),
+                      ),
+                    ),
+                    child: Icon(
+                      page.icon,
+                      size: iconSize,
+                      color: page.accentColor,
+                    ),
+                  ),
+                  SizedBox(height: isCompact ? 18 : 28),
+                  Text(
+                    stepText,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 1.2,
+                      color: colorScheme.onSurface.withValues(alpha: 0.56),
+                    ),
+                  ),
+                  SizedBox(height: isCompact ? 12 : 16),
+                  _CenterFeatureCard(page: page),
+                  SizedBox(height: isCompact ? 10 : 14),
+                  Wrap(
+                    alignment: WrapAlignment.center,
+                    spacing: 10,
+                    runSpacing: 10,
+                    children: const [
+                      _FeatureChip(label: 'Local trust'),
+                      _FeatureChip(label: 'Fast matching'),
+                      _FeatureChip(label: 'Simple tracking'),
+                    ],
+                  ),
                 ],
               ),
-              border: Border.all(
-                color: page.accentColor.withValues(alpha: 0.16),
-              ),
-            ),
-            child: Icon(page.icon, size: 74, color: page.accentColor),
-          ),
-          const SizedBox(height: 28),
-          Text(
-            stepText,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 1.2,
-              color: colorScheme.onSurface.withValues(alpha: 0.56),
             ),
           ),
-          const SizedBox(height: 16),
-          _CenterFeatureCard(page: page),
-          const SizedBox(height: 14),
-          Wrap(
-            alignment: WrapAlignment.center,
-            spacing: 10,
-            runSpacing: 10,
-            children: const [
-              _FeatureChip(label: 'Local trust'),
-              _FeatureChip(label: 'Fast matching'),
-              _FeatureChip(label: 'Simple tracking'),
-            ],
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

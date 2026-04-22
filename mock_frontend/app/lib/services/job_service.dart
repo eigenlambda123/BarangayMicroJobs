@@ -1,10 +1,11 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import '../config/api_config.dart';
 import 'auth_service.dart';
 
 class JobService {
-  static const String baseUrl = 'http://10.0.2.2:8000';
+  static const String baseUrl = ApiConfig.baseUrl;
 
   // Create job post: POST /jobs/create
   Future<Map<String, dynamic>> createJob({
