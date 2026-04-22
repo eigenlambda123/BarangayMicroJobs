@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../transactions/transaction_history_card.dart';
+import '../../common/compact_pagination_controls.dart';
 
 class AcceptedJobsSection extends StatefulWidget {
   final List<Map<String, dynamic>> transactions;
@@ -144,52 +145,12 @@ class _AcceptedJobsSectionState extends State<AcceptedJobsSection> {
                   null, // Cancel handled in transaction details screen
             );
           }),
-          // Pagination Controls
-          if (_appliedJobs.isNotEmpty && _totalPages > 1)
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  IconButton(
-                    onPressed: _currentPage > 1
-                        ? () => setState(() => _currentPage--)
-                        : null,
-                    icon: const Icon(Icons.chevron_left),
-                    tooltip: 'Previous',
-                  ),
-                  const SizedBox(width: 8),
-                  ...List.generate(_totalPages, (index) {
-                    final pageNum = index + 1;
-                    final isActive = pageNum == _currentPage;
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 4),
-                      child: GestureDetector(
-                        onTap: () => setState(() => _currentPage = pageNum),
-                        child: Container(
-                          width: isActive ? 28 : 8,
-                          height: 8,
-                          decoration: BoxDecoration(
-                            color: isActive
-                                ? colorScheme.primary
-                                : colorScheme.primary.withValues(alpha: 0.2),
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                        ),
-                      ),
-                    );
-                  }),
-                  const SizedBox(width: 8),
-                  IconButton(
-                    onPressed: _currentPage < _totalPages
-                        ? () => setState(() => _currentPage++)
-                        : null,
-                    icon: const Icon(Icons.chevron_right),
-                    tooltip: 'Next',
-                  ),
-                ],
-              ),
-            ),
+          CompactPaginationControls(
+            currentPage: _currentPage,
+            totalPages: _totalPages,
+            activeColor: colorScheme.primary,
+            onPageChanged: (page) => setState(() => _currentPage = page),
+          ),
         ],
       ],
     );
