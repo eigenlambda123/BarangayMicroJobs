@@ -1,3 +1,2 @@
 - Implement a rule based or simple ml model to suggest skills based on the job description and location when creating or editing a job post. This can help users quickly add relevant skills and improve the visibility of their job posts to potential applicants.
-- Implement searching and filtering functionality for job posts and applications, allowing users to easily find relevant job opportunities or candidates based on specific criteria such as location, skills, experience level, etc.
 - Implement offline data synchronization for the mobile app, allowing users to create and manage job posts and applications even without an internet connection. The app can sync data with the backend once the connection is restored, ensuring a seamless user experience.
