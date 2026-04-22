@@ -212,6 +212,12 @@ def update_job_post(
     
     if job.poster_id != current_user.id:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You can only edit your own job posts")
+
+    if job.status.lower() != "open":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="This job can no longer be edited after a provider has been hired",
+        )
     
     # Update fields only if provided
     if job_data.title is not None:

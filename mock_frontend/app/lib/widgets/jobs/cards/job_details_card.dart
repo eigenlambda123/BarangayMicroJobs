@@ -5,10 +5,12 @@ import '../../../services/job_service.dart';
 class JobDetailsCard extends StatefulWidget {
   final Map<String, dynamic> job;
   final VoidCallback onJobUpdated;
+  final bool canEdit;
 
   const JobDetailsCard({
     required this.job,
     required this.onJobUpdated,
+    this.canEdit = true,
     super.key,
   });
 
@@ -200,17 +202,18 @@ class _JobDetailsCardState extends State<JobDetailsCard> {
             ],
           ),
           const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: OutlinedButton.icon(
-                  onPressed: () => setState(() => _isEditMode = true),
-                  icon: const Icon(Icons.edit_outlined),
-                  label: const Text('Edit Job'),
+          if (widget.canEdit)
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () => setState(() => _isEditMode = true),
+                    icon: const Icon(Icons.edit_outlined),
+                    label: const Text('Edit Job'),
+                  ),
                 ),
-              ),
-            ],
-          ),
+              ],
+            ),
         ],
       ),
     );

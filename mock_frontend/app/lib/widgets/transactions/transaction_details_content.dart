@@ -27,6 +27,10 @@ class TransactionDetailsContent extends StatelessWidget {
     final isRequester = transaction['is_requester'] as bool;
     final status = (transaction['status'] ?? 'unknown').toString();
     final statusLabel = status.toUpperCase();
+    final canEditJob =
+        isRequester &&
+        status == 'applied' &&
+        (job['status'] ?? '').toString().toLowerCase() == 'open';
 
     Color statusColor;
     switch (status) {
@@ -85,7 +89,11 @@ class TransactionDetailsContent extends StatelessWidget {
           ),
           const SizedBox(height: 14),
           // Job Details Card
-          JobDetailsCard(job: job, onJobUpdated: onJobUpdated),
+          JobDetailsCard(
+            job: job,
+            onJobUpdated: onJobUpdated,
+            canEdit: canEditJob,
+          ),
 
           const SizedBox(height: 14),
 
