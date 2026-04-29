@@ -159,14 +159,29 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
 
   Future<void> _cancelTransaction() async {
     try {
-      await TransactionService().cancelTransaction(widget.transactionId);
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Transaction cancelled successfully')),
-        );
-        // Navigate back to marketplace (parent screen)
-        // Return true to trigger marketplace refresh to show job as available again
-        Navigator.of(context).pop(true);
+      final response = await TransactionService().cancelTransaction(
+        widget.transactionId,
+      );
+      final finalized = response['finalized'] as bool? ?? false;
+
+      if (finalized) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Transaction cancelled successfully')),
+          );
+          Navigator.of(context).pop(true);
+        }
+      } else {
+        await _loadTransactionDetails();
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                'Cancellation marked. Waiting for the other party to confirm.',
+              ),
+            ),
+          );
+        }
       }
     } catch (e) {
       if (mounted) {

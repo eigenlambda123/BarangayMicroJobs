@@ -17,6 +17,12 @@ class TransactionActionButtons extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final canShowComplete = TransactionHelpers.canShowCompletionActions(
+      transaction,
+    );
+    final canShowCancel = TransactionHelpers.canShowCancellationActions(
+      transaction,
+    );
 
     return Container(
       width: double.infinity,
@@ -38,7 +44,7 @@ class TransactionActionButtons extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 10),
-          if (TransactionHelpers.canShowCompletionActions(transaction))
+          if (canShowComplete)
             ElevatedButton.icon(
               onPressed: onCompletePressed,
               icon: const Icon(Icons.check_circle),
@@ -58,20 +64,35 @@ class TransactionActionButtons extends StatelessWidget {
                 ),
               ),
             ),
-          const SizedBox(height: 12),
-          OutlinedButton.icon(
-            onPressed: onCancelPressed,
-            icon: const Icon(Icons.cancel),
-            label: const Text('Cancel Transaction'),
-            style: OutlinedButton.styleFrom(
-              foregroundColor: colorScheme.error,
-              side: BorderSide(color: colorScheme.error),
-              minimumSize: const Size(double.infinity, 48),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(999),
+          if (canShowComplete && canShowCancel) const SizedBox(height: 12),
+          if (canShowCancel)
+            OutlinedButton.icon(
+              onPressed: onCancelPressed,
+              icon: const Icon(Icons.cancel),
+              label: Text(TransactionHelpers.getCancelButtonText(transaction)),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: colorScheme.error,
+                side: BorderSide(color: colorScheme.error),
+                minimumSize: const Size(double.infinity, 48),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(999),
+                ),
               ),
             ),
-          ),
+          if (!canShowComplete && !canShowCancel)
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: Text(
+                TransactionHelpers.canShowCancellationStatus(transaction)
+                    ? TransactionHelpers.getCancelButtonText(transaction)
+                    : 'No actions available',
+                style: TextStyle(
+                  fontSize: 13,
+                  color: colorScheme.onSurface.withValues(alpha: 0.66),
+                ),
+              ),
+            ),
         ],
       ),
     );

@@ -71,6 +71,10 @@ class JobTransaction(SQLModel, table=True):
     requester_completed: bool = Field(default=False)
     provider_completed: bool = Field(default=False)
 
+    # Dual cancellation flags
+    requester_canceled: bool = Field(default=False)
+    provider_canceled: bool = Field(default=False)
+
 class Rating(SQLModel, table=True):
     # Basic Rating Informations
     id: UUID = Field(default_factory=uuid4, primary_key=True)

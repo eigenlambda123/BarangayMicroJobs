@@ -82,6 +82,8 @@ def build_transaction_data(transaction: JobTransaction, job: JobPost, provider: 
         "is_requester": transaction.requester_id == current_user_id,
         "requester_completed": transaction.requester_completed,
         "provider_completed": transaction.provider_completed,
+        "requester_canceled": transaction.requester_canceled,
+        "provider_canceled": transaction.provider_canceled,
     }
 
 @router.get("/me")
@@ -370,28 +372,50 @@ def cancel_transaction(
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only the requester or provider can cancel the transaction")
 
     # Check if transaction is in a cancellable state (not completed)
-    if transaction.status == TransactionStatus.COMPLETED:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Cannot cancel a completed transaction")
+    if transaction.status in (TransactionStatus.COMPLETED, TransactionStatus.CANCELED):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Cannot cancel a finalized transaction")
 
-    # Check the current transaction status before updating
-    was_hired = transaction.status == TransactionStatus.HIRED
-    
-    # Update transaction status
-    transaction.status = TransactionStatus.CANCELED
-    
-    # Update job status back to open if it was assigned and was a hired transaction
+    if transaction.status != TransactionStatus.HIRED:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Job must be hired before cancellation can be confirmed")
+
+    is_requester = transaction.requester_id == current_user.id
+
+    if is_requester:
+        if transaction.requester_canceled:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Requester already confirmed cancellation")
+        transaction.requester_canceled = True
+    else:
+        if transaction.provider_canceled:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Provider already confirmed cancellation")
+        transaction.provider_canceled = True
+
+    cancellation_confirmed = transaction.requester_canceled and transaction.provider_canceled
+
     job = get_job_safe(session, transaction.job_id)
-    
-    if was_hired and job.status == "assigned":
-        # If the hired provider cancels, revert the job to open
+
+    if cancellation_confirmed:
+        transaction.status = TransactionStatus.CANCELED
         job.status = "open"
-    
-    # Decrement applicants count for all canceled transactions (applied or hired)
-    if job.applicants_count > 0:
-        job.applicants_count -= 1
-    
-    session.add(job)
+
+        if job.applicants_count > 0:
+            job.applicants_count -= 1
+
+        session.add(job)
+
     session.add(transaction)
     session.commit()
-    
-    return {"message": "Transaction canceled successfully", "transaction_id": transaction.id}
+
+    if cancellation_confirmed:
+        return {
+            "message": "Job canceled by both parties",
+            "transaction_id": transaction.id,
+            "finalized": True,
+            "status": transaction.status.value,
+        }
+
+    return {
+        "message": "Cancellation marked by one party. Waiting for the other party to confirm.",
+        "transaction_id": transaction.id,
+        "finalized": False,
+        "status": transaction.status.value,
+    }

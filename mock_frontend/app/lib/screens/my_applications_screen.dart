@@ -187,6 +187,7 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
                                   // Refresh applications after cancellation
                                   _loadMyApplications();
                                 },
+                                onTransactionUpdated: _loadMyApplications,
                               ),
                               if (i < _applications.length - 1)
                                 const SizedBox(height: 12),

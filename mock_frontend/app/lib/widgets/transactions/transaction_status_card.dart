@@ -55,11 +55,190 @@ class TransactionStatusCard extends StatelessWidget {
             timestamp: transaction['completed_at'],
             isCompleted: transaction['status'] == 'completed',
           ),
-          // Show completion confirmation status
-          if (TransactionHelpers.canShowCompletionStatus(transaction)) ...[
+          if (TransactionHelpers.canShowCancellationStatus(transaction)) ...[
+            const SizedBox(height: 10),
+            CancellationStatusIndicator(transaction: transaction),
+          ],
+          if (TransactionHelpers.canShowCompletionStatus(transaction) &&
+              transaction['status'] == 'hired' &&
+              !(transaction['requester_canceled'] as bool? ?? false) &&
+              !(transaction['provider_canceled'] as bool? ?? false)) ...[
             const SizedBox(height: 10),
             CompletionStatusIndicator(transaction: transaction),
           ],
+          if (transaction['status'] == 'canceled') ...[
+            const SizedBox(height: 10),
+            StatusItem(
+              status: StatusDisplay.label('canceled'),
+              timestamp: null,
+              isCompleted: true,
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class StatusItem extends StatelessWidget {
+  final String status;
+  final dynamic timestamp;
+  final bool isCompleted;
+
+  const StatusItem({
+    super.key,
+    required this.status,
+    required this.timestamp,
+    required this.isCompleted,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final accent = isCompleted ? colorScheme.primary : colorScheme.outline;
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          margin: const EdgeInsets.only(top: 4),
+          width: 14,
+          height: 14,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: isCompleted ? colorScheme.primary : Colors.transparent,
+            border: Border.all(color: accent, width: 2),
+          ),
+          child: isCompleted
+              ? Icon(Icons.check, size: 9, color: colorScheme.onPrimary)
+              : null,
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                status,
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                  color: colorScheme.onSurface,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                _formatTimestamp(timestamp),
+                style: TextStyle(
+                  fontSize: 12,
+                  color: colorScheme.onSurface.withValues(alpha: 0.62),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  String _formatTimestamp(dynamic value) {
+    if (value == null) return 'Pending';
+
+    try {
+      final date = value is DateTime ? value : DateTime.parse(value.toString());
+      final hour = date.hour.toString().padLeft(2, '0');
+      final minute = date.minute.toString().padLeft(2, '0');
+      return '${date.month}/${date.day}/${date.year} • $hour:$minute';
+    } catch (_) {
+      return value.toString();
+    }
+  }
+}
+
+class CancellationStatusIndicator extends StatelessWidget {
+  final Map<String, dynamic> transaction;
+
+  const CancellationStatusIndicator({super.key, required this.transaction});
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final requesterCanceled =
+        transaction['requester_canceled'] as bool? ?? false;
+    final providerCanceled = transaction['provider_canceled'] as bool? ?? false;
+    final message = requesterCanceled && providerCanceled
+        ? 'Cancellation confirmed by both parties'
+        : 'Cancellation pending confirmation from the other party';
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: const Color(0xFFB42318).withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: const Color(0xFFB42318).withValues(alpha: 0.25),
+        ),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.cancel_outlined, size: 18, color: colorScheme.error),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              message,
+              style: TextStyle(
+                fontSize: 12.5,
+                fontWeight: FontWeight.w600,
+                color: colorScheme.onSurface,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class CompletionStatusIndicator extends StatelessWidget {
+  final Map<String, dynamic> transaction;
+
+  const CompletionStatusIndicator({super.key, required this.transaction});
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final status = (transaction['status'] ?? '').toString().toLowerCase();
+    final message = status == 'hired'
+        ? 'Waiting for completion confirmation'
+        : 'Job completed';
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: colorScheme.primary.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: colorScheme.primary.withValues(alpha: 0.22)),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            Icons.check_circle_outline,
+            size: 18,
+            color: colorScheme.primary,
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              message,
+              style: TextStyle(
+                fontSize: 12.5,
+                fontWeight: FontWeight.w600,
+                color: colorScheme.onSurface,
+              ),
+            ),
+          ),
         ],
       ),
     );

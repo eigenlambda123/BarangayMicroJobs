@@ -9,12 +9,14 @@ class TransactionHistoryCard extends StatelessWidget {
   final Map<String, dynamic> transaction;
   final VoidCallback? onCompletePressed;
   final VoidCallback? onCancelPressed;
+  final VoidCallback? onTransactionUpdated;
 
   const TransactionHistoryCard({
     super.key,
     required this.transaction,
     this.onCompletePressed,
     this.onCancelPressed,
+    this.onTransactionUpdated,
   });
 
   @override
@@ -47,12 +49,19 @@ class TransactionHistoryCard extends StatelessWidget {
           statusColor: statusColor,
           worker: workerName,
           onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) =>
-                    TransactionDetailsScreen(transactionId: transaction['id']),
-              ),
-            );
+            Navigator.of(context)
+                .push<bool>(
+                  MaterialPageRoute(
+                    builder: (context) => TransactionDetailsScreen(
+                      transactionId: transaction['id'],
+                    ),
+                  ),
+                )
+                .then((result) {
+                  if (result == true) {
+                    onTransactionUpdated?.call();
+                  }
+                });
           },
           onCompletePressed: onCompletePressed,
           onRatePressed: (status == 'completed' && isRequester)

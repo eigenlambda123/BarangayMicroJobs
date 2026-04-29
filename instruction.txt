@@ -27,7 +27,15 @@ For Android emulator:
 flutter run --dart-define=API_BASE_URL=http://10.0.2.2:8000
 
 For physical phone on same Wi-Fi:
-flutter run --dart-define=API_BASE_URL=http://<YOUR_LAPTOP_IP>:8000
+flutter run --dart-define=API_BASE_URL=http://11.0.19.196:8000
+
+USB fallback for physical phone:
+1. Connect the phone with a USB cable and enable USB debugging.
+2. Run this in a separate terminal:
+  navigate C:\Users\rmvilla\AppData\Local\Android\Sdk\platform-tools then run .\adb.exe reverse tcp:8000 tcp:8000
+3. Run the app with localhost as the API base URL:
+  flutter run --dart-define=API_BASE_URL=http://127.0.0.1:8000
+4. If you reconnect the phone or restart adb, run the reverse command again.
 
 3) FIND YOUR LAPTOP IP (FOR PHONE)
 

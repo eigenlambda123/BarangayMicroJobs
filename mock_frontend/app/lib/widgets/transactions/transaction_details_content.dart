@@ -27,7 +27,14 @@ class TransactionDetailsContent extends StatelessWidget {
     final requester = transaction['requester'];
     final isRequester = transaction['is_requester'] as bool;
     final status = (transaction['status'] ?? 'unknown').toString();
-    final statusLabel = StatusDisplay.label(status);
+    final requesterCanceled =
+        transaction['requester_canceled'] as bool? ?? false;
+    final providerCanceled = transaction['provider_canceled'] as bool? ?? false;
+    final cancellationPending =
+        status == 'hired' && (requesterCanceled || providerCanceled);
+    final statusLabel = cancellationPending
+        ? 'Cancellation pending'
+        : StatusDisplay.label(status);
     final canEditJob =
         isRequester &&
         status == 'applied' &&
@@ -41,14 +48,17 @@ class TransactionDetailsContent extends StatelessWidget {
       case 'hired':
         statusColor = const Color(0xFF0D5C63);
         break;
-      case 'applied':
-        statusColor = const Color(0xFFDB7C26);
-        break;
       case 'canceled':
         statusColor = const Color(0xFFB42318);
         break;
+      case 'applied':
+        statusColor = const Color(0xFFDB7C26);
+        break;
       default:
-        statusColor = const Color(0xFF6A7278);
+        statusColor = cancellationPending
+            ? const Color(0xFFDB7C26)
+            : const Color(0xFF6A7278);
+        break;
     }
 
     return SingleChildScrollView(
@@ -109,7 +119,7 @@ class TransactionDetailsContent extends StatelessWidget {
           const SizedBox(height: 18),
 
           // Action Buttons - Only show if not completed
-          if (transaction['status'] != 'completed') ...[
+          if (status != 'completed' && status != 'canceled') ...[
             TransactionActionButtons(
               transaction: transaction,
               onCompletePressed: onCompletePressed,
