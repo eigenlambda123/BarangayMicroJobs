@@ -161,6 +161,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                         MyJobsSection(
                           jobs: myJobs,
                           transactions: _transactions,
+                          onTransactionUpdated: _loadMyJobsData,
                         ),
                     ],
                   ),

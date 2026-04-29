@@ -19,15 +19,18 @@ class TransactionHelpers {
       return false;
     }
 
-    final requesterCanceled = transaction['requester_canceled'] as bool? ?? false;
+    final requesterCanceled =
+        transaction['requester_canceled'] as bool? ?? false;
     final providerCanceled = transaction['provider_canceled'] as bool? ?? false;
     if (requesterCanceled || providerCanceled) {
       return false;
     }
 
     final isRequester = transaction['is_requester'] as bool? ?? false;
-    final requesterCompleted = transaction['requester_completed'] as bool? ?? false;
-    final providerCompleted = transaction['provider_completed'] as bool? ?? false;
+    final requesterCompleted =
+        transaction['requester_completed'] as bool? ?? false;
+    final providerCompleted =
+        transaction['provider_completed'] as bool? ?? false;
 
     if (isRequester) {
       return providerCompleted && !requesterCompleted;
@@ -42,7 +45,8 @@ class TransactionHelpers {
     }
 
     final isRequester = transaction['is_requester'] as bool? ?? false;
-    final requesterCanceled = transaction['requester_canceled'] as bool? ?? false;
+    final requesterCanceled =
+        transaction['requester_canceled'] as bool? ?? false;
     final providerCanceled = transaction['provider_canceled'] as bool? ?? false;
 
     final userCanceled = isRequester ? requesterCanceled : providerCanceled;
@@ -57,7 +61,8 @@ class TransactionHelpers {
 
   static bool canShowCancellationStatus(Map<String, dynamic> transaction) {
     final status = normalize(transaction['status']);
-    final requesterCanceled = transaction['requester_canceled'] as bool? ?? false;
+    final requesterCanceled =
+        transaction['requester_canceled'] as bool? ?? false;
     final providerCanceled = transaction['provider_canceled'] as bool? ?? false;
 
     return status == 'hired' && (requesterCanceled || providerCanceled);
@@ -65,9 +70,12 @@ class TransactionHelpers {
 
   static String getCompletionButtonText(Map<String, dynamic> transaction) {
     final isRequester = transaction['is_requester'] as bool? ?? false;
-    final requesterCompleted = transaction['requester_completed'] as bool? ?? false;
-    final providerCompleted = transaction['provider_completed'] as bool? ?? false;
-    final requesterCanceled = transaction['requester_canceled'] as bool? ?? false;
+    final requesterCompleted =
+        transaction['requester_completed'] as bool? ?? false;
+    final providerCompleted =
+        transaction['provider_completed'] as bool? ?? false;
+    final requesterCanceled =
+        transaction['requester_canceled'] as bool? ?? false;
     final providerCanceled = transaction['provider_canceled'] as bool? ?? false;
 
     if (requesterCanceled || providerCanceled) {
@@ -91,7 +99,8 @@ class TransactionHelpers {
 
   static String getCancelButtonText(Map<String, dynamic> transaction) {
     final isRequester = transaction['is_requester'] as bool? ?? false;
-    final requesterCanceled = transaction['requester_canceled'] as bool? ?? false;
+    final requesterCanceled =
+        transaction['requester_canceled'] as bool? ?? false;
     final providerCanceled = transaction['provider_canceled'] as bool? ?? false;
 
     final userCanceled = isRequester ? requesterCanceled : providerCanceled;

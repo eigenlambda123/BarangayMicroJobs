@@ -4,15 +4,18 @@ import '../../../screens/job_details_screen.dart';
 import '../../../utils/history_helpers.dart';
 import '../../common/compact_pagination_controls.dart';
 import '../cards/posting_card.dart';
+import '../../transactions/transaction_history_card.dart';
 
 class MyJobsSection extends StatefulWidget {
   final List<Map<String, dynamic>> jobs;
   final List<Map<String, dynamic>> transactions;
+  final VoidCallback? onTransactionUpdated;
 
   const MyJobsSection({
     super.key,
     required this.jobs,
     required this.transactions,
+    this.onTransactionUpdated,
   });
 
   @override
@@ -162,6 +165,27 @@ class _MyJobsSectionState extends State<MyJobsSection> {
               );
             },
           ),
+
+          // If there are transactions linked to this job where the current
+          // user is the requester (the job poster), show the transaction
+          // history card(s) so the poster can track status and take actions.
+          for (final tx in widget.transactions.where((transaction) {
+            final linkedJob = transaction['job'];
+            return linkedJob is Map &&
+                linkedJob['id']?.toString() ==
+                    _paginatedJobs[i]['id']?.toString() &&
+                (transaction['is_requester'] == true);
+          })) ...[
+            const SizedBox(height: 8),
+            TransactionHistoryCard(
+              transaction: tx,
+              onCancelPressed: () {
+                widget.onTransactionUpdated?.call();
+              },
+              onTransactionUpdated: widget.onTransactionUpdated,
+            ),
+          ],
+
           if (i < _paginatedJobs.length - 1) const SizedBox(height: 12),
         ],
         if (widget.jobs.isNotEmpty && _totalPages > 1)

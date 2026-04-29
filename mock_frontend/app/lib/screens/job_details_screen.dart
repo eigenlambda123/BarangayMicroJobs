@@ -7,6 +7,7 @@ import '../widgets/jobs/cards/job_header_card.dart';
 import '../widgets/jobs/cards/job_details_snapshot_card.dart';
 import '../widgets/jobs/cards/job_details_action_panel.dart';
 import '../widgets/jobs/sections/job_applicants_section.dart';
+import '../widgets/transactions/transaction_status_card.dart';
 import '../utils/status_display.dart';
 
 class JobDetailsScreen extends StatefulWidget {
@@ -34,6 +35,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
   bool _isLoading = false;
   Map<String, dynamic>? _jobData;
   Map<String, dynamic>? _posterData;
+  Map<String, dynamic>? _jobTransaction;
   bool _hasApplied = false;
 
   @override
@@ -43,6 +45,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
     _loadJobDetails();
     _loadPoster();
     _checkApplicationStatus();
+    _loadJobTransaction();
   }
 
   @override
@@ -103,6 +106,33 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
     } catch (e) {
       if (kDebugMode) {
         print('Error checking application status: $e');
+      }
+    }
+  }
+
+  Future<void> _loadJobTransaction() async {
+    try {
+      final transactions = await TransactionService().getMyTransactions(
+        role: 'requester',
+      );
+      final matchingTransaction = transactions
+          .cast<Map<String, dynamic>?>()
+          .firstWhere((transaction) {
+            if (transaction == null) return false;
+            final job = transaction['job'];
+            return transaction['is_requester'] == true &&
+                job is Map &&
+                job['id']?.toString() == widget.jobId;
+          }, orElse: () => null);
+
+      if (mounted) {
+        setState(() {
+          _jobTransaction = matchingTransaction;
+        });
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error loading job transaction: $e');
       }
     }
   }
@@ -220,6 +250,10 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                   applicantsCount: null,
                 ),
                 const SizedBox(height: 14),
+                if (isJobPoster && _jobTransaction != null) ...[
+                  TransactionStatusCard(transaction: _jobTransaction!),
+                  const SizedBox(height: 14),
+                ],
                 JobDetailsActionPanel(
                   isJobPoster: isJobPoster,
                   isJobOpen: isJobOpen,
@@ -238,6 +272,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                   isJobOpen: isJobOpen,
                   onHireComplete: () async {
                     await _loadJobDetails();
+                    await _loadJobTransaction();
                   },
                 ),
               ],
