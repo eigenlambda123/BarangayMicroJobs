@@ -29,16 +29,6 @@ class JobDetailsSnapshotCard extends StatelessWidget {
         spacing: 8,
         runSpacing: 8,
         children: [
-          _snapshotChip(
-            icon: Icons.person_outline,
-            label: isJobPoster ? 'You posted this job' : 'You can apply now',
-            color: colorScheme.primary,
-          ),
-          _snapshotChip(
-            icon: Icons.work_outline,
-            label: 'Status: ${StatusDisplay.label(jobStatus)}',
-            color: StatusDisplay.color(jobStatus, colorScheme),
-          ),
           if (applicantsCount != null)
             _snapshotChip(
               icon: Icons.group_outlined,
