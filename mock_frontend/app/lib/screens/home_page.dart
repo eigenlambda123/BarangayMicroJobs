@@ -49,10 +49,10 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       appBar: AppBar(
-        toolbarHeight: 72,
+        toolbarHeight: 56,
         titleSpacing: 16,
         title: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
           decoration: BoxDecoration(
             color: colorScheme.primary.withValues(alpha: 0.08),
             borderRadius: BorderRadius.circular(20),
