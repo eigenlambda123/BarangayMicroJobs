@@ -121,6 +121,7 @@ class _AvailableJobsSectionState extends State<AvailableJobsSection> {
         for (int i = 0; i < _paginatedJobs.length; i++) ...[
           PostingCard(
             title: _paginatedJobs[i]['title'] ?? 'Unknown Job',
+            description: _paginatedJobs[i]['description']?.toString(),
             price: '₱${_paginatedJobs[i]['salary'] ?? '0'}',
             location: _paginatedJobs[i]['location'] ?? 'Unknown Location',
             applicants: _paginatedJobs[i]['applicants_count'] ?? 0,

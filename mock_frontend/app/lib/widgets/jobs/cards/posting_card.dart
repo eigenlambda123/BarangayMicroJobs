@@ -3,6 +3,7 @@ import '../../../utils/status_display.dart';
 
 class PostingCard extends StatelessWidget {
   final String title;
+  final String? description;
   final String price;
   final String location;
   final int applicants;
@@ -12,6 +13,7 @@ class PostingCard extends StatelessWidget {
 
   const PostingCard({
     required this.title,
+    this.description,
     required this.price,
     required this.location,
     required this.applicants,
@@ -26,6 +28,7 @@ class PostingCard extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final statusLabel = StatusDisplay.label(status);
     final statusColor = _statusColor(status);
+    final previewDescription = description?.trim();
 
     return GestureDetector(
       onTap: onTap,
@@ -44,7 +47,7 @@ class PostingCard extends StatelessWidget {
           ],
         ),
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(15),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -70,31 +73,49 @@ class PostingCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 10),
                   Expanded(
-                    child: Text(
-                      title,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 16,
-                        height: 1.3,
-                        color: colorScheme.onSurface,
-                      ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 16,
+                            height: 1.25,
+                            color: colorScheme.onSurface,
+                          ),
+                        ),
+                        if (previewDescription != null && previewDescription.isNotEmpty) ...[
+                          const SizedBox(height: 6),
+                          Text(
+                            previewDescription,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 12,
+                              height: 1.35,
+                              color: colorScheme.onSurface.withValues(alpha: 0.68),
+                            ),
+                          ),
+                        ],
+                      ],
                     ),
                   ),
                   const SizedBox(width: 12),
                   Container(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 8,
+                      horizontal: 11,
+                      vertical: 7,
                     ),
                     decoration: BoxDecoration(
                       color: colorScheme.secondary.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(
-                        color: colorScheme.secondary.withValues(alpha: 0.2),
+                        color: colorScheme.onSurface.withValues(alpha: 0.08),
                       ),
                     ),
                     child: Text(
@@ -109,69 +130,56 @@ class PostingCard extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 14),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      color: colorScheme.primary.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(
-                        color: colorScheme.primary.withValues(alpha: 0.2),
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.location_on_rounded,
-                          size: 14,
-                          color: colorScheme.primary,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          location,
-                          style: TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
+              const SizedBox(height: 12),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                decoration: BoxDecoration(
+                  color: colorScheme.primary.withValues(alpha: 0.08),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: colorScheme.primary.withValues(alpha: 0.14),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.location_on_outlined,
+                            size: 14,
                             color: colorScheme.primary,
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      color: colorScheme.secondary.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(
-                        color: colorScheme.secondary.withValues(alpha: 0.2),
+                          const SizedBox(width: 6),
+                          Expanded(
+                            child: Text(
+                              location,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                                color: colorScheme.primary,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    child: Text(
-                      applicants == 1
-                          ? '1 applicant'
-                          : '$applicants applicants',
+                    const SizedBox(width: 10),
+                    Text(
+                      applicants == 1 ? '1 applicant' : '$applicants applicants',
                       style: TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
                         color: colorScheme.secondary,
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-              const SizedBox(height: 14),
+              const SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -192,10 +200,10 @@ class PostingCard extends StatelessWidget {
                       vertical: 6,
                     ),
                     decoration: BoxDecoration(
-                      color: statusColor.withValues(alpha: 0.1),
+                      color: statusColor.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
-                        color: statusColor.withValues(alpha: 0.3),
+                        color: statusColor.withValues(alpha: 0.24),
                       ),
                     ),
                     child: Text(
