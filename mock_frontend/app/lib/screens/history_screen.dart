@@ -7,8 +7,8 @@ import '../services/transaction_service.dart';
 import '../widgets/common/empty_state.dart';
 import '../widgets/common/error_state.dart';
 import '../widgets/common/loading_state.dart';
-import '../widgets/jobs/actions/post_job_overlay.dart';
 import '../widgets/jobs/sections/my_jobs_section.dart';
+import 'post_job_screen.dart';
 import '../widgets/marketplace/marketplace_background_orb.dart';
 
 class HistoryScreen extends StatefulWidget {
@@ -19,7 +19,6 @@ class HistoryScreen extends StatefulWidget {
 }
 
 class _HistoryScreenState extends State<HistoryScreen> {
-  bool _showPostJobModal = false;
   List<Map<String, dynamic>> _jobs = [];
   List<Map<String, dynamic>> _transactions = [];
   bool _isLoading = true;
@@ -116,8 +115,13 @@ class _HistoryScreenState extends State<HistoryScreen> {
         Scaffold(
           backgroundColor: Colors.transparent,
           floatingActionButton: FloatingActionButton.extended(
-            onPressed: () {
-              setState(() => _showPostJobModal = true);
+            onPressed: () async {
+              final result = await Navigator.of(context).push<bool>(
+                MaterialPageRoute(builder: (_) => const PostJobScreen()),
+              );
+              if (result == true && mounted) {
+                _refreshMyJobs();
+              }
             },
             backgroundColor: colorScheme.primary,
             foregroundColor: colorScheme.onPrimary,
@@ -193,19 +197,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
             ),
           ),
         ),
-        if (_showPostJobModal)
-          PostJobOverlay(
-            onClose: () {
-              setState(() => _showPostJobModal = false);
-            },
-            onSubmit: () {
-              setState(() => _showPostJobModal = false);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Job posted successfully!')),
-              );
-              _refreshMyJobs();
-            },
-          ),
       ],
     );
   }

@@ -7,8 +7,8 @@ import '../services/transaction_service.dart';
 import '../widgets/common/empty_state.dart';
 import '../widgets/common/error_state.dart';
 import '../widgets/common/loading_state.dart';
-import '../widgets/jobs/actions/post_job_overlay.dart';
 import '../widgets/jobs/sections/available_jobs_section.dart';
+import 'post_job_screen.dart';
 import '../widgets/marketplace/marketplace_background_orb.dart';
 import '../widgets/marketplace/marketplace_filter_bar.dart';
 import '../widgets/marketplace/marketplace_filter_sheet.dart';
@@ -23,7 +23,6 @@ class MarketplaceScreen extends StatefulWidget {
 }
 
 class _MarketplaceScreenState extends State<MarketplaceScreen> {
-  bool _showPostJobModal = false;
   List<Map<String, dynamic>> _jobs = [];
   List<Map<String, dynamic>> _userTransactions = [];
   bool _isLoading = true;
@@ -177,8 +176,13 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
         Scaffold(
           backgroundColor: Colors.transparent,
           floatingActionButton: FloatingActionButton.extended(
-            onPressed: () {
-              setState(() => _showPostJobModal = true);
+            onPressed: () async {
+              final result = await Navigator.of(context).push<bool>(
+                MaterialPageRoute(builder: (_) => const PostJobScreen()),
+              );
+              if (result == true && mounted) {
+                _loadMarketplaceData();
+              }
             },
             backgroundColor: colorScheme.primary,
             foregroundColor: colorScheme.onPrimary,
@@ -223,19 +227,6 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
             ),
           ),
         ),
-        if (_showPostJobModal)
-          PostJobOverlay(
-            onClose: () {
-              setState(() => _showPostJobModal = false);
-            },
-            onSubmit: () {
-              setState(() => _showPostJobModal = false);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Job posted successfully!')),
-              );
-              _loadMarketplaceData();
-            },
-          ),
       ],
     );
   }
