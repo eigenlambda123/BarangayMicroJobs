@@ -110,14 +110,13 @@ class _AvailableJobsSectionState extends State<AvailableJobsSection> {
           ],
         ),
         const SizedBox(height: 4),
-        Text(
-          'Browse open opportunities and jump into the ones that fit your schedule.',
-          style: TextStyle(
-            fontSize: 13,
-            height: 1.35,
-            color: colorScheme.onSurface.withValues(alpha: 0.62),
-          ),
-        ),
+        // Text(
+        //   'Browse open opportunities and jump into the ones that fit your schedule.',
+        //   style: TextStyle(
+        //     fontSize: 13,
+        //     height: 1.35,
+        //     color: colorScheme.onSurface.withValues(alpha: 0.62),
+        //   ),
         const SizedBox(height: 14),
         for (int i = 0; i < _paginatedJobs.length; i++) ...[
           PostingCard(

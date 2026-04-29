@@ -7,32 +7,13 @@ class RegisterHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final isPhone = MediaQuery.of(context).size.width < 600;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const BrandLogo(height: 66),
+        BrandLogo(height: isPhone ? 96 : 72),
         const SizedBox(height: 32),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          decoration: BoxDecoration(
-            color: colorScheme.primary.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: colorScheme.primary.withValues(alpha: 0.2),
-            ),
-          ),
-          child: Text(
-            'Join the local network',
-            style: TextStyle(
-              color: colorScheme.primary,
-              fontWeight: FontWeight.w700,
-              fontSize: 12,
-              letterSpacing: 0.4,
-            ),
-          ),
-        ),
-        const SizedBox(height: 48),
         Text(
           'Get Started',
           style: TextStyle(

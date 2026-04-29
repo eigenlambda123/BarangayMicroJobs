@@ -53,13 +53,15 @@ class MarketplaceHeader extends StatelessWidget {
             width: 36,
             height: 36,
             decoration: BoxDecoration(
-              color: colorScheme.secondary.withValues(alpha: 0.14),
+              color: colorScheme.surface,
               borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: colorScheme.secondary.withValues(alpha: 0.14),
+              ),
             ),
-            child: Icon(
-              Icons.campaign_outlined,
-              color: colorScheme.secondary,
-              size: 20,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Image.asset('assets/app_logo.png', fit: BoxFit.cover),
             ),
           ),
         ],

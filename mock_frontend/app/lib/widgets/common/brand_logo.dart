@@ -11,7 +11,7 @@ class BrandLogo extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Image.asset(
-      'assets/logo.png',
+      'assets/app_logo.png',
       height: height,
       width: width,
       fit: BoxFit.contain,
@@ -20,19 +20,7 @@ class BrandLogo extends StatelessWidget {
         return Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              width: 26,
-              height: 26,
-              decoration: BoxDecoration(
-                color: colorScheme.primary,
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.handyman_outlined,
-                size: 16,
-                color: Colors.white,
-              ),
-            ),
+            Container(width: 26, height: 26),
             const SizedBox(width: 10),
             Text(
               'Barangay Microjobs',

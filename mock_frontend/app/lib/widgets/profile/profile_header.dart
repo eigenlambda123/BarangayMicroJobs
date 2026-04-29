@@ -150,13 +150,40 @@ class _ProfileHeaderState extends State<ProfileHeader> {
             ],
           ),
           const SizedBox(height: 14),
-          Text(
-            fullName,
-            style: TextStyle(
-              fontWeight: FontWeight.w800,
-              fontSize: 23,
-              color: colorScheme.onSurface,
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                fullName,
+                style: TextStyle(
+                  fontWeight: FontWeight.w800,
+                  fontSize: 23,
+                  color: colorScheme.onSurface,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Row(
+                children: [
+                  Container(
+                    width: 8,
+                    height: 8,
+                    decoration: const BoxDecoration(
+                      color: Color(0xFF2FB344),
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    'ONLINE',
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      color: colorScheme.primary,
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
           const SizedBox(height: 8),
           Wrap(

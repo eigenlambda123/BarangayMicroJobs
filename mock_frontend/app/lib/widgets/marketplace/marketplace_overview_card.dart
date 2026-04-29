@@ -53,6 +53,16 @@ class MarketplaceOverviewCard extends StatelessWidget {
                         color: colorScheme.primary,
                       ),
                     ),
+                    Text(
+                      'Discover local opportunities and connect with your community',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w400,
+                        color: colorScheme.onSurface.withValues(alpha: 0.7),
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ],
                 ),
               ),
