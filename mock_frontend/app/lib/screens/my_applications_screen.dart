@@ -115,21 +115,20 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // ===== MAIN TITLE =====
+                      Text(
+                        'My Applications',
+                        style: Theme.of(context).textTheme.headlineSmall
+                            ?.copyWith(fontWeight: FontWeight.w800),
+                      ),
+                      const SizedBox(height: 16),
+
+                      // ===== APPLICATIONS SECTION =====
                       Row(
                         children: [
-                          Container(
-                            width: 10,
-                            height: 10,
-                            decoration: BoxDecoration(
-                              color: colorScheme.primary,
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                          const SizedBox(width: 10),
                           Text(
-                            'My Applications',
-                            style: Theme.of(context).textTheme.titleLarge
-                                ?.copyWith(fontWeight: FontWeight.w800),
+                            'Applications',
+                            style: Theme.of(context).textTheme.titleLarge,
                           ),
                           const SizedBox(width: 8),
                           Container(
