@@ -70,14 +70,6 @@ class _AvailableJobsSectionState extends State<AvailableJobsSection> {
           children: [
             Row(
               children: [
-                Container(
-                  width: 10,
-                  height: 10,
-                  decoration: BoxDecoration(
-                    color: colorScheme.secondary,
-                    shape: BoxShape.circle,
-                  ),
-                ),
                 const SizedBox(width: 10),
                 Text(
                   'Available Jobs',

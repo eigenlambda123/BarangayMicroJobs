@@ -8,6 +8,7 @@ import '../widgets/common/error_state.dart';
 import '../widgets/common/loading_state.dart';
 import '../widgets/transactions/transaction_history_card.dart';
 import '../widgets/marketplace/marketplace_background_orb.dart';
+import '../widgets/marketplace/marketplace_section_shell.dart';
 
 class MyApplicationsScreen extends StatefulWidget {
   const MyApplicationsScreen({super.key});
@@ -124,72 +125,85 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
                       const SizedBox(height: 16),
 
                       // ===== APPLICATIONS SECTION =====
-                      Row(
-                        children: [
-                          Text(
-                            'Applications',
-                            style: Theme.of(context).textTheme.titleLarge,
-                          ),
-                          const SizedBox(width: 8),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 10,
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              color: colorScheme.primary.withValues(
-                                alpha: 0.12,
-                              ),
-                              borderRadius: BorderRadius.circular(999),
-                            ),
-                            child: Text(
-                              '${_applications.length}',
-                              style: TextStyle(
-                                fontWeight: FontWeight.w700,
-                                color: colorScheme.primary,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Track the status of jobs you have applied to.',
-                        style: TextStyle(
-                          fontSize: 13,
-                          height: 1.35,
-                          color: colorScheme.onSurface.withValues(alpha: 0.62),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      if (_isLoading)
-                        const LoadingState()
-                      else if (_errorMessage != null)
-                        ErrorState(
-                          errorMessage: _errorMessage!,
-                          onRetry: _loadMyApplications,
-                        )
-                      else if (_applications.isEmpty)
-                        const EmptyState(
-                          title: 'No applications yet',
-                          subtitle:
-                              'Apply to jobs in the marketplace to see them here',
-                        )
-                      else
-                        Column(
+                      MarketplaceSectionShell(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            for (int i = 0; i < _applications.length; i++) ...[
-                              TransactionHistoryCard(
-                                transaction: _applications[i],
-                                onCompletePressed: null,
-                                onTransactionUpdated: _loadMyApplications,
-                                onGoToMarketplace: null,
+                            Row(
+                              children: [
+                                Text(
+                                  'Applications',
+                                  style: Theme.of(context).textTheme.titleLarge,
+                                ),
+                                const SizedBox(width: 8),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 4,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: colorScheme.primary.withValues(
+                                      alpha: 0.12,
+                                    ),
+                                    borderRadius: BorderRadius.circular(999),
+                                  ),
+                                  child: Text(
+                                    '${_applications.length}',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w700,
+                                      color: colorScheme.primary,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Track the status of jobs you have applied to.',
+                              style: TextStyle(
+                                fontSize: 13,
+                                height: 1.35,
+                                color: colorScheme.onSurface.withValues(
+                                  alpha: 0.62,
+                                ),
                               ),
-                              if (i < _applications.length - 1)
-                                const SizedBox(height: 12),
-                            ],
+                            ),
+                            const SizedBox(height: 16),
+                            if (_isLoading)
+                              const LoadingState()
+                            else if (_errorMessage != null)
+                              ErrorState(
+                                errorMessage: _errorMessage!,
+                                onRetry: _loadMyApplications,
+                              )
+                            else if (_applications.isEmpty)
+                              const EmptyState(
+                                title: 'No applications yet',
+                                subtitle:
+                                    'Apply to jobs in the marketplace to see them here',
+                              )
+                            else
+                              Column(
+                                children: [
+                                  for (
+                                    int i = 0;
+                                    i < _applications.length;
+                                    i++
+                                  ) ...[
+                                    TransactionHistoryCard(
+                                      transaction: _applications[i],
+                                      onCompletePressed: null,
+                                      onTransactionUpdated: _loadMyApplications,
+                                      onGoToMarketplace: null,
+                                    ),
+                                    if (i < _applications.length - 1)
+                                      const SizedBox(height: 12),
+                                  ],
+                                ],
+                              ),
                           ],
                         ),
+                      ),
                     ],
                   ),
                 ),
