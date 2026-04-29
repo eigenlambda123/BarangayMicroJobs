@@ -29,33 +29,18 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       appBar: AppBar(
-        toolbarHeight: 92,
+        toolbarHeight: 72,
         titleSpacing: 16,
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-              decoration: BoxDecoration(
-                color: colorScheme.primary.withValues(alpha: 0.08),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: colorScheme.primary.withValues(alpha: 0.12),
-                ),
-              ),
-              child: const BrandLogo(height: 32),
+        title: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+          decoration: BoxDecoration(
+            color: colorScheme.primary.withValues(alpha: 0.08),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: colorScheme.primary.withValues(alpha: 0.12),
             ),
-            const SizedBox(height: 4),
-            Text(
-              _subtitles[_selectedIndex],
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-                color: colorScheme.onSurface.withValues(alpha: 0.62),
-              ),
-            ),
-          ],
+          ),
+          child: const BrandLogo(height: 28),
         ),
         actions: [
           Padding(

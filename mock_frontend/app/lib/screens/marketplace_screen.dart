@@ -212,11 +212,11 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                         onSearchSubmitted: (_) => _loadMarketplaceData(),
                         onClearPressed: _clearFilters,
                       ),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 8),
                       MarketplaceOverviewCard(
                         availableCount: _availableJobs.length,
                       ),
-                      const SizedBox(height: 18),
+                      const SizedBox(height: 12),
                       MarketplaceSectionShell(
                         child: _buildActivePostingsSection(context),
                       ),

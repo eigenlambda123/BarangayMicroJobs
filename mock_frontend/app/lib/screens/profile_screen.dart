@@ -209,26 +209,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   fontWeight: FontWeight.w800,
                 ),
               ),
-              const SizedBox(height: 12),
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(14),
-                decoration: BoxDecoration(
-                  color: colorScheme.surface,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: colorScheme.primary.withValues(alpha: 0.12),
-                  ),
-                ),
-                child: Text(
-                  'Manage your profile photo, view reputation, and track your contribution in the community.',
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: colorScheme.onSurface.withValues(alpha: 0.66),
-                    height: 1.35,
-                  ),
-                ),
-              ),
               const SizedBox(height: 16),
               ProfileHeader(
                 userData: _userData,
