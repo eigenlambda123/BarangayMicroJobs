@@ -144,34 +144,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        children: [
-                          Text(
-                            'My Posted Jobs',
-                            style: Theme.of(context).textTheme.headlineSmall
-                                ?.copyWith(fontWeight: FontWeight.w800),
-                          ),
-                          const Spacer(),
-                          IconButton(
-                            onPressed: _isLoading ? null : _refreshMyJobs,
-                            tooltip: 'Refresh my jobs',
-                            icon: Icon(
-                              Icons.refresh,
-                              color: colorScheme.primary,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Manage the jobs you have posted and review who has applied.',
-                        style: TextStyle(
-                          fontSize: 13,
-                          height: 1.35,
-                          color: colorScheme.onSurface.withValues(alpha: 0.66),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
                       if (_isLoading)
                         const LoadingState()
                       else if (_errorMessage != null)
