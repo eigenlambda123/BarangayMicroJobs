@@ -106,18 +106,18 @@ class _MyJobsSectionState extends State<MyJobsSection> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // ===== MAIN TITLE =====
+        Text(
+          'My Jobs',
+          style: Theme.of(
+            context,
+          ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800),
+        ),
+        const SizedBox(height: 16),
+
         // ===== MY POSTED JOBS SECTION =====
         Row(
           children: [
-            Container(
-              width: 10,
-              height: 10,
-              decoration: BoxDecoration(
-                color: colorScheme.primary,
-                shape: BoxShape.circle,
-              ),
-            ),
-            const SizedBox(width: 10),
             Text(
               'My Posted Jobs',
               style: Theme.of(context).textTheme.titleLarge,
@@ -243,15 +243,6 @@ class _MyJobsSectionState extends State<MyJobsSection> {
           const SizedBox(height: 24),
           Row(
             children: [
-              Container(
-                width: 10,
-                height: 10,
-                decoration: BoxDecoration(
-                  color: colorScheme.secondary,
-                  shape: BoxShape.circle,
-                ),
-              ),
-              const SizedBox(width: 10),
               Text(
                 'Active Transactions',
                 style: Theme.of(context).textTheme.titleLarge,
