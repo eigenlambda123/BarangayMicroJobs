@@ -5,11 +5,13 @@ class RatingDialog extends StatefulWidget {
   final String transactionId;
   final String providerName;
   final String jobTitle;
+  final VoidCallback? onRatingSubmitted;
 
   const RatingDialog({
     required this.transactionId,
     required this.providerName,
     required this.jobTitle,
+    this.onRatingSubmitted,
     super.key,
   });
 
@@ -50,6 +52,7 @@ class _RatingDialogState extends State<RatingDialog> {
           const SnackBar(content: Text('Rating submitted successfully!')),
         );
         Navigator.of(context).pop();
+        widget.onRatingSubmitted?.call();
       }
     } catch (e) {
       if (mounted) {

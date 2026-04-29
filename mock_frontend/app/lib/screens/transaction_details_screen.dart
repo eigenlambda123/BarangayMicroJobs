@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/transaction_service.dart';
 import '../widgets/transactions/transaction_details_content.dart';
-import '../widgets/transactions/rating_dialog.dart';
+import '../widgets/common/rating_dialog.dart';
 import '../widgets/common/loading_state.dart';
 import '../widgets/common/error_state.dart';
 
@@ -126,6 +126,7 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
       builder: (context) => RatingDialog(
         providerName: providerName,
         transactionId: widget.transactionId,
+        jobTitle: transaction['job']['title'] ?? 'Job',
         onRatingSubmitted: _loadTransactionDetails,
       ),
     );
