@@ -72,6 +72,15 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final ongoingApps = _applications.where((t) {
+      final st = (t['status'] ?? '').toString().toLowerCase();
+      return !(st == 'completed' || st == 'cancelled' || st == 'canceled');
+    }).toList();
+
+    final completedApps = _applications.where((t) {
+      final st = (t['status'] ?? '').toString().toLowerCase();
+      return (st == 'completed' || st == 'cancelled' || st == 'canceled');
+    }).toList();
 
     return Stack(
       children: [
@@ -125,84 +134,223 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
                       const SizedBox(height: 16),
 
                       // ===== APPLICATIONS SECTION =====
-                      MarketplaceSectionShell(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Ongoing and Completed sections
+                          if (_isLoading)
+                            const LoadingState()
+                          else if (_errorMessage != null)
+                            ErrorState(
+                              errorMessage: _errorMessage!,
+                              onRetry: _loadMyApplications,
+                            )
+                          else
+                            Column(
                               children: [
-                                Text(
-                                  'Applications',
-                                  style: Theme.of(context).textTheme.titleLarge,
-                                ),
-                                const SizedBox(width: 8),
+                                // Ongoing card
                                 Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 10,
-                                    vertical: 4,
-                                  ),
                                   decoration: BoxDecoration(
-                                    color: colorScheme.primary.withValues(
-                                      alpha: 0.12,
+                                    color: colorScheme.surface,
+                                    borderRadius: BorderRadius.circular(16),
+                                    border: Border.all(
+                                      color: colorScheme.primary.withValues(
+                                        alpha: 0.12,
+                                      ),
                                     ),
-                                    borderRadius: BorderRadius.circular(999),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withValues(
+                                          alpha: 0.06,
+                                        ),
+                                        blurRadius: 16,
+                                        offset: const Offset(0, 4),
+                                      ),
+                                    ],
                                   ),
-                                  child: Text(
-                                    '${_applications.length}',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w700,
-                                      color: colorScheme.primary,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(16),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Text(
+                                              'Ongoing',
+                                              style: Theme.of(
+                                                context,
+                                              ).textTheme.titleLarge,
+                                            ),
+                                            const SizedBox(width: 8),
+                                            Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: 10,
+                                                    vertical: 4,
+                                                  ),
+                                              decoration: BoxDecoration(
+                                                color: colorScheme.primary
+                                                    .withValues(alpha: 0.12),
+                                                borderRadius:
+                                                    BorderRadius.circular(999),
+                                              ),
+                                              child: Text(
+                                                '${ongoingApps.length}',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.w700,
+                                                  color: colorScheme.primary,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Text(
+                                          'Active applications you have applied to or are currently engaged with.',
+                                          style: TextStyle(
+                                            fontSize: 13,
+                                            height: 1.35,
+                                            color: colorScheme.onSurface
+                                                .withValues(alpha: 0.62),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 12),
+                                        if (ongoingApps.isEmpty)
+                                          const EmptyState(
+                                            title: 'No ongoing applications',
+                                            subtitle:
+                                                'You have no active applications at the moment',
+                                          )
+                                        else
+                                          Column(
+                                            children: [
+                                              for (
+                                                int i = 0;
+                                                i < ongoingApps.length;
+                                                i++
+                                              ) ...[
+                                                TransactionHistoryCard(
+                                                  transaction: ongoingApps[i],
+                                                  onCompletePressed: null,
+                                                  onTransactionUpdated:
+                                                      _loadMyApplications,
+                                                  onGoToMarketplace: null,
+                                                ),
+                                                if (i < ongoingApps.length - 1)
+                                                  const SizedBox(height: 12),
+                                              ],
+                                            ],
+                                          ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+
+                                const SizedBox(height: 18),
+
+                                // Completed card
+                                Container(
+                                  decoration: BoxDecoration(
+                                    color: colorScheme.surface,
+                                    borderRadius: BorderRadius.circular(16),
+                                    border: Border.all(
+                                      color: colorScheme.secondary.withValues(
+                                        alpha: 0.12,
+                                      ),
+                                    ),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withValues(
+                                          alpha: 0.06,
+                                        ),
+                                        blurRadius: 16,
+                                        offset: const Offset(0, 4),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(16),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Text(
+                                              'Completed',
+                                              style: Theme.of(
+                                                context,
+                                              ).textTheme.titleLarge,
+                                            ),
+                                            const SizedBox(width: 8),
+                                            Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: 10,
+                                                    vertical: 4,
+                                                  ),
+                                              decoration: BoxDecoration(
+                                                color: colorScheme.secondary
+                                                    .withValues(alpha: 0.12),
+                                                borderRadius:
+                                                    BorderRadius.circular(999),
+                                              ),
+                                              child: Text(
+                                                '${completedApps.length}',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.w700,
+                                                  color: colorScheme.secondary,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Text(
+                                          'Completed and cancelled applications are listed here for your records.',
+                                          style: TextStyle(
+                                            fontSize: 13,
+                                            height: 1.35,
+                                            color: colorScheme.onSurface
+                                                .withValues(alpha: 0.62),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 12),
+                                        if (completedApps.isEmpty)
+                                          const EmptyState(
+                                            title: 'No completed applications',
+                                            subtitle:
+                                                'Completed or cancelled applications will appear here',
+                                          )
+                                        else
+                                          Column(
+                                            children: [
+                                              for (
+                                                int i = 0;
+                                                i < completedApps.length;
+                                                i++
+                                              ) ...[
+                                                TransactionHistoryCard(
+                                                  transaction: completedApps[i],
+                                                  onCompletePressed: null,
+                                                  onTransactionUpdated:
+                                                      _loadMyApplications,
+                                                  onGoToMarketplace: null,
+                                                ),
+                                                if (i <
+                                                    completedApps.length - 1)
+                                                  const SizedBox(height: 12),
+                                              ],
+                                            ],
+                                          ),
+                                      ],
                                     ),
                                   ),
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'Track the status of jobs you have applied to.',
-                              style: TextStyle(
-                                fontSize: 13,
-                                height: 1.35,
-                                color: colorScheme.onSurface.withValues(
-                                  alpha: 0.62,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                            if (_isLoading)
-                              const LoadingState()
-                            else if (_errorMessage != null)
-                              ErrorState(
-                                errorMessage: _errorMessage!,
-                                onRetry: _loadMyApplications,
-                              )
-                            else if (_applications.isEmpty)
-                              const EmptyState(
-                                title: 'No applications yet',
-                                subtitle:
-                                    'Apply to jobs in the marketplace to see them here',
-                              )
-                            else
-                              Column(
-                                children: [
-                                  for (
-                                    int i = 0;
-                                    i < _applications.length;
-                                    i++
-                                  ) ...[
-                                    TransactionHistoryCard(
-                                      transaction: _applications[i],
-                                      onCompletePressed: null,
-                                      onTransactionUpdated: _loadMyApplications,
-                                      onGoToMarketplace: null,
-                                    ),
-                                    if (i < _applications.length - 1)
-                                      const SizedBox(height: 12),
-                                  ],
-                                ],
-                              ),
-                          ],
-                        ),
+                        ],
                       ),
                     ],
                   ),
