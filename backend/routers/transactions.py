@@ -373,18 +373,24 @@ def cancel_transaction(
     if transaction.status == TransactionStatus.COMPLETED:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Cannot cancel a completed transaction")
 
+    # Check the current transaction status before updating
+    was_hired = transaction.status == TransactionStatus.HIRED
+    
     # Update transaction status
     transaction.status = TransactionStatus.CANCELED
     
-    # Update job status back to open if it was assigned
+    # Update job status back to open if it was assigned and was a hired transaction
     job = get_job_safe(session, transaction.job_id)
-    if job.status == "assigned":
+    
+    if was_hired and job.status == "assigned":
+        # If the hired provider cancels, revert the job to open
         job.status = "open"
-        # Decrement applicants count since this application is being canceled
-        if job.applicants_count > 0:
-            job.applicants_count -= 1
-        session.add(job)
-
+    
+    # Decrement applicants count for all canceled transactions (applied or hired)
+    if job.applicants_count > 0:
+        job.applicants_count -= 1
+    
+    session.add(job)
     session.add(transaction)
     session.commit()
     
