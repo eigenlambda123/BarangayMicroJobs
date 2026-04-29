@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../screens/job_details_screen.dart';
 import '../../../utils/history_helpers.dart';
 import '../../common/compact_pagination_controls.dart';
+import '../../common/empty_state.dart';
 import '../cards/posting_card.dart';
 import '../../transactions/transaction_history_card.dart';
 
@@ -355,17 +356,10 @@ class _MyJobsSectionState extends State<MyJobsSection> {
                 ),
                 const SizedBox(height: 14),
                 if (activeTransactions.isEmpty)
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: Text(
-                        'No active transactions',
-                        style: TextStyle(
-                          color: colorScheme.onSurface.withValues(alpha: 0.5),
-                        ),
-                      ),
-                    ),
+                  const EmptyState(
+                    title: 'No active transactions',
+                    subtitle:
+                        'Transactions in progress will appear here once a worker is hired.',
                   )
                 else
                   Column(

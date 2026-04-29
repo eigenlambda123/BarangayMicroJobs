@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../services/auth_service.dart';
+import '../widgets/common/brand_logo.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -46,7 +47,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       icon: Icons.verified_rounded,
       title: 'Track every step',
       description:
-          'Follow status updates, conversations, and completed jobs in one simple workspace.',
+          'Follow status updates and completed jobs in one simple workspace.',
       accentColor: Color(0xFF2FB344),
       highlights: [
         'Receive real-time status updates',
@@ -106,6 +107,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
     final page = _pages[_currentPage];
     final availableHeight = MediaQuery.of(context).size.height;
     final isCompact = availableHeight < 760;
@@ -144,19 +146,40 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   children: [
                     Row(
                       children: [
-                        TextButton(
-                          onPressed: _isCompleting ? null : _completeOnboarding,
-                          child: const Text('Skip'),
+                        Opacity(
+                          opacity: 0.95,
+                          child: BrandLogo(height: isCompact ? 26 : 30),
                         ),
                         const Spacer(),
-                        Text(
-                          '${_currentPage + 1}/${_pages.length}',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w700,
-                            color: colorScheme.onSurface.withValues(
-                              alpha: 0.56,
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: colorScheme.surface.withValues(alpha: 0.88),
+                            borderRadius: BorderRadius.circular(999),
+                            border: Border.all(
+                              color: colorScheme.primary.withValues(
+                                alpha: 0.12,
+                              ),
                             ),
                           ),
+                          child: Text(
+                            '${_currentPage + 1}/${_pages.length}',
+                            style: textTheme.labelSmall?.copyWith(
+                              fontWeight: FontWeight.w700,
+                              color: colorScheme.primary,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        TextButton(
+                          onPressed: _isCompleting ? null : _completeOnboarding,
+                          style: TextButton.styleFrom(
+                            foregroundColor: colorScheme.primary,
+                          ),
+                          child: const Text('Skip'),
                         ),
                       ],
                     ),
@@ -202,7 +225,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       width: double.infinity,
                       padding: EdgeInsets.all(isCompact ? 14 : 18),
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.86),
+                        color: colorScheme.surface.withValues(alpha: 0.9),
                         borderRadius: BorderRadius.circular(28),
                         border: Border.all(
                           color: page.accentColor.withValues(alpha: 0.12),
@@ -218,16 +241,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          Text(
-                            page.title,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: isCompact ? 18 : 20,
-                              fontWeight: FontWeight.w800,
-                              color: colorScheme.onSurface,
-                            ),
-                          ),
-                          SizedBox(height: isCompact ? 12 : 16),
+                          SizedBox(height: isCompact ? 2 : 4),
                           FilledButton(
                             onPressed: _isCompleting ? null : _goToNextPage,
                             style: FilledButton.styleFrom(
@@ -289,6 +303,7 @@ class _OnboardingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -332,11 +347,26 @@ class _OnboardingPage extends StatelessWidget {
                   Text(
                     stepText,
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 13,
+                    style: textTheme.labelSmall?.copyWith(
                       fontWeight: FontWeight.w700,
-                      letterSpacing: 1.2,
+                      letterSpacing: 1.1,
                       color: colorScheme.onSurface.withValues(alpha: 0.56),
+                    ),
+                  ),
+                  SizedBox(height: isCompact ? 10 : 14),
+                  Text(
+                    page.title,
+                    textAlign: TextAlign.center,
+                    style: textTheme.headlineMedium?.copyWith(
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    page.description,
+                    textAlign: TextAlign.center,
+                    style: textTheme.bodyMedium?.copyWith(
+                      color: colorScheme.onSurface.withValues(alpha: 0.72),
                     ),
                   ),
                   SizedBox(height: isCompact ? 12 : 16),
@@ -370,12 +400,13 @@ class _CenterFeatureCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
 
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.78),
+        color: colorScheme.surface.withValues(alpha: 0.84),
         borderRadius: BorderRadius.circular(18),
         border: Border.all(color: page.accentColor.withValues(alpha: 0.16)),
       ),
@@ -384,19 +415,9 @@ class _CenterFeatureCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Container(
-                padding: const EdgeInsets.all(6),
-                decoration: BoxDecoration(
-                  color: page.accentColor.withValues(alpha: 0.14),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Icon(page.icon, size: 16, color: page.accentColor),
-              ),
-              const SizedBox(width: 8),
               Text(
-                page.title,
-                style: TextStyle(
-                  fontSize: 13,
+                'What you can do',
+                style: textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.w800,
                   color: colorScheme.onSurface,
                 ),
@@ -422,7 +443,7 @@ class _CenterFeatureCard extends StatelessWidget {
                   Expanded(
                     child: Text(
                       item,
-                      style: TextStyle(
+                      style: textTheme.bodySmall?.copyWith(
                         fontSize: 12,
                         height: 1.3,
                         color: colorScheme.onSurface.withValues(alpha: 0.76),
