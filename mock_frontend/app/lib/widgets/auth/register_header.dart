@@ -11,43 +11,24 @@ class RegisterHeader extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        const BrandLogo(height: 66),
+        const SizedBox(height: 16),
         Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
           decoration: BoxDecoration(
-            color: colorScheme.primary.withValues(alpha: 0.08),
-            borderRadius: BorderRadius.circular(28),
-            border: Border.all(
-              color: colorScheme.primary.withValues(alpha: 0.12),
+            color: colorScheme.primary.withValues(alpha: 0.12),
+            borderRadius: BorderRadius.circular(999),
+          ),
+          child: Text(
+            'Join the local network',
+            style: TextStyle(
+              color: colorScheme.primary,
+              fontWeight: FontWeight.w700,
+              fontSize: 12,
             ),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const BrandLogo(height: 66),
-              const SizedBox(height: 16),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 7,
-                ),
-                decoration: BoxDecoration(
-                  color: colorScheme.primary.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(999),
-                ),
-                child: Text(
-                  'Join the local network',
-                  style: TextStyle(
-                    color: colorScheme.primary,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 12,
-                  ),
-                ),
-              ),
-            ],
-          ),
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: 32),
         Text(
           'Sign Up',
           style: TextStyle(

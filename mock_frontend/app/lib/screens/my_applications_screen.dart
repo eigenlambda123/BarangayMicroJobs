@@ -183,10 +183,6 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
                               TransactionHistoryCard(
                                 transaction: _applications[i],
                                 onCompletePressed: null,
-                                onCancelPressed: () {
-                                  // Refresh applications after cancellation
-                                  _loadMyApplications();
-                                },
                                 onTransactionUpdated: _loadMyApplications,
                                 onGoToMarketplace: null,
                               ),

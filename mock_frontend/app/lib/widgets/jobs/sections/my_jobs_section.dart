@@ -96,9 +96,17 @@ class _MyJobsSectionState extends State<MyJobsSection> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
+    // Filter for active transactions (where user is requester and status is not completed)
+    final activeTransactions = widget.transactions.where((transaction) {
+      return (transaction['is_requester'] == true) &&
+          ((transaction['status'] ?? '').toString().toLowerCase() !=
+              'completed');
+    }).toList();
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // ===== MY POSTED JOBS SECTION =====
         Row(
           children: [
             Container(
@@ -167,28 +175,6 @@ class _MyJobsSectionState extends State<MyJobsSection> {
               );
             },
           ),
-
-          // If there are transactions linked to this job where the current
-          // user is the requester (the job poster), show the transaction
-          // history card(s) so the poster can track status and take actions.
-          for (final tx in widget.transactions.where((transaction) {
-            final linkedJob = transaction['job'];
-            return linkedJob is Map &&
-                linkedJob['id']?.toString() ==
-                    _paginatedJobs[i]['id']?.toString() &&
-                (transaction['is_requester'] == true);
-          })) ...[
-            const SizedBox(height: 8),
-            TransactionHistoryCard(
-              transaction: tx,
-              onCancelPressed: () {
-                widget.onTransactionUpdated?.call();
-              },
-              onTransactionUpdated: widget.onTransactionUpdated,
-              onGoToMarketplace: widget.onGoToMarketplace,
-            ),
-          ],
-
           if (i < _paginatedJobs.length - 1) const SizedBox(height: 12),
         ],
         if (widget.jobs.isNotEmpty && _totalPages > 1)
@@ -251,6 +237,65 @@ class _MyJobsSectionState extends State<MyJobsSection> {
               },
             ),
           ),
+
+        // ===== ACTIVE TRANSACTIONS SECTION =====
+        if (activeTransactions.isNotEmpty) ...[
+          const SizedBox(height: 24),
+          Row(
+            children: [
+              Container(
+                width: 10,
+                height: 10,
+                decoration: BoxDecoration(
+                  color: colorScheme.secondary,
+                  shape: BoxShape.circle,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Text(
+                'Active Transactions',
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              const SizedBox(width: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
+                decoration: BoxDecoration(
+                  color: colorScheme.secondary.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(999),
+                ),
+                child: Text(
+                  '${activeTransactions.length}',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    color: colorScheme.secondary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'Jobs you have hired workers for and are currently in progress.',
+            style: TextStyle(
+              fontSize: 13,
+              height: 1.35,
+              color: colorScheme.onSurface.withValues(alpha: 0.62),
+            ),
+          ),
+          const SizedBox(height: 14),
+          for (int i = 0; i < activeTransactions.length; i++) ...[
+            TransactionHistoryCard(
+              transaction: activeTransactions[i],
+              onTransactionUpdated: widget.onTransactionUpdated,
+              onGoToMarketplace: widget.onGoToMarketplace,
+            ),
+            if (i < activeTransactions.length - 1) const SizedBox(height: 12),
+          ],
+        ],
+
         const SizedBox(height: 24),
       ],
     );
