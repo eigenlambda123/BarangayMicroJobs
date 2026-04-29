@@ -12,7 +12,9 @@ import 'post_job_screen.dart';
 import '../widgets/marketplace/marketplace_background_orb.dart';
 
 class HistoryScreen extends StatefulWidget {
-  const HistoryScreen({super.key});
+  final VoidCallback? onGoToMarketplace;
+
+  const HistoryScreen({super.key, this.onGoToMarketplace});
 
   @override
   State<HistoryScreen> createState() => _HistoryScreenState();
@@ -162,6 +164,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                           jobs: myJobs,
                           transactions: _transactions,
                           onTransactionUpdated: _loadMyJobsData,
+                          onGoToMarketplace: widget.onGoToMarketplace,
                         ),
                     ],
                   ),

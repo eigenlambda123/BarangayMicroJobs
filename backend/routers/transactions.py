@@ -411,6 +411,7 @@ def cancel_transaction(
             "transaction_id": transaction.id,
             "finalized": True,
             "status": transaction.status.value,
+            "requester_cancelled": is_requester,
         }
 
     return {
@@ -418,4 +419,5 @@ def cancel_transaction(
         "transaction_id": transaction.id,
         "finalized": False,
         "status": transaction.status.value,
+        "requester_cancelled": is_requester,
     }

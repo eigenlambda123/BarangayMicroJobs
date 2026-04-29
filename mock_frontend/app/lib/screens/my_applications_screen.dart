@@ -188,6 +188,7 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
                                   _loadMyApplications();
                                 },
                                 onTransactionUpdated: _loadMyApplications,
+                                onGoToMarketplace: null,
                               ),
                               if (i < _applications.length - 1)
                                 const SizedBox(height: 12),

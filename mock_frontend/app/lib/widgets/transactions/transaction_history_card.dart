@@ -10,6 +10,7 @@ class TransactionHistoryCard extends StatelessWidget {
   final VoidCallback? onCompletePressed;
   final VoidCallback? onCancelPressed;
   final VoidCallback? onTransactionUpdated;
+  final VoidCallback? onGoToMarketplace;
 
   const TransactionHistoryCard({
     super.key,
@@ -17,6 +18,7 @@ class TransactionHistoryCard extends StatelessWidget {
     this.onCompletePressed,
     this.onCancelPressed,
     this.onTransactionUpdated,
+    this.onGoToMarketplace,
   });
 
   @override
@@ -50,7 +52,7 @@ class TransactionHistoryCard extends StatelessWidget {
           worker: workerName,
           onTap: () {
             Navigator.of(context)
-                .push<bool>(
+                .push<dynamic>(
                   MaterialPageRoute(
                     builder: (context) => TransactionDetailsScreen(
                       transactionId: transaction['id'],
@@ -60,6 +62,10 @@ class TransactionHistoryCard extends StatelessWidget {
                 .then((result) {
                   if (result == true) {
                     onTransactionUpdated?.call();
+                  } else if (result == 'go_to_marketplace') {
+                    // Job poster cancelled: navigate back to home and then to marketplace
+                    Navigator.of(context).popUntil((route) => route.isFirst);
+                    onGoToMarketplace?.call();
                   }
                 });
           },

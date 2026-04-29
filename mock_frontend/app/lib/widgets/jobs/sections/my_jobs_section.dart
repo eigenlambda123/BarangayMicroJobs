@@ -10,12 +10,14 @@ class MyJobsSection extends StatefulWidget {
   final List<Map<String, dynamic>> jobs;
   final List<Map<String, dynamic>> transactions;
   final VoidCallback? onTransactionUpdated;
+  final VoidCallback? onGoToMarketplace;
 
   const MyJobsSection({
     super.key,
     required this.jobs,
     required this.transactions,
     this.onTransactionUpdated,
+    this.onGoToMarketplace,
   });
 
   @override
@@ -183,6 +185,7 @@ class _MyJobsSectionState extends State<MyJobsSection> {
                 widget.onTransactionUpdated?.call();
               },
               onTransactionUpdated: widget.onTransactionUpdated,
+              onGoToMarketplace: widget.onGoToMarketplace,
             ),
           ],
 

@@ -163,13 +163,21 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
         widget.transactionId,
       );
       final finalized = response['finalized'] as bool? ?? false;
+      final requesterCancelled =
+          response['requester_cancelled'] as bool? ?? false;
 
       if (finalized) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Transaction cancelled successfully')),
           );
-          Navigator.of(context).pop(true);
+          if (requesterCancelled) {
+            // Job poster cancelled: return special marker to navigate to marketplace
+            Navigator.of(context).pop('go_to_marketplace');
+          } else {
+            // Applicant cancelled: pop back to my applications
+            Navigator.of(context).pop(true);
+          }
         }
       } else {
         await _loadTransactionDetails();

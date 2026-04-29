@@ -143,6 +143,7 @@ class _AcceptedJobsSectionState extends State<AcceptedJobsSection> {
                   : null,
               onCancelPressed:
                   null, // Cancel handled in transaction details screen
+              onGoToMarketplace: null,
             );
           }),
           CompactPaginationControls(

@@ -16,6 +16,12 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
 
+  void switchToMarketplace() {
+    setState(() {
+      _selectedIndex = 0;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -147,7 +153,7 @@ class _HomePageState extends State<HomePage> {
       case 0:
         return const MarketplaceScreen();
       case 1:
-        return const HistoryScreen();
+        return HistoryScreen(onGoToMarketplace: switchToMarketplace);
       case 2:
         return const MyApplicationsScreen();
       case 3:
