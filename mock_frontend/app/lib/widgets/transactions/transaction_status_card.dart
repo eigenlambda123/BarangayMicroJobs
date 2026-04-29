@@ -11,6 +11,9 @@ class TransactionStatusCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final requesterCanceled =
+        transaction['requester_canceled'] as bool? ?? false;
+    final providerCanceled = transaction['provider_canceled'] as bool? ?? false;
 
     return Container(
       width: double.infinity,
@@ -70,8 +73,11 @@ class TransactionStatusCard extends StatelessWidget {
             const SizedBox(height: 10),
             StatusItem(
               status: StatusDisplay.label('canceled'),
-              timestamp: null,
+              timestamp: requesterCanceled && providerCanceled
+                  ? 'Confirmed by both parties'
+                  : 'Cancellation pending confirmation',
               isCompleted: true,
+              accentColor: const Color(0xFFB42318),
             ),
           ],
         ],
@@ -84,18 +90,22 @@ class StatusItem extends StatelessWidget {
   final String status;
   final dynamic timestamp;
   final bool isCompleted;
+  final Color? accentColor;
 
   const StatusItem({
     super.key,
     required this.status,
     required this.timestamp,
     required this.isCompleted,
+    this.accentColor,
   });
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final accent = isCompleted ? colorScheme.primary : colorScheme.outline;
+    final accent =
+        accentColor ??
+        (isCompleted ? colorScheme.primary : colorScheme.outline);
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -106,7 +116,7 @@ class StatusItem extends StatelessWidget {
           height: 14,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: isCompleted ? colorScheme.primary : Colors.transparent,
+            color: isCompleted ? accent : Colors.transparent,
             border: Border.all(color: accent, width: 2),
           ),
           child: isCompleted
