@@ -4,6 +4,7 @@ import '../widgets/common/brand_logo.dart';
 import 'history_screen.dart';
 import 'marketplace_screen.dart';
 import 'profile_screen.dart';
+import 'my_applications_screen.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -15,11 +16,17 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
 
-  static const List<String> _titles = ['Marketplace', 'My Jobs', 'Profile'];
+  static const List<String> _titles = [
+    'Marketplace',
+    'My Jobs',
+    'My Applications',
+    'Profile',
+  ];
 
   static const List<String> _subtitles = [
     'Find opportunities posted by other users',
     'Manage the jobs you have posted',
+    'Track the status of your applications',
     'Manage your account and preferences',
   ];
 
@@ -114,9 +121,14 @@ class _HomePageState extends State<HomePage> {
             label: _titles[1],
           ),
           NavigationDestination(
+            icon: const Icon(Icons.assignment_outlined),
+            selectedIcon: Icon(Icons.assignment, color: colorScheme.primary),
+            label: _titles[2],
+          ),
+          NavigationDestination(
             icon: const Icon(Icons.person_outline),
             selectedIcon: Icon(Icons.person, color: colorScheme.primary),
-            label: _titles[2],
+            label: _titles[3],
           ),
         ],
       ),
@@ -130,6 +142,8 @@ class _HomePageState extends State<HomePage> {
       case 1:
         return const HistoryScreen();
       case 2:
+        return const MyApplicationsScreen();
+      case 3:
         return const ProfileScreen();
       default:
         return const MarketplaceScreen();
