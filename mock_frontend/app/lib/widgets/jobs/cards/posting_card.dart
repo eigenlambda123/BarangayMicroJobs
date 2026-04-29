@@ -32,19 +32,19 @@ class PostingCard extends StatelessWidget {
       child: Container(
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(16),
           color: colorScheme.surface,
-          border: Border.all(color: colorScheme.primary.withValues(alpha: 0.1)),
-          boxShadow: const [
+          border: Border.all(color: colorScheme.primary.withValues(alpha: 0.12)),
+          boxShadow: [
             BoxShadow(
-              color: Color(0x12000000),
-              blurRadius: 14,
-              offset: Offset(0, 6),
+              color: Colors.black.withValues(alpha: 0.06),
+              blurRadius: 16,
+              offset: const Offset(0, 4),
             ),
           ],
         ),
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 15, 16, 15),
+          padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -54,9 +54,9 @@ class PostingCard extends StatelessWidget {
                   Container(
                     width: 12,
                     height: 12,
-                    margin: const EdgeInsets.only(top: 5),
+                    margin: const EdgeInsets.only(top: 4),
                     decoration: BoxDecoration(
-                      color: statusColor.withValues(alpha: 0.18),
+                      color: statusColor.withValues(alpha: 0.2),
                       shape: BoxShape.circle,
                     ),
                     child: Center(
@@ -70,7 +70,7 @@ class PostingCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 10),
+                  const SizedBox(width: 12),
                   Expanded(
                     child: Text(
                       title,
@@ -79,33 +79,37 @@ class PostingCard extends StatelessWidget {
                       style: TextStyle(
                         fontWeight: FontWeight.w700,
                         fontSize: 16,
-                        height: 1.2,
+                        height: 1.3,
                         color: colorScheme.onSurface,
                       ),
                     ),
                   ),
-                  const SizedBox(width: 10),
+                  const SizedBox(width: 12),
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 12,
-                      vertical: 7,
+                      vertical: 8,
                     ),
                     decoration: BoxDecoration(
-                      color: colorScheme.secondary.withValues(alpha: 0.14),
-                      borderRadius: BorderRadius.circular(999),
+                      color: colorScheme.secondary.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: colorScheme.secondary.withValues(alpha: 0.2),
+                      ),
                     ),
                     child: Text(
                       price,
                       style: TextStyle(
                         fontWeight: FontWeight.w700,
-                        fontSize: 12,
+                        fontSize: 13,
                         color: colorScheme.secondary,
+                        letterSpacing: 0.2,
                       ),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 14),
               Wrap(
                 spacing: 8,
                 runSpacing: 8,
@@ -117,13 +121,16 @@ class PostingCard extends StatelessWidget {
                     ),
                     decoration: BoxDecoration(
                       color: colorScheme.primary.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(999),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: colorScheme.primary.withValues(alpha: 0.2),
+                      ),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(
-                          Icons.location_on_outlined,
+                          Icons.location_on_rounded,
                           size: 14,
                           color: colorScheme.primary,
                         ),
@@ -145,8 +152,11 @@ class PostingCard extends StatelessWidget {
                       vertical: 6,
                     ),
                     decoration: BoxDecoration(
-                      color: colorScheme.secondary.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(999),
+                      color: colorScheme.secondary.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: colorScheme.secondary.withValues(alpha: 0.2),
+                      ),
                     ),
                     child: Text(
                       applicants == 1
@@ -161,7 +171,7 @@ class PostingCard extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 14),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -170,7 +180,8 @@ class PostingCard extends StatelessWidget {
                       date!,
                       style: TextStyle(
                         fontSize: 11,
-                        color: colorScheme.onSurface.withValues(alpha: 0.58),
+                        fontWeight: FontWeight.w500,
+                        color: colorScheme.onSurface.withValues(alpha: 0.55),
                       ),
                     )
                   else
@@ -178,11 +189,14 @@ class PostingCard extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 10,
-                      vertical: 5,
+                      vertical: 6,
                     ),
                     decoration: BoxDecoration(
-                      color: statusColor.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(999),
+                      color: statusColor.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: statusColor.withValues(alpha: 0.3),
+                      ),
                     ),
                     child: Text(
                       statusLabel,

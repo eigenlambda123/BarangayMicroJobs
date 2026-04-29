@@ -12,32 +12,46 @@ class LoginHeader extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const BrandLogo(height: 66),
-        const SizedBox(height: 24),
+        const SizedBox(height: 32),
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(
-            color: colorScheme.secondary.withValues(alpha: 0.12),
-            borderRadius: BorderRadius.circular(999),
+            color: colorScheme.secondary.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: colorScheme.secondary.withValues(alpha: 0.2),
+            ),
           ),
           child: Text(
             'Community marketplace',
             style: TextStyle(
               color: colorScheme.secondary,
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.w700,
               fontSize: 12,
-              letterSpacing: 0.2,
+              letterSpacing: 0.4,
             ),
           ),
         ),
-        const SizedBox(height: 40),
-        Text('Log In', style: Theme.of(context).textTheme.displayMedium),
+        const SizedBox(height: 48),
+        Text(
+          'Welcome Back',
+          style: TextStyle(
+            fontSize: 32,
+            fontWeight: FontWeight.w800,
+            letterSpacing: -0.5,
+            color: colorScheme.onSurface,
+            height: 1.1,
+          ),
+        ),
         const SizedBox(height: 12),
         Text(
-          'Welcome back to Barangay Microjobs',
+          'Sign in to continue to Barangay Microjobs',
           style: TextStyle(
             fontSize: 16,
-            color: colorScheme.onSurface.withValues(alpha: 0.7),
-            height: 1.45,
+            fontWeight: FontWeight.w400,
+            color: colorScheme.onSurface.withValues(alpha: 0.65),
+            height: 1.5,
+            letterSpacing: 0.2,
           ),
         ),
       ],

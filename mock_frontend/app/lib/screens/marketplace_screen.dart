@@ -246,14 +246,15 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
     if (_otherUsersJobs.isEmpty) {
       return const EmptyState(
         title: 'No marketplace jobs yet',
-        subtitle: 'Check back later for new opportunities from other users',
+        subtitle:
+            'Check back later for new opportunities posted by other users.',
       );
     }
 
     if (_availableJobs.isEmpty) {
       return const EmptyState(
         title: 'No open jobs from other users',
-        subtitle: 'Try clearing filters or check back later',
+        subtitle: 'Try clearing filters or check back later for new listings.',
       );
     }
 
