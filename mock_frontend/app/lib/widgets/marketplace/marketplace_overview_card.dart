@@ -2,12 +2,10 @@ import 'package:flutter/material.dart';
 
 class MarketplaceOverviewCard extends StatelessWidget {
   final int totalCount;
-  final int myJobsCount;
   final int availableCount;
 
   const MarketplaceOverviewCard({
     required this.totalCount,
-    required this.myJobsCount,
     required this.availableCount,
     super.key,
   });
@@ -53,7 +51,7 @@ class MarketplaceOverviewCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Live marketplace',
+                      'Open marketplace',
                       style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w700,
@@ -62,7 +60,7 @@ class MarketplaceOverviewCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Track what you posted and what you can apply for right now.',
+                      'Browse opportunities posted by other users and jump into the ones you can take.',
                       style: TextStyle(
                         fontSize: 13,
                         height: 1.35,
@@ -88,8 +86,8 @@ class MarketplaceOverviewCard extends StatelessWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: _MarketplaceMetricCard(
-                  title: 'My postings',
-                  value: '$myJobsCount',
+                  title: 'Other users\' posts',
+                  value: '$totalCount',
                   icon: Icons.cases_outlined,
                   tint: colorScheme.primary,
                 ),

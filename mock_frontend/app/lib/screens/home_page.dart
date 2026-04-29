@@ -15,11 +15,11 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
 
-  static const List<String> _titles = ['Marketplace', 'Activity', 'Profile'];
+  static const List<String> _titles = ['Marketplace', 'My Jobs', 'Profile'];
 
   static const List<String> _subtitles = [
-    'Find and post local microjobs',
-    'Track your completed and active work',
+    'Find opportunities posted by other users',
+    'Manage the jobs you have posted',
     'Manage your account and preferences',
   ];
 
@@ -124,8 +124,8 @@ class _HomePageState extends State<HomePage> {
             label: _titles[0],
           ),
           NavigationDestination(
-            icon: const Icon(Icons.timeline_outlined),
-            selectedIcon: Icon(Icons.timeline, color: colorScheme.primary),
+            icon: const Icon(Icons.work_outline),
+            selectedIcon: Icon(Icons.work, color: colorScheme.primary),
             label: _titles[1],
           ),
           NavigationDestination(

@@ -1,19 +1,19 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
-import '../widgets/common/loading_state.dart';
-import '../widgets/common/error_state.dart';
+import 'package:flutter/material.dart';
+
+import '../services/auth_service.dart';
+import '../services/job_service.dart';
+import '../services/transaction_service.dart';
 import '../widgets/common/empty_state.dart';
-import '../widgets/jobs/sections/my_jobs_section.dart';
-import '../widgets/jobs/sections/available_jobs_section.dart';
+import '../widgets/common/error_state.dart';
+import '../widgets/common/loading_state.dart';
 import '../widgets/jobs/actions/post_job_overlay.dart';
+import '../widgets/jobs/sections/available_jobs_section.dart';
 import '../widgets/marketplace/marketplace_background_orb.dart';
 import '../widgets/marketplace/marketplace_filter_bar.dart';
 import '../widgets/marketplace/marketplace_filter_sheet.dart';
 import '../widgets/marketplace/marketplace_overview_card.dart';
 import '../widgets/marketplace/marketplace_section_shell.dart';
-import '../services/job_service.dart';
-import '../services/auth_service.dart';
-import '../services/transaction_service.dart';
 
 class MarketplaceScreen extends StatefulWidget {
   const MarketplaceScreen({super.key});
@@ -32,28 +32,10 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
   final TextEditingController _searchController = TextEditingController();
   MarketplaceFilterSelection _filters = const MarketplaceFilterSelection();
 
-  static const List<String> _lucenaBarangays = [
-    'Barangay Bocohan',
-    'Barangay Dalahican',
-    'Barangay Gulang-Gulang',
-    'Barangay Ibabang Dupay',
-    'Barangay Ilayang Dupay',
-    'Barangay Isabang',
-    'Barangay Market View',
-    'Barangay Mayao Kanluran',
-    'Barangay Mayao Castillo',
-    'Barangay Mayao Crossing',
-    'Barangay Ransohan',
-    'Barangay Salinas',
-    'Barangay Talao-Talao',
-  ];
-
   @override
   void initState() {
     super.initState();
-    _loadCurrentUser();
-    _loadJobs();
-    _loadUserTransactions();
+    _loadMarketplaceData();
   }
 
   @override
@@ -62,58 +44,41 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
     super.dispose();
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // Refresh transactions when returning to this screen
-    _loadUserTransactions();
-  }
-
-  Future<void> _refreshMarketplace() async {
+  Future<void> _loadMarketplaceData() async {
     if (mounted) {
       setState(() {
+        _isLoading = true;
         _errorMessage = null;
       });
     }
 
-    await Future.wait([
-      _loadCurrentUser(),
-      _loadJobs(),
-      _loadUserTransactions(),
-    ]);
-  }
-
-  Future<void> _loadCurrentUser() async {
     try {
-      final userId = await AuthService().getUserId();
-      if (mounted) {
-        setState(() {
-          _currentUserId = userId;
-        });
+      final results = await Future.wait<dynamic>([
+        AuthService().getUserId(),
+        JobService().getAllJobs(
+          query: _searchController.text,
+          location: _filters.apiLocation,
+          status: _filters.apiStatus,
+          minSalary: _filters.minSalary,
+          maxSalary: _filters.maxSalary,
+        ),
+        TransactionService().getMyTransactions(),
+      ]);
+
+      if (!mounted) {
+        return;
       }
+
+      setState(() {
+        _currentUserId = results[0] as String?;
+        _jobs = (results[1] as List).cast<Map<String, dynamic>>();
+        _userTransactions = (results[2] as List).cast<Map<String, dynamic>>();
+        _isLoading = false;
+      });
     } catch (e) {
       if (kDebugMode) {
-        print('DEBUG: Failed to load current user: $e');
+        print('DEBUG: Failed to load marketplace data: $e');
       }
-    }
-  }
-
-  Future<void> _loadJobs() async {
-    try {
-      final jobs = await JobService().getAllJobs(
-        query: _searchController.text,
-        location: _filters.apiLocation,
-        status: _filters.apiStatus,
-        minSalary: _filters.minSalary,
-        maxSalary: _filters.maxSalary,
-      );
-      if (mounted) {
-        setState(() {
-          _jobs = jobs;
-          _isLoading = false;
-        });
-      }
-    } catch (e) {
       if (mounted) {
         setState(() {
           _errorMessage = 'Failed to load jobs: ${e.toString()}';
@@ -123,16 +88,16 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
     }
   }
 
+  Future<void> _refreshMarketplace() async {
+    await _loadMarketplaceData();
+  }
+
   void _clearFilters() {
     setState(() {
       _searchController.clear();
       _filters = const MarketplaceFilterSelection();
     });
-    _loadJobs();
-  }
-
-  int get _activeFilterCount {
-    return _filters.activeFilterCount;
+    _loadMarketplaceData();
   }
 
   Future<void> _showFilterSheet() async {
@@ -149,42 +114,30 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
     setState(() {
       _filters = selection;
     });
-    _loadJobs();
+    _loadMarketplaceData();
   }
 
-  Future<void> _loadUserTransactions() async {
-    try {
-      final transactions = await TransactionService().getMyTransactions();
-      if (mounted) {
-        setState(() {
-          _userTransactions = transactions;
-        });
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        print('DEBUG: Failed to load user transactions: $e');
-      }
-      // Don't set error state for transactions, as it's not critical for the main functionality
+  List<Map<String, dynamic>> get _otherUsersJobs {
+    final currentUserId = _currentUserId;
+    if (currentUserId == null || currentUserId.isEmpty) {
+      return const [];
     }
-  }
 
-  List<Map<String, dynamic>> get _myJobs =>
-      _jobs.where((job) => job['poster_id'] == _currentUserId).toList();
+    return _jobs
+        .where((job) => job['poster_id']?.toString() != currentUserId)
+        .toList();
+  }
 
   List<Map<String, dynamic>> get _availableJobs {
-    // Get job IDs that the user has already applied for
     final appliedJobIds = _userTransactions
         .where((transaction) => !(transaction['is_requester'] as bool))
         .map((transaction) => transaction['job']['id'])
         .toSet();
 
-    return _jobs.where((job) {
+    return _otherUsersJobs.where((job) {
       final jobStatus = (job['status'] ?? '').toString().toLowerCase();
-      return job['poster_id'] != _currentUserId && // Not posted by current user
-          !appliedJobIds.contains(job['id']) && // Not already applied for
-          jobStatus == 'open'; // Hide jobs that already have a hired worker
-    }) // Not already applied for
-    .toList();
+      return !appliedJobIds.contains(job['id']) && jobStatus == 'open';
+    }).toList();
   }
 
   @override
@@ -252,13 +205,12 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                         searchController: _searchController,
                         filters: _filters,
                         onFilterPressed: _showFilterSheet,
-                        onSearchSubmitted: (_) => _loadJobs(),
+                        onSearchSubmitted: (_) => _loadMarketplaceData(),
                         onClearPressed: _clearFilters,
                       ),
                       const SizedBox(height: 12),
                       MarketplaceOverviewCard(
-                        totalCount: _jobs.length,
-                        myJobsCount: _myJobs.length,
+                        totalCount: _otherUsersJobs.length,
                         availableCount: _availableJobs.length,
                       ),
                       const SizedBox(height: 18),
@@ -272,7 +224,6 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
             ),
           ),
         ),
-        // Post Job Modal Overlay
         if (_showPostJobModal)
           PostJobOverlay(
             onClose: () {
@@ -283,7 +234,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Job posted successfully!')),
               );
-              _loadJobs();
+              _loadMarketplaceData();
             },
           ),
       ],
@@ -296,36 +247,29 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
     }
 
     if (_errorMessage != null) {
-      return ErrorState(errorMessage: _errorMessage!, onRetry: _loadJobs);
-    }
-
-    if (_jobs.isEmpty) {
-      return const EmptyState(
-        title: 'No jobs available',
-        subtitle: 'Check back later for new opportunities',
+      return ErrorState(
+        errorMessage: _errorMessage!,
+        onRetry: _loadMarketplaceData,
       );
     }
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // My Posted Jobs Section
-        if (_myJobs.isNotEmpty)
-          MyJobsSection(jobs: _myJobs, transactions: _userTransactions),
+    if (_otherUsersJobs.isEmpty) {
+      return const EmptyState(
+        title: 'No marketplace jobs yet',
+        subtitle: 'Check back later for new opportunities from other users',
+      );
+    }
 
-        // Available Jobs Section (All other jobs)
-        if (_availableJobs.isNotEmpty) const SizedBox(height: 20),
-        if (_availableJobs.isNotEmpty)
-          AvailableJobsSection(jobs: _availableJobs, onRefresh: _loadJobs)
-        else if (_myJobs.isNotEmpty)
-          const Padding(
-            padding: EdgeInsets.all(32.0),
-            child: EmptyState(
-              title: 'No other jobs available to apply for',
-              subtitle: '',
-            ),
-          ),
-      ],
+    if (_availableJobs.isEmpty) {
+      return const EmptyState(
+        title: 'No open jobs from other users',
+        subtitle: 'Try clearing filters or check back later',
+      );
+    }
+
+    return AvailableJobsSection(
+      jobs: _availableJobs,
+      onRefresh: _loadMarketplaceData,
     );
   }
 }
