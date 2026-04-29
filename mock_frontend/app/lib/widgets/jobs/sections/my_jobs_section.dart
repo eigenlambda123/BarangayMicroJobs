@@ -173,11 +173,15 @@ class _MyJobsSectionState extends State<MyJobsSection> {
                 ),
                 const SizedBox(height: 14),
                 if (_paginatedJobs.isEmpty)
-                  Center(
-                    child: Text(
-                      'No jobs posted yet',
-                      style: TextStyle(
-                        color: colorScheme.onSurface.withValues(alpha: 0.5),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: Text(
+                        'No jobs posted yet',
+                        style: TextStyle(
+                          color: colorScheme.onSurface.withValues(alpha: 0.5),
+                        ),
                       ),
                     ),
                   )
@@ -293,64 +297,77 @@ class _MyJobsSectionState extends State<MyJobsSection> {
         ),
 
         // ===== ACTIVE TRANSACTIONS SECTION =====
-        if (activeTransactions.isNotEmpty) ...[
-          const SizedBox(height: 24),
-          Container(
-            decoration: BoxDecoration(
-              color: colorScheme.surface,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: colorScheme.secondary.withValues(alpha: 0.12),
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.06),
-                  blurRadius: 16,
-                  offset: const Offset(0, 4),
-                ),
-              ],
+        const SizedBox(height: 24),
+        Container(
+          decoration: BoxDecoration(
+            color: colorScheme.surface,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: colorScheme.secondary.withValues(alpha: 0.12),
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Text(
-                        'Active Transactions',
-                        style: Theme.of(context).textTheme.titleLarge,
-                      ),
-                      const SizedBox(width: 8),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: colorScheme.secondary.withValues(alpha: 0.12),
-                          borderRadius: BorderRadius.circular(999),
-                        ),
-                        child: Text(
-                          '${activeTransactions.length}',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w700,
-                            color: colorScheme.secondary,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Jobs you have hired workers for and are currently in progress.',
-                    style: TextStyle(
-                      fontSize: 13,
-                      height: 1.35,
-                      color: colorScheme.onSurface.withValues(alpha: 0.62),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.06),
+                blurRadius: 16,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      'Active Transactions',
+                      style: Theme.of(context).textTheme.titleLarge,
                     ),
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: colorScheme.secondary.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(999),
+                      ),
+                      child: Text(
+                        '${activeTransactions.length}',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          color: colorScheme.secondary,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Jobs you have hired workers for and are currently in progress.',
+                  style: TextStyle(
+                    fontSize: 13,
+                    height: 1.35,
+                    color: colorScheme.onSurface.withValues(alpha: 0.62),
                   ),
-                  const SizedBox(height: 14),
+                ),
+                const SizedBox(height: 14),
+                if (activeTransactions.isEmpty)
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: Text(
+                        'No active transactions',
+                        style: TextStyle(
+                          color: colorScheme.onSurface.withValues(alpha: 0.5),
+                        ),
+                      ),
+                    ),
+                  )
+                else
                   Column(
                     children: [
                       for (int i = 0; i < activeTransactions.length; i++) ...[
@@ -364,12 +381,10 @@ class _MyJobsSectionState extends State<MyJobsSection> {
                       ],
                     ],
                   ),
-                ],
-              ),
+              ],
             ),
           ),
-        ],
-
+        ),
         const SizedBox(height: 24),
       ],
     );
