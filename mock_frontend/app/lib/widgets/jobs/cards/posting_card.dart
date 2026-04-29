@@ -37,7 +37,9 @@ class PostingCard extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
           color: colorScheme.surface,
-          border: Border.all(color: colorScheme.primary.withValues(alpha: 0.12)),
+          border: Border.all(
+            color: colorScheme.primary.withValues(alpha: 0.12),
+          ),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.06),
@@ -89,7 +91,8 @@ class PostingCard extends StatelessWidget {
                             color: colorScheme.onSurface,
                           ),
                         ),
-                        if (previewDescription != null && previewDescription.isNotEmpty) ...[
+                        if (previewDescription != null &&
+                            previewDescription.isNotEmpty) ...[
                           const SizedBox(height: 6),
                           Text(
                             previewDescription,
@@ -98,7 +101,9 @@ class PostingCard extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 12,
                               height: 1.35,
-                              color: colorScheme.onSurface.withValues(alpha: 0.68),
+                              color: colorScheme.onSurface.withValues(
+                                alpha: 0.68,
+                              ),
                             ),
                           ),
                         ],
@@ -133,7 +138,10 @@ class PostingCard extends StatelessWidget {
               const SizedBox(height: 12),
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 10,
+                ),
                 decoration: BoxDecoration(
                   color: colorScheme.primary.withValues(alpha: 0.08),
                   borderRadius: BorderRadius.circular(12),
@@ -169,7 +177,9 @@ class PostingCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 10),
                     Text(
-                      applicants == 1 ? '1 applicant' : '$applicants applicants',
+                      applicants == 1
+                          ? '1 applicant'
+                          : '$applicants applicants',
                       style: TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
