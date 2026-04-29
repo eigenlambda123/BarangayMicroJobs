@@ -147,21 +147,26 @@ class _JobDetailsCardState extends State<JobDetailsCard> {
               Expanded(
                 child: Text(
                   widget.job['title'] ?? 'Untitled Job',
-                  style: const TextStyle(
-                    fontSize: 22,
+                  style: TextStyle(
+                    fontSize: 20,
                     fontWeight: FontWeight.w800,
+                    height: 1.2,
+                    color: colorScheme.onSurface,
                   ),
                 ),
               ),
               const SizedBox(width: 10),
               Container(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
+                  horizontal: 12,
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFD8EED6),
+                  color: colorScheme.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(999),
+                  border: Border.all(
+                    color: colorScheme.primary.withValues(alpha: 0.14),
+                  ),
                 ),
                 child: Text(
                   '₱${widget.job['salary'] ?? 0}',
@@ -178,30 +183,44 @@ class _JobDetailsCardState extends State<JobDetailsCard> {
           Text(
             (widget.job['description'] ?? 'No description available')
                 .toString(),
+            maxLines: 3,
+            overflow: TextOverflow.ellipsis,
             style: TextStyle(
               fontSize: 14,
-              color: colorScheme.onSurface.withValues(alpha: 0.78),
+              height: 1.45,
+              color: colorScheme.onSurface.withValues(alpha: 0.72),
             ),
           ),
-          const SizedBox(height: 12),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              _metaChip(
-                colorScheme: colorScheme,
-                icon: Icons.location_on_outlined,
-                label: (widget.job['location'] ?? 'Unknown location')
-                    .toString(),
+          const SizedBox(height: 14),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: colorScheme.onSurface.withValues(alpha: 0.03),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(
+                color: colorScheme.onSurface.withValues(alpha: 0.06),
               ),
-              _metaChip(
-                colorScheme: colorScheme,
-                icon: Icons.schedule_outlined,
-                label: 'Transaction linked',
-              ),
-            ],
+            ),
+            child: Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                _metaChip(
+                  colorScheme: colorScheme,
+                  icon: Icons.location_on_outlined,
+                  label: (widget.job['location'] ?? 'Unknown location')
+                      .toString(),
+                ),
+                _metaChip(
+                  colorScheme: colorScheme,
+                  icon: Icons.schedule_outlined,
+                  label: 'Transaction linked',
+                ),
+              ],
+            ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 14),
           if (widget.canEdit)
             Row(
               children: [

@@ -4,7 +4,6 @@ import '../services/auth_service.dart';
 import '../services/transaction_service.dart';
 import '../services/job_service.dart';
 import '../widgets/jobs/cards/job_header_card.dart';
-import '../widgets/jobs/cards/job_details_snapshot_card.dart';
 import '../widgets/jobs/cards/job_details_action_panel.dart';
 import '../widgets/jobs/sections/job_applicants_section.dart';
 import '../widgets/transactions/transaction_status_card.dart';
@@ -242,12 +241,6 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                   location: widget.location,
                   jobData: _jobData,
                   posterData: _posterData,
-                ),
-                const SizedBox(height: 14),
-                JobDetailsSnapshotCard(
-                  isJobPoster: isJobPoster,
-                  jobStatus: jobStatus,
-                  applicantsCount: null,
                 ),
                 const SizedBox(height: 14),
                 if (isJobPoster && _jobTransaction != null) ...[
