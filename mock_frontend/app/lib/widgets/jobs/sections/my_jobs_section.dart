@@ -115,176 +115,259 @@ class _MyJobsSectionState extends State<MyJobsSection> {
         ),
         const SizedBox(height: 16),
 
-        // ===== MY POSTED JOBS SECTION =====
-        Row(
-          children: [
-            Text(
-              'My Posted Jobs',
-              style: Theme.of(context).textTheme.titleLarge,
+        // ===== POSTED JOBS SECTION =====
+        Container(
+          decoration: BoxDecoration(
+            color: colorScheme.surface,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: colorScheme.primary.withValues(alpha: 0.12),
             ),
-            const SizedBox(width: 8),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-              decoration: BoxDecoration(
-                color: colorScheme.primary.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(999),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.06),
+                blurRadius: 16,
+                offset: const Offset(0, 4),
               ),
-              child: Text(
-                '${widget.jobs.length}',
-                style: TextStyle(
-                  fontWeight: FontWeight.w700,
-                  color: colorScheme.primary,
-                ),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 4),
-        Text(
-          'Jobs you have already published in the barangay marketplace.',
-          style: TextStyle(
-            fontSize: 13,
-            height: 1.35,
-            color: colorScheme.onSurface.withValues(alpha: 0.62),
+            ],
           ),
-        ),
-        const SizedBox(height: 14),
-        for (int i = 0; i < _paginatedJobs.length; i++) ...[
-          PostingCard(
-            title: _paginatedJobs[i]['title'] ?? 'Unknown Job',
-            price: '₱${_paginatedJobs[i]['salary'] ?? '0'}',
-            location: _paginatedJobs[i]['location'] ?? 'Unknown Location',
-            applicants: _paginatedJobs[i]['applicants_count'] ?? 0,
-            status: _effectiveStatusForJob(_paginatedJobs[i]),
-            date: _paginatedJobs[i]['last_modified'] != null
-                ? formatDate(_paginatedJobs[i]['last_modified'])
-                : null,
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) {
-                    return JobDetailsScreen(
-                      jobTitle: _paginatedJobs[i]['title'] ?? 'Job',
-                      price: '₱${_paginatedJobs[i]['salary'] ?? '0'}',
-                      location: _paginatedJobs[i]['location'] ?? 'Unknown',
-                      jobId: _paginatedJobs[i]['id'] ?? '',
-                      posterId: _paginatedJobs[i]['poster_id'] ?? '',
-                    );
-                  },
-                ),
-              );
-            },
-          ),
-          if (i < _paginatedJobs.length - 1) const SizedBox(height: 12),
-        ],
-        if (widget.jobs.isNotEmpty && _totalPages > 1)
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16.0),
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                if (constraints.maxWidth < 380) {
-                  return CompactPaginationControls(
-                    currentPage: _currentPage,
-                    totalPages: _totalPages,
-                    activeColor: colorScheme.primary,
-                    onPageChanged: (page) =>
-                        setState(() => _currentPage = page),
-                  );
-                }
-
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
                   children: [
-                    SizedBox(
-                      width: 120,
-                      child: OutlinedButton.icon(
-                        onPressed: _currentPage > 1 ? _goToPreviousPage : null,
-                        icon: const Icon(Icons.arrow_back),
-                        label: const Text('Previous'),
-                      ),
+                    Text(
+                      'Posted Jobs',
+                      style: Theme.of(context).textTheme.titleLarge,
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: 8),
                     Container(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 14,
-                        vertical: 10,
+                        horizontal: 10,
+                        vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: colorScheme.primary.withValues(alpha: 0.08),
+                        color: colorScheme.primary.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(999),
                       ),
                       child: Text(
-                        'Page $_currentPage of $_totalPages',
+                        '${widget.jobs.length}',
                         style: TextStyle(
-                          fontWeight: FontWeight.w600,
+                          fontWeight: FontWeight.w700,
                           color: colorScheme.primary,
                         ),
                       ),
                     ),
-                    const SizedBox(width: 12),
-                    SizedBox(
-                      width: 120,
-                      child: FilledButton.tonalIcon(
-                        onPressed: _currentPage < _totalPages
-                            ? _goToNextPage
-                            : null,
-                        icon: const Icon(Icons.arrow_forward),
-                        label: const Text('Next'),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Jobs you have already published in the barangay marketplace.',
+                  style: TextStyle(
+                    fontSize: 13,
+                    height: 1.35,
+                    color: colorScheme.onSurface.withValues(alpha: 0.62),
+                  ),
+                ),
+                const SizedBox(height: 14),
+                if (_paginatedJobs.isEmpty)
+                  Center(
+                    child: Text(
+                      'No jobs posted yet',
+                      style: TextStyle(
+                        color: colorScheme.onSurface.withValues(alpha: 0.5),
                       ),
                     ),
-                  ],
-                );
-              },
+                  )
+                else
+                  Column(
+                    children: [
+                      for (int i = 0; i < _paginatedJobs.length; i++) ...[
+                        PostingCard(
+                          title: _paginatedJobs[i]['title'] ?? 'Unknown Job',
+                          price: '₱${_paginatedJobs[i]['salary'] ?? '0'}',
+                          location:
+                              _paginatedJobs[i]['location'] ??
+                              'Unknown Location',
+                          applicants:
+                              _paginatedJobs[i]['applicants_count'] ?? 0,
+                          status: _effectiveStatusForJob(_paginatedJobs[i]),
+                          date: _paginatedJobs[i]['last_modified'] != null
+                              ? formatDate(_paginatedJobs[i]['last_modified'])
+                              : null,
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) {
+                                  return JobDetailsScreen(
+                                    jobTitle:
+                                        _paginatedJobs[i]['title'] ?? 'Job',
+                                    price:
+                                        '₱${_paginatedJobs[i]['salary'] ?? '0'}',
+                                    location:
+                                        _paginatedJobs[i]['location'] ??
+                                        'Unknown',
+                                    jobId: _paginatedJobs[i]['id'] ?? '',
+                                    posterId:
+                                        _paginatedJobs[i]['poster_id'] ?? '',
+                                  );
+                                },
+                              ),
+                            );
+                          },
+                        ),
+                        if (i < _paginatedJobs.length - 1)
+                          const SizedBox(height: 12),
+                      ],
+                    ],
+                  ),
+                if (widget.jobs.isNotEmpty && _totalPages > 1)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 16.0),
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        if (constraints.maxWidth < 380) {
+                          return CompactPaginationControls(
+                            currentPage: _currentPage,
+                            totalPages: _totalPages,
+                            activeColor: colorScheme.primary,
+                            onPageChanged: (page) =>
+                                setState(() => _currentPage = page),
+                          );
+                        }
+
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              width: 120,
+                              child: OutlinedButton.icon(
+                                onPressed: _currentPage > 1
+                                    ? _goToPreviousPage
+                                    : null,
+                                icon: const Icon(Icons.arrow_back),
+                                label: const Text('Previous'),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 14,
+                                vertical: 10,
+                              ),
+                              decoration: BoxDecoration(
+                                color: colorScheme.primary.withValues(
+                                  alpha: 0.08,
+                                ),
+                                borderRadius: BorderRadius.circular(999),
+                              ),
+                              child: Text(
+                                'Page $_currentPage of $_totalPages',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  color: colorScheme.primary,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            SizedBox(
+                              width: 120,
+                              child: FilledButton.tonalIcon(
+                                onPressed: _currentPage < _totalPages
+                                    ? _goToNextPage
+                                    : null,
+                                icon: const Icon(Icons.arrow_forward),
+                                label: const Text('Next'),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  ),
+              ],
             ),
           ),
+        ),
 
         // ===== ACTIVE TRANSACTIONS SECTION =====
         if (activeTransactions.isNotEmpty) ...[
           const SizedBox(height: 24),
-          Row(
-            children: [
-              Text(
-                'Active Transactions',
-                style: Theme.of(context).textTheme.titleLarge,
+          Container(
+            decoration: BoxDecoration(
+              color: colorScheme.surface,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: colorScheme.secondary.withValues(alpha: 0.12),
               ),
-              const SizedBox(width: 8),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 4,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.06),
+                  blurRadius: 16,
+                  offset: const Offset(0, 4),
                 ),
-                decoration: BoxDecoration(
-                  color: colorScheme.secondary.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(999),
-                ),
-                child: Text(
-                  '${activeTransactions.length}',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    color: colorScheme.secondary,
+              ],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        'Active Transactions',
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: colorScheme.secondary.withValues(alpha: 0.12),
+                          borderRadius: BorderRadius.circular(999),
+                        ),
+                        child: Text(
+                          '${activeTransactions.length}',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                            color: colorScheme.secondary,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Jobs you have hired workers for and are currently in progress.',
+                    style: TextStyle(
+                      fontSize: 13,
+                      height: 1.35,
+                      color: colorScheme.onSurface.withValues(alpha: 0.62),
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  Column(
+                    children: [
+                      for (int i = 0; i < activeTransactions.length; i++) ...[
+                        TransactionHistoryCard(
+                          transaction: activeTransactions[i],
+                          onTransactionUpdated: widget.onTransactionUpdated,
+                          onGoToMarketplace: widget.onGoToMarketplace,
+                        ),
+                        if (i < activeTransactions.length - 1)
+                          const SizedBox(height: 12),
+                      ],
+                    ],
+                  ),
+                ],
               ),
-            ],
-          ),
-          const SizedBox(height: 4),
-          Text(
-            'Jobs you have hired workers for and are currently in progress.',
-            style: TextStyle(
-              fontSize: 13,
-              height: 1.35,
-              color: colorScheme.onSurface.withValues(alpha: 0.62),
             ),
           ),
-          const SizedBox(height: 14),
-          for (int i = 0; i < activeTransactions.length; i++) ...[
-            TransactionHistoryCard(
-              transaction: activeTransactions[i],
-              onTransactionUpdated: widget.onTransactionUpdated,
-              onGoToMarketplace: widget.onGoToMarketplace,
-            ),
-            if (i < activeTransactions.length - 1) const SizedBox(height: 12),
-          ],
         ],
 
         const SizedBox(height: 24),
