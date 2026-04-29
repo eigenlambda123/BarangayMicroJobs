@@ -106,6 +106,10 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
       locationOptions: marketplaceLocationOptions,
     );
 
+    if (!mounted) {
+      return;
+    }
+
     if (selection == null) {
       return;
     }
