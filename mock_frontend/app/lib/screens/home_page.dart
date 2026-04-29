@@ -16,6 +16,13 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
 
+  @override
+  void initState() {
+    super.initState();
+    // Always start at Marketplace tab when HomePage is created (e.g., on login)
+    _selectedIndex = 0;
+  }
+
   static const List<String> _titles = [
     'Marketplace',
     'My Jobs',
