@@ -33,8 +33,8 @@ class JobHeaderCard extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: colorScheme.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: colorScheme.primary.withValues(alpha: 0.12)),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: colorScheme.primary.withValues(alpha: 0.1)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -42,18 +42,19 @@ class JobHeaderCard extends StatelessWidget {
           Text(
             jobTitle,
             style: TextStyle(
-              fontWeight: FontWeight.w800,
-              fontSize: 20,
+              fontWeight: FontWeight.w700,
+              fontSize: 22,
+              letterSpacing: -0.2,
               color: colorScheme.onSurface,
             ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 12),
           ClipRRect(
             borderRadius: BorderRadius.circular(12),
             child: Container(
               height: 180,
               width: double.infinity,
-              color: colorScheme.primary.withValues(alpha: 0.06),
+              color: colorScheme.primary.withValues(alpha: 0.05),
               child: imageUrl != null && imageUrl.isNotEmpty
                   ? Image.network(
                       imageUrl,
@@ -67,48 +68,48 @@ class JobHeaderCard extends StatelessWidget {
           ),
           if (jobData?['description'] != null &&
               jobData!['description'].toString().trim().isNotEmpty) ...[
-            const SizedBox(height: 12),
+            const SizedBox(height: 14),
             Text(
               'Description',
               style: TextStyle(
                 fontSize: 12,
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w600,
                 color: colorScheme.primary,
-                letterSpacing: 0.2,
+                letterSpacing: 0.1,
               ),
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 8),
             Text(
               jobData!['description'].toString(),
               style: TextStyle(
                 fontSize: 14,
-                height: 1.45,
-                color: colorScheme.onSurface.withValues(alpha: 0.78),
+                height: 1.55,
+                color: colorScheme.onSurface.withValues(alpha: 0.76),
               ),
             ),
           ] else ...[
-            const SizedBox(height: 12),
+            const SizedBox(height: 14),
             Text(
               'Description',
               style: TextStyle(
                 fontSize: 12,
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w600,
                 color: colorScheme.primary,
-                letterSpacing: 0.2,
+                letterSpacing: 0.1,
               ),
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 8),
             Text(
               'No description provided for this job yet.',
               style: TextStyle(
                 fontSize: 14,
-                height: 1.45,
+                height: 1.55,
                 color: colorScheme.onSurface.withValues(alpha: 0.6),
                 fontStyle: FontStyle.italic,
               ),
             ),
           ],
-          const SizedBox(height: 12),
+          const SizedBox(height: 14),
           Wrap(
             spacing: 8,
             runSpacing: 8,
@@ -128,7 +129,7 @@ class JobHeaderCard extends StatelessWidget {
                 ),
             ],
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 16),
           Wrap(
             spacing: 10,
             runSpacing: 10,

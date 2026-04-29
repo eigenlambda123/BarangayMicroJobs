@@ -12,7 +12,7 @@ class LoginHeader extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const BrandLogo(height: 66),
-        const SizedBox(height: 16),
+        const SizedBox(height: 24),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
           decoration: BoxDecoration(
@@ -23,27 +23,21 @@ class LoginHeader extends StatelessWidget {
             'Community marketplace',
             style: TextStyle(
               color: colorScheme.secondary,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w600,
               fontSize: 12,
+              letterSpacing: 0.2,
             ),
           ),
         ),
-        const SizedBox(height: 32),
-        Text(
-          'Log In',
-          style: TextStyle(
-            fontSize: 32,
-            fontWeight: FontWeight.w800,
-            color: colorScheme.onSurface,
-          ),
-        ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 40),
+        Text('Log In', style: Theme.of(context).textTheme.displayMedium),
+        const SizedBox(height: 12),
         Text(
           'Welcome back to Barangay Microjobs',
           style: TextStyle(
             fontSize: 16,
-            color: colorScheme.onSurface.withValues(alpha: 0.68),
-            height: 1.35,
+            color: colorScheme.onSurface.withValues(alpha: 0.7),
+            height: 1.45,
           ),
         ),
       ],

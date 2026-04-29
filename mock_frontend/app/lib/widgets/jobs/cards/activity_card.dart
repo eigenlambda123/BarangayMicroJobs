@@ -33,21 +33,21 @@ class ActivityCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: colorScheme.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: colorScheme.primary.withValues(alpha: 0.12)),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: colorScheme.primary.withValues(alpha: 0.1)),
         boxShadow: const [
           BoxShadow(
-            color: Color(0x0E000000),
-            blurRadius: 8,
-            offset: Offset(0, 3),
+            color: Color(0x12000000),
+            blurRadius: 14,
+            offset: Offset(0, 6),
           ),
         ],
       ),
       child: InkWell(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(18),
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.all(14),
+          padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -63,22 +63,23 @@ class ActivityCard extends StatelessWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                            fontWeight: FontWeight.w800,
-                            fontSize: 15,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 16,
                             color: colorScheme.onSurface,
+                            height: 1.2,
                           ),
                         ),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: 6),
                         Row(
                           children: [
                             Icon(
                               Icons.person_outline,
-                              size: 13,
+                              size: 14,
                               color: colorScheme.onSurface.withValues(
-                                alpha: 0.62,
+                                alpha: 0.6,
                               ),
                             ),
-                            const SizedBox(width: 4),
+                            const SizedBox(width: 6),
                             Expanded(
                               child: Text(
                                 worker,
@@ -89,7 +90,7 @@ class ActivityCard extends StatelessWidget {
                                   color: colorScheme.onSurface.withValues(
                                     alpha: 0.62,
                                   ),
-                                  fontWeight: FontWeight.w600,
+                                  fontWeight: FontWeight.w500,
                                 ),
                               ),
                             ),
@@ -101,25 +102,25 @@ class ActivityCard extends StatelessWidget {
                   const SizedBox(width: 10),
                   Container(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
+                      horizontal: 12,
                       vertical: 6,
                     ),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF3BAF4A),
-                      borderRadius: BorderRadius.circular(10),
+                      color: colorScheme.secondary.withValues(alpha: 0.16),
+                      borderRadius: BorderRadius.circular(999),
                     ),
                     child: Text(
                       price,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w800,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w700,
                         fontSize: 12,
-                        color: Colors.white,
+                        color: colorScheme.secondary,
                       ),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 12),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -136,7 +137,7 @@ class ActivityCard extends StatelessWidget {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: statusColor.withValues(alpha: 0.16),
+                      color: statusColor.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(999),
                     ),
                     child: Text(
@@ -153,7 +154,7 @@ class ActivityCard extends StatelessWidget {
               if (onCompletePressed != null ||
                   onCancelPressed != null ||
                   onRatePressed != null)
-                const SizedBox(height: 10),
+                const SizedBox(height: 12),
               if (onCompletePressed != null ||
                   onCancelPressed != null ||
                   onRatePressed != null)
@@ -166,11 +167,6 @@ class ActivityCard extends StatelessWidget {
                       FilledButton.tonal(
                         onPressed: onCompletePressed,
                         child: const Text('Mark Complete'),
-                      ),
-                    if (onCancelPressed != null)
-                      OutlinedButton(
-                        onPressed: onCancelPressed,
-                        child: const Text('Cancel'),
                       ),
                     if (onRatePressed != null)
                       FilledButton(
