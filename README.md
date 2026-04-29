@@ -2,18 +2,15 @@
 
 A Flutter-based community platform designed to connect local residents with micro-job opportunities within their barangay. The application enables residents to post jobs, offer services, and build a localized reputation through ratings and reviews.
 
-## 📋 Table of Contents
+## Table of Contents
 
 - [Overview](#overview)
-- [Features](#features)
 - [User Roles](#user-roles)
 - [Application Screens](#application-screens)
-- [Key Features in Detail](#key-features-in-detail)
+- [Key Features](#key-features-in-detail)
 - [Architecture](#architecture)
 - [Development Setup](#development-setup)
 - [Daily Workflow](#daily-workflow)
-- [Technology Stack](#technology-stack)
-- [Quality Attributes](#quality-attributes)
 
 ---
 
@@ -22,102 +19,11 @@ A Flutter-based community platform designed to connect local residents with micr
 **BarangayMicroJobs** is a mobile-first platform that promotes localized economic activity by connecting barangay residents for short-term tasks and skill-based services. The system supports offline functionality, ensuring accessibility even with unstable internet connectivity, and provides a safe, community-driven marketplace for micro-jobs.
 
 ### Key Objectives
-- ✅ Provide a centralized platform for posting and browsing micro-jobs
-- ✅ Enable residents to offer skills and services within their barangay
-- ✅ Facilitate job acceptance, completion tracking, and feedback
-- ✅ Support offline-first functionality with automatic synchronization
-- ✅ Enable community reputation building through ratings and reviews
-
----
-
-## Features
-
-### 1. User Authentication & Profile Management
-- **Phone Number Registration**: Residents register using a unique phone number and password
-- **JWT Authentication**: Secure token-based authentication for API requests
-- **Profile Management**: Users can update their information including:
-  - Full name and contact details
-  - Skills and specialties
-  - Profile picture
-  - Location information
-  - Verification status (admin-controlled)
-- **Role-based Access**: Support for regular users and administrator roles
-
-### 2. Job Posting & Management
-- **Create Job Posts**: Post micro-job requests with:
-  - Job title and detailed description
-  - Budget/salary information
-  - Location within barangay
-  - Optional job images
-  - Job categories
-- **Edit/Cancel Jobs**: Modify job details before assignment
-- **Job Status Tracking**: Jobs progress through states:
-  - `Open` - Available for applications
-  - `Assigned` - Provider has been selected
-  - `Completed` - Job is finished
-  - `Cancelled` - Job was cancelled
-- **View Posted Jobs**: Track all jobs you've posted
-
-### 3. Job Marketplace & Discovery
-- **Browse Available Jobs**: View all open jobs posted by other residents
-- **Search & Filter**: Find jobs using:
-  - Keywords/text search
-  - Location filters
-  - Salary range filters
-  - Job status filters
-  - Filter combinations
-- **Job Details**: View comprehensive job information before applying
-- **Marketplace Overview**: Dashboard showing:
-  - Total available jobs count
-  - Jobs you can apply to
-  - Quick action buttons
-
-### 4. Job Applications & Transactions
-- **Apply for Jobs**: Submit applications to available job postings
-- **Review Applicants**: Job posters can:
-  - View all applicants for a job
-  - Review applicant profiles and ratings
-  - Select and hire desired providers
-  - Prevent duplicate hiring (one provider per job)
-- **Transaction Management**: Track application and hiring progress with states:
-  - `Applied` - Initial application submitted
-  - `Hired` - Provider selected by job poster
-  - `Completed` - Work completed by both parties
-- **Mark as Complete**: Either party can mark a transaction as completed
-
-### 5. Offline-First Data Synchronization
-- **Local Storage**: All data stored locally in SQLite database
-- **Offline Operations**: Full functionality without internet:
-  - Browse cached jobs
-  - Create job posts
-  - Apply for jobs
-  - View profiles and history
-- **Automatic Synchronization**: Data syncs automatically when connection is restored
-- **Sync Status Tracking**: System tracks which records have been synced
-- **Conflict Resolution**: Uses "Last Modified" timestamps to handle conflicts
-
-### 6. Feedback & Ratings System
-- **Leave Ratings**: Rate transaction counterparts (1-5 stars) after job completion
-- **Comments**: Add optional feedback comments
-- **Average Ratings**: System calculates and displays user average rating
-- **Reputation Building**: Build community trust through consistent ratings
-- **Rating Restrictions**: One rating per unique transaction
-
-### 7. Activity & History Tracking
-- **Job History**: View all your posted and completed jobs
-- **Transaction History**: Track all job applications and hires
-- **Performance Metrics**: See statistics like:
-  - Jobs posted
-  - Jobs completed
-  - Total earnings/spent
-  - Average rating
-- **Status Timeline**: View chronological updates for each transaction
-
-### 8. Administrative Features
-- **User Verification**: Admins can verify/approve residents
-- **Content Moderation**: Tools to monitor and manage job postings
-- **Activity Monitoring**: View system-wide activity reports
-- **Audit Trail**: Track synchronization events and data updates
+- Provide a centralized platform for posting and browsing micro-jobs
+- Enable residents to offer skills and services within their barangay
+- Facilitate job acceptance, completion tracking, and feedback
+- Support offline-first functionality with automatic synchronization
+- Enable community reputation building through ratings and reviews
 
 ---
 
@@ -178,9 +84,9 @@ Authorized personnel who:
 
 ---
 
-## Key Features in Detail
+## Key Features
 
-### 📱 Marketplace Screen
+### Marketplace Screen
 The main hub where users:
 - View available jobs in a scrollable list
 - Search jobs by keywords
@@ -196,7 +102,7 @@ The main hub where users:
 - Job count overview card
 - Marketplace background visual design
 
-### 💼 Job Posting
+### Job Posting
 Complete job creation form with:
 - **Title**: What needs to be done (max 50 chars)
 - **Description**: Detailed task explanation (max 500 chars)
@@ -206,7 +112,7 @@ Complete job creation form with:
 - **Draft Saving**: Automatically saves as you type
 - **Validation**: Ensures all required fields before submission
 
-### 🔍 Smart Search & Filters
+### Smart Search & Filters
 Advanced filtering system with:
 - **Text Search**: Keywords in job titles/descriptions
 - **Location Filters**: Filter by specific zones
@@ -215,7 +121,7 @@ Advanced filtering system with:
 - **Combination Filters**: Apply multiple filters simultaneously
 - **Clear Filters**: One-click reset to show all jobs
 
-### ⭐ Rating & Feedback
+### Rating & Feedback
 Post-completion rating system:
 - **Star Rating**: 1-5 star rating scale
 - **Written Feedback**: Optional detailed comments
@@ -223,7 +129,7 @@ Post-completion rating system:
 - **Reputation Building**: Public rating display
 - **One Rating Per Transaction**: Prevents duplicate ratings
 
-### 📊 Activity & Statistics
+### Activity & Statistics
 Dashboard showing:
 - Total jobs posted
 - Total jobs completed
@@ -232,7 +138,7 @@ Dashboard showing:
 - Active and inactive transactions
 - Complete transaction history with timestamps
 
-### 🔄 Offline Synchronization
+### Offline Synchronization
 Intelligent sync system:
 - **Automatic Detection**: Detects internet availability
 - **Background Sync**: Syncs data without interrupting users
@@ -399,65 +305,6 @@ To keep your local code in sync with the team:
 
 ---
 
-## Technology Stack
-
-| Component | Technology | Purpose |
-|-----------|-----------|---------|
-| Frontend | Flutter & Dart | Mobile app development |
-| Backend | FastAPI & Python | REST API server |
-| Database | SQLite (local) / PostgreSQL (server) | Data persistence |
-| Auth | JWT Tokens | Secure authentication |
-| Storage | File system | User uploads and images |
-| Version Control | Git & GitHub | Code management |
-
----
-
-## Quality Attributes
-
-### Usability
-- Simple mobile-first interface
-- Intuitive navigation with bottom tab bar
-- Clear icons and readable typography
-- Minimal steps to post/apply for jobs
-- No formal training required for new users
-
-### Performance
-- App fully interactive within 5 seconds on launch
-- Page transitions load within 3 seconds
-- Support for 30+ concurrent users
-- Smooth scrolling without lag
-- Background sync doesn't interrupt user tasks
-
-### Security
-- Phone number + password authentication
-- Passwords encrypted/hashed before storage
-- JWT token-based authorization
-- Role-based access control
-- Admin-only moderation functions
-
-### Reliability
-- Minimal crashes during normal use
-- Data persists after app restart
-- Graceful recovery from connection loss
-- Regular backup of transaction data
-- Safe error messages without exposing private data
-
-### Offline Capability
-- Full app functionality without internet
-- Local SQLite database caching
-- Automatic sync when online
-- Conflict-free data synchronization
-- Transparent offline/online status
-
-### Localization
-- English (Philippines) UI language
-- Support for regional dialects (Tagalog, Visayan) in user content
-- MM/DD/YYYY date format (local convention)
-- Philippine Peso (₱) currency formatting
-- Metric system for measurements
-
----
-
 ## API Documentation
 
 ### Backend API Routes
@@ -493,16 +340,6 @@ Full API documentation available at: `http://localhost:8000/docs`
 
 ---
 
-## Data Privacy & Compliance
-
-- Soft-delete policy for user data deletion
-- Automatic removal of session tokens on logout
-- Compliance with local privacy standards
-- Audit trail for all transactions
-- User data retention for community reputation
-
----
-
 ## Future Enhancements
 
 Planned features for future releases:
@@ -514,15 +351,6 @@ Planned features for future releases:
 - Multi-barangay support
 - Video profiles and job previews
 - In-app messaging system
-
----
-
-## Support & Documentation
-
-- **SRS Document**: See `Software Requirements Specification for Barangay MicroJobs`
-- **Backend README**: See `backend/README.md` for detailed backend documentation
-- **UML Diagrams**: See `UMLDiagrams/` for system architecture diagrams
-- **Issue Tracking**: Report bugs and feature requests on GitHub Issues
 
 ---
 
@@ -538,6 +366,6 @@ Manuel S. Enverga University Foundation - February 2026
 
 ---
 
-**Version**: 1.0 (Approved)  
+**Version**: 1.0
 **Last Updated**: April 2026
 
