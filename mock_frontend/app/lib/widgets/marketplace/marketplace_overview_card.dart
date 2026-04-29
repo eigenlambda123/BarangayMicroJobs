@@ -53,15 +53,6 @@ class MarketplaceOverviewCard extends StatelessWidget {
                         color: colorScheme.primary,
                       ),
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Browse opportunities posted by other users and jump into the ones you can take.',
-                      style: TextStyle(
-                        fontSize: 13,
-                        height: 1.35,
-                        color: colorScheme.onSurface.withValues(alpha: 0.68),
-                      ),
-                    ),
                   ],
                 ),
               ),
