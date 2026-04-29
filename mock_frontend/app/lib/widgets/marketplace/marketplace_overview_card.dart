@@ -1,14 +1,9 @@
 import 'package:flutter/material.dart';
 
 class MarketplaceOverviewCard extends StatelessWidget {
-  final int totalCount;
   final int availableCount;
 
-  const MarketplaceOverviewCard({
-    required this.totalCount,
-    required this.availableCount,
-    super.key,
-  });
+  const MarketplaceOverviewCard({required this.availableCount, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -73,28 +68,6 @@ class MarketplaceOverviewCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: _MarketplaceMetricCard(
-                  title: 'Total jobs',
-                  value: '$totalCount',
-                  icon: Icons.view_list_rounded,
-                  tint: colorScheme.secondary,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _MarketplaceMetricCard(
-                  title: 'Other users\' posts',
-                  value: '$totalCount',
-                  icon: Icons.cases_outlined,
-                  tint: colorScheme.primary,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
           Container(
             width: double.infinity,
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
@@ -122,68 +95,6 @@ class MarketplaceOverviewCard extends StatelessWidget {
                 ),
               ],
             ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _MarketplaceMetricCard extends StatelessWidget {
-  const _MarketplaceMetricCard({
-    required this.title,
-    required this.value,
-    required this.icon,
-    required this.tint,
-  });
-
-  final String title;
-  final String value;
-  final IconData icon;
-  final Color tint;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: tint.withValues(alpha: 0.09),
-        borderRadius: BorderRadius.circular(18),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: tint.withValues(alpha: 0.14),
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: Icon(icon, color: tint, size: 18),
-          ),
-          const SizedBox(width: 10),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                value,
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w900,
-                  color: tint,
-                ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                title,
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: Theme.of(
-                    context,
-                  ).colorScheme.onSurface.withValues(alpha: 0.62),
-                ),
-              ),
-            ],
           ),
         ],
       ),

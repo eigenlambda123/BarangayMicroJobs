@@ -210,7 +210,6 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                       ),
                       const SizedBox(height: 12),
                       MarketplaceOverviewCard(
-                        totalCount: _otherUsersJobs.length,
                         availableCount: _availableJobs.length,
                       ),
                       const SizedBox(height: 18),
