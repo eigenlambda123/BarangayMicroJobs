@@ -1,5 +1,9 @@
 # Endpoint Commands
 
+## Database Note
+
+This backend uses SQLite by default for local development. On Render, set the service's `DATABASE_URL` to the managed PostgreSQL connection string so data persists across restarts and redeploys.
+
 ## Authentication Flow
 
 ### 1. Register a New User

@@ -1,18 +1,17 @@
-from sqlmodel import create_engine, SQLModel, Session
-from sqlalchemy.orm import sessionmaker
+import os
+
 from sqlalchemy import inspect, text
+from sqlmodel import Session, SQLModel, create_engine
 
-# Set this to True to use SQLite for local development
-USE_SQLITE = True
-
-# File path for SQLite
+# Local fallback for development when DATABASE_URL is not set.
 SQLITE_URL = "sqlite:///./barangay_microjobs.db"
-# Connection string for PostgreSQL
-POSTGRES_URL = "postgresql://user:password@localhost:5432/barangay_microjobs_db"
 
-# Select the URL based on switch
-DATABASE_URL = SQLITE_URL if USE_SQLITE else POSTGRES_URL
+# Render provides DATABASE_URL automatically for managed PostgreSQL services.
+DATABASE_URL = os.getenv("DATABASE_URL", SQLITE_URL)
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
+USE_SQLITE = DATABASE_URL.startswith("sqlite")
 connect_args = {"check_same_thread": False} if USE_SQLITE else {}
 
 engine = create_engine(DATABASE_URL, echo=True, connect_args=connect_args)

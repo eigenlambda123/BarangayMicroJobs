@@ -167,6 +167,11 @@ Intelligent sync system:
 - **Async Processing**: Uvicorn ASGI server
 - **File Storage**: Local uploads directory
 
+### Deployment Note
+
+- Use SQLite for local development.
+- Use Render's managed PostgreSQL service in production by setting `DATABASE_URL`.
+
 ### Project Structure
 
 ```

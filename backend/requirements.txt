@@ -1,6 +1,7 @@
 # Generic dependencies for the FastAPI
 fastapi[standard]
 sqlmodel
+psycopg2-binary
 
 # For password hashing and JWT token handling
 bcrypt==4.3.0
