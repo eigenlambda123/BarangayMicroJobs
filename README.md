@@ -364,7 +364,7 @@ Planned features for future releases:
 - Alegre, Raphael Hugo I.
 - Altamira, Lester Adriane D.
 - Cadeliña, Iggy Michael V.
-- Villa, Rodmark Bernard A.
+- Villa, RM A.
 - Villapando, Gabriel Salvadore E.
 
 Manuel S. Enverga University Foundation - February 2026
