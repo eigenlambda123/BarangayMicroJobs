@@ -1,7 +1,7 @@
 # BarangayMicroJobs
 
 <p align="center">
-  <img src="frontend/logo/logo.png" alt="BarangayMicroJobs Logo" width="180"/>
+  <img src="mock_frontend/app/assets/app_logo.png" alt="BarangayMicroJobs Logo" width="180"/>
 </p>
 
 BarangayMicroJobs is a community platform that connects local residents with nearby micro-job opportunities.
